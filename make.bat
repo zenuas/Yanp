@@ -7,9 +7,13 @@ call :%TARGET% %*
 exit /b %ERRORLEVEL%
 
 :build
-	dotnet build --nologo --noconlog
+	dotnet build --nologo -v q --clp:NoSummary
+	exit /b %ERRORLEVEL%
+
+:clean
+	dotnet clean --nologo -v q
 	exit /b %ERRORLEVEL%
 
 :test
-	dotnet test --noconlog
+	dotnet test --nologo -v q
 	exit /b %ERRORLEVEL%
