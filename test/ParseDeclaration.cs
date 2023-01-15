@@ -52,4 +52,21 @@ public class ParseDeclaration
         Assert.Equal(y3.Declares["b"], new Declarate { Assoc = AssocTypes.Left, Name = "b", Priority = 1 }, new EqDeclarate());
         Assert.Equal(y3.Declares["c"], new Declarate { Assoc = AssocTypes.Left, Name = "c", Priority = 2 }, new EqDeclarate());
     }
+
+    [Fact]
+    public void Type()
+    {
+        _ = Assert.Throws<SyntaxErrorException>(() => RunString("%type a"));
+
+        var y2 = RunString("%type<type> a b");
+        Assert.Equal(2, y2.Declares.Count);
+        Assert.Equal(y2.Declares["a"], new Declarate { Assoc = AssocTypes.Type, Name = "a", Priority = 1, Type = "type" }, new EqDeclarate());
+        Assert.Equal(y2.Declares["b"], new Declarate { Assoc = AssocTypes.Type, Name = "b", Priority = 1, Type = "type" }, new EqDeclarate());
+
+        var y3 = RunString("%type<type> a b %type<type2> c");
+        Assert.Equal(3, y3.Declares.Count);
+        Assert.Equal(y3.Declares["a"], new Declarate { Assoc = AssocTypes.Type, Name = "a", Priority = 1, Type = "type" }, new EqDeclarate());
+        Assert.Equal(y3.Declares["b"], new Declarate { Assoc = AssocTypes.Type, Name = "b", Priority = 1, Type = "type" }, new EqDeclarate());
+        Assert.Equal(y3.Declares["c"], new Declarate { Assoc = AssocTypes.Type, Name = "c", Priority = 2, Type = "type2" }, new EqDeclarate());
+    }
 }
