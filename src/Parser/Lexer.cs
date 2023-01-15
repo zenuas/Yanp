@@ -13,22 +13,23 @@ public class Lexer
     public static Dictionary<char, Symbols> ReservedChar { get; } = new Dictionary<char, Symbols>
             {
                 { ':', Symbols.__Colon },
+                { ';', Symbols.__Semicolon },
+                { '|', Symbols.__VerticaLine },
+                { '{', Symbols.__LeftCurlyBracket },
+                { '<', Symbols.__LessThan },
+                { '>', Symbols.__GraterThan },
             };
     public static Dictionary<string, Symbols> ReservedString { get; } = new Dictionary<string, Symbols>
             {
-                { "%start", Symbols.LET },
-                { "%left", Symbols.STRUCT },
-                { "%right", Symbols.CLASS },
-                { "instance", Symbols.INSTANCE },
-                { "sub", Symbols.SUB },
-                { "if", Symbols.IF },
-                { "then", Symbols.THEN },
-                { "else", Symbols.ELSE },
-                { "switch", Symbols.SWITCH },
-                { "true", Symbols.TRUE },
-                { "false", Symbols.FALSE },
-                { "null", Symbols.NULL },
-                { "is", Symbols.IS },
+                { "%token", Symbols.TOKEN },
+                { "%left", Symbols.LEFT },
+                { "%right", Symbols.RIGHT },
+                { "%nonassoc", Symbols.NONASSOC },
+                { "%type", Symbols.TYPE },
+                { "%default", Symbols.DEFAULT },
+                { "%define", Symbols.DEFINE },
+                { "%start", Symbols.START },
+                { "%prec", Symbols.PREC },
             };
 
     public Lexer(SourceCodeReader reader)
@@ -73,7 +74,7 @@ public class Lexer
 
     public static Token ReadToken(SourceCodeReader reader)
     {
-        if (reader.EndOfStream) return new Token { Type = Symbols.EOL, LineNumber = reader.LineNumber, LineColumn = reader.LineColumn };
+        if (reader.EndOfStream) return new Token { Type = Symbols.__EOF, LineNumber = reader.LineNumber, LineColumn = reader.LineColumn };
 
         var c = reader.PeekChar();
         if (ReservedChar.ContainsKey(c)) return new Token { Type = ReservedChar[c], LineNumber = reader.LineNumber, LineColumn = reader.LineColumn, Value = reader.ReadChar().ToString() };
@@ -85,7 +86,23 @@ public class Lexer
 
             case '%':
                 _ = reader.ReadChar();
-                if (IsAlphabet(reader.PeekChar())) return ReadVariable(reader, "%");
+                var next = reader.PeekChar();
+                if (IsAlphabet(next))
+                {
+                    var t = ReadVariable(reader, "%");
+                    if (t.Type == Symbols.VAR) throw new SyntaxErrorException($"undefined keyword {t.Value}") { LineNumber = reader.LineNumber, LineColumn = reader.LineColumn };
+                    return t;
+                }
+                else if (next == '%')
+                {
+                    _ = reader.ReadChar();
+                    return new Token { Type = Symbols.PartEnd, LineNumber = reader.LineNumber, LineColumn = reader.LineColumn - 1 };
+                }
+                else if (next == '{')
+                {
+                    _ = reader.ReadChar();
+                    throw new System.Exception("not implemented");
+                }
                 break;
 
             default:

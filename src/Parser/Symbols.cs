@@ -2,133 +2,63 @@ namespace Parser;
 
 public enum Symbols
 {
-
-    /// <summary>'('</summary>
-    __LeftParenthesis,
-
-    /// <summary>')'</summary>
-    __RightParenthesis,
-
-    /// <summary>','</summary>
-    __Comma,
-
-    /// <summary>'.'</summary>
-    __FullStop,
-
-    /// <summary>':'</summary>
-    __Colon,
-
-    /// <summary>'?'</summary>
-    __QuestionMark,
-
-    /// <summary>'['</summary>
-    __LeftSquareBracket,
-
-    /// <summary>']'</summary>
-    __RightSquareBracket,
-
-    /// <summary>'{'</summary>
-    __LeftCurlyBracket,
-
-    /// <summary>'}'</summary>
-    __RightCurlyBracket,
-
     /// <summary>End of File</summary>
     __EOF,
 
-    /// <summary>AND2</summary>
-    AND2,
+    /// <summary>%token</summary>
+    TOKEN,
 
-    /// <summary>ARROW</summary>
-    ARROW,
+    /// <summary>%left</summary>
+    LEFT,
 
-    /// <summary>BEGIN</summary>
-    BEGIN,
+    /// <summary>%right</summary>
+    RIGHT,
 
-    /// <summary>CLASS</summary>
-    CLASS,
+    /// <summary>%nonassoc</summary>
+    NONASSOC,
 
-    /// <summary>ELSE</summary>
-    ELSE,
+    /// <summary>%type</summary>
+    TYPE,
 
-    /// <summary>END</summary>
-    END,
+    /// <summary>%default</summary>
+    DEFAULT,
 
-    /// <summary>EOL</summary>
-    EOL,
+    /// <summary>%define</summary>
+    DEFINE,
 
-    /// <summary>EQ</summary>
-    EQ,
+    /// <summary>%start</summary>
+    START,
 
-    /// <summary>FALSE</summary>
-    FALSE,
+    /// <summary>%prec</summary>
+    PREC,
 
-    /// <summary>FLOAT</summary>
-    FLOAT,
+    /// <summary>%{</summary>
+    InlineStart,
 
-    /// <summary>GT</summary>
-    GT,
+    /// <summary>%%</summary>
+    PartEnd,
 
-    /// <summary>IF</summary>
-    IF,
+    /// <summary>:</summary>
+    __Colon,
 
-    /// <summary>IGNORE</summary>
-    IGNORE,
+    /// <summary>;</summary>
+    __Semicolon,
 
-    /// <summary>INSTANCE</summary>
-    INSTANCE,
+    /// <summary>|</summary>
+    __VerticaLine,
 
-    /// <summary>IS</summary>
-    IS,
+    /// <summary>{</summary>
+    __LeftCurlyBracket,
 
-    /// <summary>LAMBDA_START</summary>
-    LAMBDA_START,
+    /// <summary>&lt;</summary>
+    __LessThan,
 
-    /// <summary>LET</summary>
-    LET,
-
-    /// <summary>LT</summary>
-    LT,
-
-    /// <summary>NULL</summary>
-    NULL,
-
-    /// <summary>NUM</summary>
-    NUM,
-
-    /// <summary>OPE</summary>
-    OPE,
-
-    /// <summary>OR</summary>
-    OR,
-
-    /// <summary>OR2</summary>
-    OR2,
-
-    /// <summary>STR</summary>
-    STR,
-
-    /// <summary>STRUCT</summary>
-    STRUCT,
-
-    /// <summary>SUB</summary>
-    SUB,
-
-    /// <summary>SWITCH</summary>
-    SWITCH,
-
-    /// <summary>THEN</summary>
-    THEN,
-
-    /// <summary>TRUE</summary>
-    TRUE,
-
-    /// <summary>TYPE_PARAM</summary>
-    TYPE_PARAM,
-
-    /// <summary>UNARY</summary>
-    UNARY,
+    /// <summary>&gt;</summary>
+    __GraterThan,
 
     /// <summary>VAR</summary>
     VAR,
+
+    /// <summary>STR</summary>
+    STR,
 }

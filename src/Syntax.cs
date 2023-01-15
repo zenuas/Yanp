@@ -1,5 +1,7 @@
 ﻿using System.Text;
 
+namespace Yanp;
+
 public class Syntax
 {
     public StringBuilder HeaderCode { get; } = new StringBuilder();

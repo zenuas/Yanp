@@ -2,7 +2,7 @@
 using Extensions;
 using Parser;
 using System.IO;
-using static ParserGenerator;
+using static Yanp.ParserGenerator;
 
 namespace Yanp;
 
@@ -26,8 +26,8 @@ public class Program
     public static void Run(TextReader input)
     {
         var lex = new Lexer(new SourceCodeReader() { BaseReader = input });
-        ParseDeclaration(lex);
+        var syntax = new Syntax();
+        ParseDeclaration(syntax, lex);
         ParseGrammar(lex);
     }
 }
-

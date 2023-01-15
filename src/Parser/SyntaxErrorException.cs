@@ -4,8 +4,8 @@ namespace Parser;
 
 public class SyntaxErrorException : Exception
 {
-    public int? LineNumber { get; init; }
-    public int? LineColumn { get; init; }
+    public required int LineNumber { get; init; }
+    public required int LineColumn { get; init; }
 
     public SyntaxErrorException(string message) : base(message)
     {
