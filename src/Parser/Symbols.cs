@@ -50,15 +50,12 @@ public enum Symbols
     /// <summary>{</summary>
     __LeftCurlyBracket,
 
-    /// <summary>&lt;</summary>
-    __LessThan,
-
-    /// <summary>&gt;</summary>
-    __GraterThan,
-
     /// <summary>VAR</summary>
     VAR,
 
-    /// <summary>STR</summary>
-    STR,
+    /// <summary>CHAR</summary>
+    CHAR,
+
+    /// <summary>DECLARE</summary>
+    DECLARE,
 }

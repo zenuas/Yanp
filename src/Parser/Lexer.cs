@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
 
 namespace Parser;
 
@@ -16,8 +17,6 @@ public class Lexer
                 { ';', Symbols.__Semicolon },
                 { '|', Symbols.__VerticaLine },
                 { '{', Symbols.__LeftCurlyBracket },
-                { '<', Symbols.__LessThan },
-                { '>', Symbols.__GraterThan },
             };
     public static Dictionary<string, Symbols> ReservedString { get; } = new Dictionary<string, Symbols>
             {
@@ -81,8 +80,8 @@ public class Lexer
 
         switch (c)
         {
-            case '"':
-                return ReadString(reader);
+            case '\'':
+                return ReadChar(reader);
 
             case '%':
                 _ = reader.ReadChar();
@@ -104,6 +103,9 @@ public class Lexer
                     throw new System.Exception("not implemented");
                 }
                 break;
+
+            case '<':
+                return ReadTypeDeclare(reader);
 
             default:
                 if (IsAlphabet(c)) return ReadVariable(reader);
@@ -128,20 +130,66 @@ public class Lexer
             : new Token { Type = Symbols.VAR, LineNumber = line, LineColumn = col, Value = name };
     }
 
-    public static Token ReadString(SourceCodeReader reader)
+    public static Token ReadTypeDeclare(SourceCodeReader reader)
+    {
+        var line = reader.LineNumber;
+        var col = reader.LineColumn;
+        var s = new StringBuilder();
+
+        if (reader.EndOfStream || reader.ReadChar() != '<') throw new SyntaxErrorException("syntax error") { LineNumber = line, LineColumn = col };
+        var nest = 1;
+        while (!reader.EndOfStream)
+        {
+            var c = reader.ReadChar();
+            if (c == '<')
+            {
+                nest++;
+            }
+            else if (c == '>')
+            {
+                nest--;
+                if (nest <= 0) break;
+            }
+            _ = s.Append(c);
+        }
+        if (nest > 0 || s.Length == 0) throw new SyntaxErrorException("syntax error") { LineNumber = line, LineColumn = col };
+
+        return new Token { Type = Symbols.DECLARE, LineNumber = line, LineColumn = col, Value = s.ToString() };
+    }
+
+    public static Token ReadChar(SourceCodeReader reader)
     {
         var line = reader.LineNumber;
         var col = reader.LineColumn;
 
-        var start = reader.ReadChar();
-        var s = new StringBuilder();
-        while (!reader.EndOfStream)
+        if (reader.EndOfStream || reader.ReadChar() != '\'') throw new SyntaxErrorException("syntax error") { LineNumber = line, LineColumn = col };
+        if (reader.EndOfStream) throw new SyntaxErrorException("syntax error") { LineNumber = line, LineColumn = col };
+
+        var c = reader.ReadChar();
+        if (c == '\'')
         {
-            var c = reader.ReadChar();
-            if (c == start) break;
-            _ = s.Append(c);
+            if (reader.EndOfStream) throw new SyntaxErrorException("syntax error") { LineNumber = line, LineColumn = col };
+
+            var next = reader.ReadChar();
+            switch (next)
+            {
+                case '\'':
+                case '"':
+                case '\\':
+                    c = next;
+                    break;
+
+                case 't': c = '\t'; break;
+                case 'r': c = '\r'; break;
+                case 'n': c = '\n'; break;
+
+                default:
+                    throw new SyntaxErrorException($"parse escape char error ({next})") { LineNumber = line, LineColumn = col };
+            }
         }
-        return new Token { Type = Symbols.STR, LineNumber = line, LineColumn = col, Value = s.ToString() };
+
+        if (reader.EndOfStream || reader.ReadChar() != '\'') throw new SyntaxErrorException("syntax error") { LineNumber = line, LineColumn = col };
+        return new Token { Type = Symbols.CHAR, LineNumber = line, LineColumn = col, Value = c.ToString() };
     }
 
     public static bool IsNumber(char c) => c >= '0' && c <= '9';
