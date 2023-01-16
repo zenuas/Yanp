@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Xml.Linq;
 
 namespace Parser;
 
@@ -56,6 +55,11 @@ public class Lexer
         var t = PeekToken();
         Store.RemoveAt(0);
         return t;
+    }
+
+    public void UnReadToken(Token t)
+    {
+        Store.Insert(0, t);
     }
 
     public static bool ReadSkipWhiteSpace(SourceCodeReader reader)

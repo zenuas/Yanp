@@ -52,7 +52,89 @@ public class ParserGenerator
         }
     }
 
-    public static void ParseGrammar(Lexer lex)
+    public static IEnumerable<(Token Head, Token[] Grammars)> ParserGrammarLines(Lexer lex)
+    {
+        if (lex.PeekToken().Type == Symbols.__EOF || lex.PeekToken().Type == Symbols.PartEnd) yield break;
+
+        Token? prev = null;
+        while (true)
+        {
+            var head = lex.PeekToken();
+            switch (head.Type)
+            {
+                case Symbols.__VerticaLine:
+                    if (prev is null) throw new SyntaxErrorException($"bad sequence grammar token") { LineNumber = head.LineNumber, LineColumn = head.LineColumn };
+                    head = prev;
+                    goto GRAMMAR_LINE_;
+
+                case Symbols.VAR:
+                    _ = lex.ReadToken();
+                    if (lex.PeekToken().Type != Symbols.__Colon) throw new SyntaxErrorException($"bad sequence grammar token") { LineNumber = lex.BaseReader.LineNumber, LineColumn = lex.BaseReader.LineColumn };
+                    _ = lex.ReadToken();
+
+                GRAMMAR_LINE_:
+                    var grams = new List<Token>();
+                    while (true)
+                    {
+                        var g = lex.PeekToken();
+                        if (g.Type == Symbols.TOKEN)
+                        {
+                            _ = lex.ReadToken();
+                            if (lex.PeekToken().Type == Symbols.__Colon)
+                            {
+                                lex.UnReadToken(g); // head : a b g . : c
+                                break;
+                            }
+                            grams.Add(g);
+                        }
+                        else if (g.Type == Symbols.CHAR)
+                        {
+                            grams.Add(lex.ReadToken());
+                        }
+                        else if (g.Type == Symbols.__LeftCurlyBracket)
+                        {
+
+                        }
+                        else if (g.Type == Symbols.PREC)
+                        {
+                            _ = lex.ReadToken();
+                            var prec_g = lex.ReadToken();
+                            if (prec_g.Type != Symbols.VAR && prec_g.Type != Symbols.CHAR) throw new SyntaxErrorException($"bad sequence prec next token") { LineNumber = prec_g.LineNumber, LineColumn = prec_g.LineColumn };
+                            grams.Add(new Token() { Type = g.Type, LineNumber = prec_g.LineNumber, LineColumn = prec_g.LineColumn, Value = prec_g.Value });
+                        }
+                        else if (g.Type == Symbols.__VerticaLine)
+                        {
+                            prev = head;
+                            break;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    yield return (head, grams.ToArray());
+                    break;
+
+                case Symbols.__Semicolon:
+                    prev = null;
+                    _ = lex.ReadToken();
+                    break;
+
+                case Symbols.PartEnd:
+                    _ = lex.ReadToken();
+                    yield break;
+
+                case Symbols.__EOF:
+                    yield break;
+
+                default:
+                    throw new SyntaxErrorException($"bad sequence grammar token") { LineNumber = lex.BaseReader.LineNumber, LineColumn = lex.BaseReader.LineColumn };
+
+            }
+        }
+    }
+
+    public static void ParseGrammar(Syntax syntax, Lexer lex)
     {
     }
 }

@@ -28,6 +28,6 @@ public class Program
         var lex = new Lexer(new SourceCodeReader() { BaseReader = input });
         var syntax = new Syntax();
         ParseDeclaration(syntax, lex);
-        ParseGrammar(lex);
+        ParseGrammar(syntax, lex);
     }
 }
