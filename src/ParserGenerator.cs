@@ -77,7 +77,7 @@ public class ParserGenerator
                     while (true)
                     {
                         var g = lex.PeekToken();
-                        if (g.Type == Symbols.TOKEN)
+                        if (g.Type == Symbols.VAR)
                         {
                             _ = lex.ReadToken();
                             if (lex.PeekToken().Type == Symbols.__Colon)
