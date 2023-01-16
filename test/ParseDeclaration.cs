@@ -69,4 +69,17 @@ public class ParseDeclaration
         Assert.Equal(y3.Declares["b"], new Declarate { Assoc = AssocTypes.Type, Name = "b", Priority = 1, Type = "type" }, new EqDeclarate());
         Assert.Equal(y3.Declares["c"], new Declarate { Assoc = AssocTypes.Type, Name = "c", Priority = 2, Type = "type2" }, new EqDeclarate());
     }
+
+    [Fact]
+    public void Char()
+    {
+        var y = RunString("%left 'a'");
+        Assert.Single(y.Declares);
+        Assert.Equal(y.Declares["'a"], new Declarate { Assoc = AssocTypes.Left, Name = "'a", Priority = 1 }, new EqDeclarate());
+
+        var y2 = RunString("%left 'a' a");
+        Assert.Equal(2, y2.Declares.Count);
+        Assert.Equal(y2.Declares["'a"], new Declarate { Assoc = AssocTypes.Left, Name = "'a", Priority = 1 }, new EqDeclarate());
+        Assert.Equal(y2.Declares["a"], new Declarate { Assoc = AssocTypes.Left, Name = "a", Priority = 1 }, new EqDeclarate());
+    }
 }

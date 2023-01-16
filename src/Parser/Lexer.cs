@@ -189,7 +189,7 @@ public class Lexer
         }
 
         if (reader.EndOfStream || reader.ReadChar() != '\'') throw new SyntaxErrorException("syntax error") { LineNumber = line, LineColumn = col };
-        return new Token { Type = Symbols.CHAR, LineNumber = line, LineColumn = col, Value = c.ToString() };
+        return new Token { Type = Symbols.CHAR, LineNumber = line, LineColumn = col, Value = $"'{c}" };
     }
 
     public static bool IsNumber(char c) => c >= '0' && c <= '9';
