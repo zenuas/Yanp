@@ -8,7 +8,6 @@ namespace Parser;
 public class Lexer
 {
     public SourceCodeReader BaseReader { get; }
-    //public Parser? Parser { get; init; }
     public List<Token> Store { get; } = new List<Token>();
     public static Dictionary<char, Symbols> ReservedChar { get; } = new Dictionary<char, Symbols>
             {
@@ -44,9 +43,6 @@ public class Lexer
         }
 
         var first = Store.First();
-        //if (Parser is { })
-        //{
-        //}
         return first;
     }
 
