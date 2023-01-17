@@ -129,9 +129,7 @@ public class Lexer
         return text.ToString();
     }
 
-    public static Token ReadVariable(SourceCodeReader reader) => ReadVariable(reader, "");
-
-    public static Token ReadVariable(SourceCodeReader reader, string prefix)
+    public static Token ReadVariable(SourceCodeReader reader, string prefix = "")
     {
         var line = reader.LineNumber;
         var col = reader.LineColumn - prefix.Length;
