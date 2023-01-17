@@ -87,13 +87,11 @@ public class ParserGenerator
                             }
                             grams.Add(g);
                         }
-                        else if (g.Type == Symbols.CHAR)
+                        else if (
+                            g.Type == Symbols.CHAR ||
+                            g.Type == Symbols.ACTION)
                         {
                             grams.Add(lex.ReadToken());
-                        }
-                        else if (g.Type == Symbols.__LeftCurlyBracket)
-                        {
-
                         }
                         else if (g.Type == Symbols.PREC)
                         {

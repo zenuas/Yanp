@@ -14,7 +14,6 @@ public class Lexer
                 { ':', Symbols.__Colon },
                 { ';', Symbols.__Semicolon },
                 { '|', Symbols.__VerticaLine },
-                { '{', Symbols.__LeftCurlyBracket },
             };
     public static Dictionary<string, Symbols> ReservedString { get; } = new Dictionary<string, Symbols>
             {
@@ -100,15 +99,15 @@ public class Lexer
                 else if (next == '{')
                 {
                     _ = reader.ReadChar();
-                    return new Token { Type = Symbols.InlineBlock, LineNumber = reader.LineNumber, LineColumn = reader.LineColumn, Value = ReadText(reader, "%}") };
+                    return new Token { Type = Symbols.InlineBlock, LineNumber = reader.LineNumber, LineColumn = reader.LineColumn - 2, Value = ReadText(reader, "%}") };
                 }
                 break;
 
             case '<':
-                return ReadTypeDeclare(reader);
+                return new Token { Type = Symbols.DECLARE, LineNumber = reader.LineNumber, LineColumn = reader.LineColumn, Value = ReadTypeDeclare(reader) };
 
             case '{':
-                return ReadTypeDeclare(reader);
+                return new Token { Type = Symbols.ACTION, LineNumber = reader.LineNumber, LineColumn = reader.LineColumn, Value = ReadAction(reader) };
 
             default:
                 if (IsAlphabet(c)) return ReadVariable(reader);
@@ -199,7 +198,7 @@ public class Lexer
             : new Token { Type = Symbols.VAR, LineNumber = line, LineColumn = col, Value = name };
     }
 
-    public static Token ReadTypeDeclare(SourceCodeReader reader)
+    public static string ReadTypeDeclare(SourceCodeReader reader)
     {
         var line = reader.LineNumber;
         var col = reader.LineColumn;
@@ -223,7 +222,7 @@ public class Lexer
         }
         if (nest > 0 || s.Length == 0) throw new SyntaxErrorException("syntax error") { LineNumber = line, LineColumn = col };
 
-        return new Token { Type = Symbols.DECLARE, LineNumber = line, LineColumn = col, Value = s.ToString() };
+        return s.ToString();
     }
 
     public static Token ReadChar(SourceCodeReader reader)

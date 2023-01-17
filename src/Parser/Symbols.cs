@@ -47,9 +47,6 @@ public enum Symbols
     /// <summary>|</summary>
     __VerticaLine,
 
-    /// <summary>{</summary>
-    __LeftCurlyBracket,
-
     /// <summary>VAR</summary>
     VAR,
 
@@ -58,4 +55,7 @@ public enum Symbols
 
     /// <summary>DECLARE</summary>
     DECLARE,
+
+    /// <summary>{ ... }</summary>
+    ACTION,
 }
