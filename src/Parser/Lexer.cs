@@ -107,6 +107,9 @@ public class Lexer
             case '<':
                 return ReadTypeDeclare(reader);
 
+            case '{':
+                return ReadTypeDeclare(reader);
+
             default:
                 if (IsAlphabet(c)) return ReadVariable(reader);
                 break;
@@ -127,6 +130,60 @@ public class Lexer
 
         if (eofmark != "") throw new SyntaxErrorException("missing eof mark") { LineNumber = reader.LineNumber, LineColumn = reader.LineColumn };
         return text.ToString();
+    }
+
+    public static string ReadAction(SourceCodeReader reader)
+    {
+        if (reader.ReadChar() != '{') throw new SyntaxErrorException("syntax error") { LineNumber = reader.LineNumber, LineColumn = reader.LineColumn };
+
+        var text = new StringBuilder();
+        var nest = 1;
+        char? quot = null;
+        while (!reader.EndOfStream)
+        {
+            var c = reader.ReadChar();
+
+            if (quot is { } q)
+            {
+                _ = text.Append(c);
+                if (q == c)
+                {
+                    quot = null;
+                }
+                else if (c == '\\' && q == reader.PeekChar())
+                {
+                    _ = reader.ReadChar();
+                    _ = text.Append(q);
+                }
+                continue;
+            }
+
+            switch (c)
+            {
+                case '{':
+                    nest++;
+                    _ = text.Append(c);
+                    break;
+
+                case '}':
+                    nest--;
+                    if (nest <= 0) return text.ToString();
+                    _ = text.Append(c);
+                    break;
+
+                case '"':
+                case '\'':
+                    _ = text.Append(c);
+                    if (quot is null) quot = c;
+                    break;
+
+                default:
+                    _ = text.Append(c);
+                    break;
+            }
+        }
+
+        throw new SyntaxErrorException("action read EOF") { LineNumber = reader.LineNumber, LineColumn = reader.LineColumn };
     }
 
     public static Token ReadVariable(SourceCodeReader reader, string prefix = "")
