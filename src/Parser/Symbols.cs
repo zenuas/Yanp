@@ -32,8 +32,8 @@ public enum Symbols
     /// <summary>%prec</summary>
     PREC,
 
-    /// <summary>%{</summary>
-    InlineStart,
+    /// <summary>%{ ... %}</summary>
+    InlineBlock,
 
     /// <summary>%%</summary>
     PartEnd,

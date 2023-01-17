@@ -100,7 +100,7 @@ public class Lexer
                 else if (next == '{')
                 {
                     _ = reader.ReadChar();
-                    throw new System.Exception("not implemented");
+                    return new Token { Type = Symbols.InlineBlock, LineNumber = reader.LineNumber, LineColumn = reader.LineColumn, Value = ReadText(reader, "%}") };
                 }
                 break;
 
@@ -113,6 +113,20 @@ public class Lexer
         }
 
         throw new SyntaxErrorException("syntax error") { LineNumber = reader.LineNumber, LineColumn = reader.LineColumn };
+    }
+
+    public static string ReadText(SourceCodeReader reader, string eofmark = "")
+    {
+        var text = new StringBuilder();
+        while (!reader.EndOfStream)
+        {
+            var line = reader.ReadLine();
+            if (eofmark != "" && line == eofmark) return text.ToString();
+            text.AppendLine(line);
+        }
+
+        if (eofmark != "") throw new SyntaxErrorException("missing eof mark") { LineNumber = reader.LineNumber, LineColumn = reader.LineColumn };
+        return text.ToString();
     }
 
     public static Token ReadVariable(SourceCodeReader reader) => ReadVariable(reader, "");
