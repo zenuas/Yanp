@@ -1,5 +1,4 @@
 ﻿using Parser;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -28,7 +27,7 @@ public class ParserGenerator
             do
             {
                 var t = lex.ReadToken();
-                syntax.Declares.Add(t.Value, new Declarate { Assoc = assoc, Name = t.Value, Priority = pri, Type = type });
+                syntax.Declares.Add(t.Value, new() { Assoc = assoc, Name = t.Value, Priority = pri, Type = type });
             } while (lex.PeekToken().Type == Symbols.VAR || lex.PeekToken().Type == Symbols.CHAR);
         };
 
@@ -100,7 +99,7 @@ public class ParserGenerator
                             _ = lex.ReadToken();
                             var prec_g = lex.ReadToken();
                             if (prec_g.Type != Symbols.VAR && prec_g.Type != Symbols.CHAR) throw new SyntaxErrorException($"bad sequence prec next token") { LineNumber = prec_g.LineNumber, LineColumn = prec_g.LineColumn };
-                            grams.Add(new Token() { Type = g.Type, LineNumber = prec_g.LineNumber, LineColumn = prec_g.LineColumn, Value = prec_g.Value });
+                            grams.Add(new() { Type = g.Type, LineNumber = prec_g.LineNumber, LineColumn = prec_g.LineColumn, Value = prec_g.Value });
                         }
                         else if (g.Type == Symbols.__VerticaLine)
                         {

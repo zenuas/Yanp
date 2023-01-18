@@ -8,14 +8,14 @@ namespace Parser;
 public class Lexer
 {
     public SourceCodeReader BaseReader { get; }
-    public List<Token> Store { get; } = new List<Token>();
-    public static Dictionary<char, Symbols> ReservedChar { get; } = new Dictionary<char, Symbols>
+    public List<Token> Store { get; } = new();
+    public static Dictionary<char, Symbols> ReservedChar { get; } = new()
             {
                 { ':', Symbols.__Colon },
                 { ';', Symbols.__Semicolon },
                 { '|', Symbols.__VerticaLine },
             };
-    public static Dictionary<string, Symbols> ReservedString { get; } = new Dictionary<string, Symbols>
+    public static Dictionary<string, Symbols> ReservedString { get; } = new()
             {
                 { "%token", Symbols.TOKEN },
                 { "%left", Symbols.LEFT },
@@ -72,10 +72,10 @@ public class Lexer
 
     public static Token ReadToken(SourceCodeReader reader)
     {
-        if (reader.EndOfStream) return new Token { Type = Symbols.__EOF, LineNumber = reader.LineNumber, LineColumn = reader.LineColumn };
+        if (reader.EndOfStream) return new() { Type = Symbols.__EOF, LineNumber = reader.LineNumber, LineColumn = reader.LineColumn };
 
         var c = reader.PeekChar();
-        if (ReservedChar.ContainsKey(c)) return new Token { Type = ReservedChar[c], LineNumber = reader.LineNumber, LineColumn = reader.LineColumn, Value = reader.ReadChar().ToString() };
+        if (ReservedChar.ContainsKey(c)) return new() { Type = ReservedChar[c], LineNumber = reader.LineNumber, LineColumn = reader.LineColumn, Value = reader.ReadChar().ToString() };
 
         switch (c)
         {
@@ -94,20 +94,20 @@ public class Lexer
                 else if (next == '%')
                 {
                     _ = reader.ReadChar();
-                    return new Token { Type = Symbols.PartEnd, LineNumber = reader.LineNumber, LineColumn = reader.LineColumn - 1 };
+                    return new() { Type = Symbols.PartEnd, LineNumber = reader.LineNumber, LineColumn = reader.LineColumn - 1 };
                 }
                 else if (next == '{')
                 {
                     _ = reader.ReadChar();
-                    return new Token { Type = Symbols.InlineBlock, LineNumber = reader.LineNumber, LineColumn = reader.LineColumn - 2, Value = ReadText(reader, "%}") };
+                    return new() { Type = Symbols.InlineBlock, LineNumber = reader.LineNumber, LineColumn = reader.LineColumn - 2, Value = ReadText(reader, "%}") };
                 }
                 break;
 
             case '<':
-                return new Token { Type = Symbols.DECLARE, LineNumber = reader.LineNumber, LineColumn = reader.LineColumn, Value = ReadTypeDeclare(reader) };
+                return new() { Type = Symbols.DECLARE, LineNumber = reader.LineNumber, LineColumn = reader.LineColumn, Value = ReadTypeDeclare(reader) };
 
             case '{':
-                return new Token { Type = Symbols.ACTION, LineNumber = reader.LineNumber, LineColumn = reader.LineColumn, Value = ReadAction(reader) };
+                return new() { Type = Symbols.ACTION, LineNumber = reader.LineNumber, LineColumn = reader.LineColumn, Value = ReadAction(reader) };
 
             default:
                 if (IsAlphabet(c)) return ReadVariable(reader);
@@ -194,8 +194,8 @@ public class Lexer
         while (IsWord(reader.PeekChar())) _ = s.Append(reader.ReadChar());
         var name = s.ToString();
         return ReservedString.ContainsKey(name)
-            ? new Token { Type = ReservedString[name], LineNumber = line, LineColumn = col, Value = name }
-            : new Token { Type = Symbols.VAR, LineNumber = line, LineColumn = col, Value = name };
+            ? new() { Type = ReservedString[name], LineNumber = line, LineColumn = col, Value = name }
+            : new() { Type = Symbols.VAR, LineNumber = line, LineColumn = col, Value = name };
     }
 
     public static string ReadTypeDeclare(SourceCodeReader reader)
@@ -257,7 +257,7 @@ public class Lexer
         }
 
         if (reader.EndOfStream || reader.ReadChar() != '\'') throw new SyntaxErrorException("syntax error") { LineNumber = line, LineColumn = col };
-        return new Token { Type = Symbols.CHAR, LineNumber = line, LineColumn = col, Value = $"'{c}" };
+        return new() { Type = Symbols.CHAR, LineNumber = line, LineColumn = col, Value = $"'{c}" };
     }
 
     public static bool IsNumber(char c) => c >= '0' && c <= '9';

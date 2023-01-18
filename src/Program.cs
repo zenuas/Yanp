@@ -25,7 +25,7 @@ public class Program
 
     public static void Run(TextReader input)
     {
-        var lex = new Lexer(new SourceCodeReader() { BaseReader = input });
+        var lex = new Lexer(new() { BaseReader = input });
         var syntax = new Syntax();
         ParseDeclaration(syntax, lex);
         ParseGrammar(syntax, lex);
