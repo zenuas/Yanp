@@ -4,19 +4,6 @@ using Yanp;
 
 public class ParserGrammarLines
 {
-    public class EqToken : IEqualityComparer<Token>
-    {
-        public bool Equals(Token? x, Token? y)
-        {
-            return x?.Type == y?.Type &&
-                x?.LineNumber == y?.LineNumber &&
-                x?.LineColumn == y?.LineColumn &&
-                x?.Value == y?.Value;
-        }
-
-        public int GetHashCode(Token obj) => obj.GetHashCode();
-    }
-
     private static Token[][] RunString(string text)
     {
         var lex = new Lexer(new() { BaseReader = new StringReader(text) });
@@ -34,21 +21,21 @@ public class ParserGrammarLines
         var tss = RunString("a :");
         Assert.Single(tss);
         Assert.Single(tss[0]);
-        Assert.Equal(tss[0][0], new() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 1, Value = "a" }, new EqToken());
+        Assert.Equivalent(tss[0][0], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 1, Value = "a" });
 
         var tss1 = RunString("a : b");
         Assert.Single(tss1);
         Assert.Equal(2, tss1[0].Length);
-        Assert.Equal(tss1[0][0], new() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 1, Value = "a" }, new EqToken());
-        Assert.Equal(tss1[0][1], new() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 5, Value = "b" }, new EqToken());
+        Assert.Equivalent(tss1[0][0], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 1, Value = "a" });
+        Assert.Equivalent(tss1[0][1], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 5, Value = "b" });
 
         var tss2 = RunString("a : b c : d");
         Assert.Equal(2, tss2.Length);
         Assert.Equal(2, tss2[0].Length);
-        Assert.Equal(tss2[0][0], new() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 1, Value = "a" }, new EqToken());
-        Assert.Equal(tss2[0][1], new() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 5, Value = "b" }, new EqToken());
+        Assert.Equivalent(tss2[0][0], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 1, Value = "a" });
+        Assert.Equivalent(tss2[0][1], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 5, Value = "b" });
         Assert.Equal(2, tss2[1].Length);
-        Assert.Equal(tss2[1][0], new() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 7, Value = "c" }, new EqToken());
-        Assert.Equal(tss2[1][1], new() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 11, Value = "d" }, new EqToken());
+        Assert.Equivalent(tss2[1][0], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 7, Value = "c" });
+        Assert.Equivalent(tss2[1][1], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 11, Value = "d" });
     }
 }
