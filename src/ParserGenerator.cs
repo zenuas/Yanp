@@ -127,7 +127,6 @@ public class ParserGenerator
 
                 default:
                     throw new SyntaxErrorException($"bad sequence grammar token") { LineNumber = lex.BaseReader.LineNumber, LineColumn = lex.BaseReader.LineColumn };
-
             }
         }
     }

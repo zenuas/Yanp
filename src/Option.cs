@@ -1,6 +1,8 @@
 ﻿using Command;
 using System.IO;
 
+namespace Yanp;
+
 public class Option
 {
     [ShortOption('i')]
