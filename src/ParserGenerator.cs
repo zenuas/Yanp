@@ -53,7 +53,7 @@ public class ParserGenerator
         }
     }
 
-    public static IEnumerable<(Token Head, List<Token> Grammars)> ParserGrammarLines(Lexer lex)
+    public static IEnumerable<(Token Head, Token[] Grammars)> ParserGrammarLines(Lexer lex)
     {
         if (lex.PeekToken().Type == Symbols.__EOF || lex.PeekToken().Type == Symbols.PartEnd) yield break;
 
@@ -111,7 +111,7 @@ public class ParserGenerator
                             break;
                         }
                     }
-                    yield return (head, grams);
+                    yield return (head, grams.ToArray());
                     break;
 
                 case Symbols.__Semicolon:
@@ -150,11 +150,10 @@ public class ParserGenerator
         foreach (var g in ParserGrammarLines(lex))
         {
             var prec = g.Grammars.Where(x => x.Type == Symbols.PREC).FirstOrDefault();
-            var action = g.Grammars.Count > 0 && g.Grammars.Last().Type == Symbols.ACTION ? g.Grammars.Last() : null;
-            if (action is { }) _ = g.Grammars.Remove(action);
+            var action = g.Grammars.Length > 0 && g.Grammars.Last().Type == Symbols.ACTION ? g.Grammars.Last() : null;
 
             var line = g.Grammars
-                .Where(x => x.Type != Symbols.PREC)
+                .Where(x => x.Type != Symbols.PREC && !(action is { } p && x == p))
                 .Select((x, i) => x.Type == Symbols.ACTION ? create_anonymous_action(x) : x)
                 .ToList();
 
