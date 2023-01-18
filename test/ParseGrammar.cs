@@ -59,6 +59,28 @@ public class ParseGrammar
     }
 
     [Fact]
+    public void Action2()
+    {
+        var y = RunString("a : b b : 'B'");
+        Assert.Equal(2, y.Grammars.Count);
+        Assert.True(y.Grammars.ContainsKey("a"));
+        Assert.Single(y.Grammars["a"]);
+        var yg = y.Grammars["a"][0];
+        Assert.Null(yg.Action);
+        Assert.Null(yg.Prec);
+        Assert.Single(yg.Grammars);
+        Assert.Equal(yg.Grammars[0], new Token { Type = Symbols.VAR, LineNumber = 1, LineColumn = 5, Value = "b" }, new EqToken());
+
+        Assert.True(y.Grammars.ContainsKey("b"));
+        Assert.Single(y.Grammars["b"]);
+        var yg2 = y.Grammars["b"][0];
+        Assert.Null(yg2.Action);
+        Assert.Null(yg2.Prec);
+        Assert.Single(yg2.Grammars);
+        Assert.Equal(yg2.Grammars[0], new Token { Type = Symbols.CHAR, LineNumber = 1, LineColumn = 11, Value = "'B" }, new EqToken());
+    }
+
+    [Fact]
     public void AnonymousAction1()
     {
         var y = RunString("a : b {anon_action} c {action}");
