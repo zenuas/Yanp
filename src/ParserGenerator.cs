@@ -1,5 +1,7 @@
 ﻿using Parser;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Yanp;
 
@@ -52,7 +54,7 @@ public class ParserGenerator
         }
     }
 
-    public static IEnumerable<(Token Head, Token[] Grammars)> ParserGrammarLines(Lexer lex)
+    public static IEnumerable<(Token Head, List<Token> Grammars)> ParserGrammarLines(Lexer lex)
     {
         if (lex.PeekToken().Type == Symbols.__EOF || lex.PeekToken().Type == Symbols.PartEnd) yield break;
 
@@ -110,7 +112,7 @@ public class ParserGenerator
                             break;
                         }
                     }
-                    yield return (head, grams.ToArray());
+                    yield return (head, grams);
                     break;
 
                 case Symbols.__Semicolon:
@@ -133,5 +135,34 @@ public class ParserGenerator
 
     public static void ParseGrammar(Syntax syntax, Lexer lex)
     {
+        var anonymous_action = 0;
+        var create_anonymous_action = (Token t) =>
+        {
+            anonymous_action++;
+            var name = $"{{{anonymous_action}}}";
+            syntax.Grammars.Add(name, new() { new() { Action = t } });
+            return new Token() { LineNumber = t.LineNumber, LineColumn = t.LineColumn, Type = Symbols.VAR, Value = name };
+        };
+        var register_declate = (Token t) =>
+        {
+            if (!syntax.Declares.ContainsKey(t.Value)) syntax.Declares.Add(t.Value, new Declarate { Assoc = AssocTypes.Type, Name = t.Value });
+        };
+
+        foreach (var g in ParserGrammarLines(lex))
+        {
+            var prec = g.Grammars.Where(x => x.Type == Symbols.PREC).FirstOrDefault();
+            var action = g.Grammars.Count > 0 && g.Grammars.Last().Type == Symbols.ACTION ? g.Grammars.Last() : null;
+            if (action is { }) _ = g.Grammars.Remove(action);
+
+            var line = g.Grammars
+                .Where(x => x.Type != Symbols.PREC)
+                .Select((x, i) => x.Type == Symbols.ACTION ? create_anonymous_action(x) : x)
+                .ToList();
+
+            register_declate(g.Head);
+            line.ForEach(register_declate);
+            if (!syntax.Grammars.ContainsKey(g.Head.Value)) syntax.Grammars.Add(g.Head.Value, new());
+            syntax.Grammars[g.Head.Value].Add(new() { Grammars = line, Prec = prec, Action = action });
+        }
     }
 }

@@ -11,4 +11,6 @@ public class Syntax
     public string Default { get; set; } = "";
 
     public Dictionary<string, Declarate> Declares { get; } = new();
+
+    public Dictionary<string, List<GrammarLine>> Grammars { get; } = new();
 }
