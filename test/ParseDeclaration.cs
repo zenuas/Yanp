@@ -67,4 +67,21 @@ public class ParseDeclaration
         Assert.Equivalent(y2.Declares["'a"], new Declarate() { Assoc = AssocTypes.Left, Name = "'a", Priority = 1 });
         Assert.Equivalent(y2.Declares["a"], new Declarate() { Assoc = AssocTypes.Left, Name = "a", Priority = 1 });
     }
+
+    [Fact]
+    public void Inline()
+    {
+        var y = RunString(@"
+%token a
+%{
+hello
+world
+%}
+%token b
+");
+        Assert.Equal(2, y.Declares.Count);
+        Assert.Equivalent(y.Declares["a"], new Declarate() { Assoc = AssocTypes.Type, Name = "a", Priority = 1 });
+        Assert.Equivalent(y.Declares["b"], new Declarate() { Assoc = AssocTypes.Type, Name = "b", Priority = 2 });
+        Assert.Equal("hello\r\nworld\r\n", y.HeaderCode.ToString());
+    }
 }

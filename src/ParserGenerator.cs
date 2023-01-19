@@ -47,6 +47,10 @@ public class ParserGenerator
                     read_assoc(assoc_conv[t.Type], ++priority);
                     break;
 
+                case Symbols.InlineBlock:
+                    _ = syntax.HeaderCode.Append(t.Value);
+                    break;
+
                 case Symbols.PartEnd:
                     return;
             }
@@ -119,6 +123,12 @@ public class ParserGenerator
                     _ = lex.ReadToken();
                     break;
 
+                case Symbols.InlineBlock:
+                    prev = null;
+                    _ = lex.ReadToken();
+                    yield return (head, new Token[0]);
+                    break;
+
                 case Symbols.PartEnd:
                     _ = lex.ReadToken();
                     yield break;
@@ -149,6 +159,12 @@ public class ParserGenerator
 
         foreach (var g in ParserGrammarLines(lex))
         {
+            if (g.Head.Type == Symbols.InlineBlock)
+            {
+                _ = syntax.HeaderCode.Append(g.Head.Value);
+                continue;
+            }
+
             var prec = g.Grammars.Where(x => x.Type == Symbols.PREC).FirstOrDefault();
             var action = g.Grammars.Length > 0 && g.Grammars.Last().Type == Symbols.ACTION ? g.Grammars.Last() : null;
 

@@ -120,6 +120,12 @@ public class Lexer
     public static string ReadText(SourceCodeReader reader, string eofmark = "")
     {
         var text = new StringBuilder();
+        if (!reader.EndOfStream)
+        {
+            var first = reader.ReadLine();
+            if (first != "") _ = text.AppendLine(first);
+        }
+
         while (!reader.EndOfStream)
         {
             var line = reader.ReadLine();
