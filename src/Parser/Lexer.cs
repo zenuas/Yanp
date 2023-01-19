@@ -124,7 +124,7 @@ public class Lexer
         {
             var line = reader.ReadLine();
             if (eofmark != "" && line == eofmark) return text.ToString();
-            text.AppendLine(line);
+            _ = text.AppendLine(line);
         }
 
         if (eofmark != "") throw new SyntaxErrorException("missing eof mark") { LineNumber = reader.LineNumber, LineColumn = reader.LineColumn };

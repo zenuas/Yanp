@@ -19,12 +19,12 @@ public class ParserGrammarLines
     public void Gram1()
     {
         var tss = RunString("a :");
-        Assert.Single(tss);
-        Assert.Single(tss[0]);
+        _ = Assert.Single(tss);
+        _ = Assert.Single(tss[0]);
         Assert.Equivalent(tss[0][0], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 1, Value = "a" });
 
         var tss1 = RunString("a : b");
-        Assert.Single(tss1);
+        _ = Assert.Single(tss1);
         Assert.Equal(2, tss1[0].Length);
         Assert.Equivalent(tss1[0][0], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 1, Value = "a" });
         Assert.Equivalent(tss1[0][1], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 5, Value = "b" });

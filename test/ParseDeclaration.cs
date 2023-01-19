@@ -23,7 +23,7 @@ public class ParseDeclaration
     public void Left()
     {
         var y = RunString("%left a");
-        Assert.Single(y.Declares);
+        _ = Assert.Single(y.Declares);
         Assert.Equivalent(y.Declares["a"], new Declarate() { Assoc = AssocTypes.Left, Name = "a", Priority = 1 });
 
         var y2 = RunString("%left a b");
@@ -59,7 +59,7 @@ public class ParseDeclaration
     public void Char()
     {
         var y = RunString("%left 'a'");
-        Assert.Single(y.Declares);
+        _ = Assert.Single(y.Declares);
         Assert.Equivalent(y.Declares["'a"], new Declarate() { Assoc = AssocTypes.Left, Name = "'a", Priority = 1 });
 
         var y2 = RunString("%left 'a' a");
