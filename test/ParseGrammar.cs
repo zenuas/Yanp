@@ -30,17 +30,21 @@ public class ParseGrammar
         Assert.Null(yg.Action);
         Assert.Null(yg.Prec);
         Assert.Empty(yg.Grammars);
+    }
 
-        var y2 = RunString("a : b 'c'");
-        _ = Assert.Single(y2.Grammars);
-        Assert.True(y2.Grammars.ContainsKey("a"));
-        _ = Assert.Single(y2.Grammars["a"]);
-        var yg2 = y2.Grammars["a"][0];
-        Assert.Null(yg2.Action);
-        Assert.Null(yg2.Prec);
-        Assert.Equal(2, yg2.Grammars.Count);
-        Assert.Equivalent(yg2.Grammars[0], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 5, Value = "b" });
-        Assert.Equivalent(yg2.Grammars[1], new Token() { Type = Symbols.CHAR, LineNumber = 1, LineColumn = 7, Value = "'c" });
+    [Fact]
+    public void Gram2()
+    {
+        var y = RunString("a : b 'c'");
+        _ = Assert.Single(y.Grammars);
+        Assert.True(y.Grammars.ContainsKey("a"));
+        _ = Assert.Single(y.Grammars["a"]);
+        var yg = y.Grammars["a"][0];
+        Assert.Null(yg.Action);
+        Assert.Null(yg.Prec);
+        Assert.Equal(2, yg.Grammars.Count);
+        Assert.Equivalent(yg.Grammars[0], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 5, Value = "b" });
+        Assert.Equivalent(yg.Grammars[1], new Token() { Type = Symbols.CHAR, LineNumber = 1, LineColumn = 7, Value = "'c" });
     }
 
     [Fact]
