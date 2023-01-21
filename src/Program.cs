@@ -24,5 +24,10 @@ public class Program
     public static void Run(TextReader input)
     {
         var syntax = SyntaxParser.Parse(input);
+
+        if (syntax.Grammars.IsEmpty()) throw new ParseException("no grammar has been specified");
+        if (!syntax.Grammars.Contains(x => x.Key == syntax.Start)) throw new ParseException("no grammar has been specified");
+
+        Generator.LR0(syntax);
     }
 }
