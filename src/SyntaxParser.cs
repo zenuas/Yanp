@@ -1,11 +1,22 @@
 ﻿using Parser;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Yanp;
 
-public class ParserGenerator
+public class SyntaxParser
 {
+    public static Syntax Parse(TextReader input)
+    {
+        var lex = new Lexer(new() { BaseReader = input });
+        var syntax = new Syntax();
+        ParseDeclaration(syntax, lex);
+        ParseGrammar(syntax, lex);
+        syntax.FooterCode = input.ReadToEnd();
+        return syntax;
+    }
+
     public static void ParseDeclaration(Syntax syntax, Lexer lex)
     {
         var assoc_conv = new Dictionary<Symbols, AssocTypes>() {

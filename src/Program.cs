@@ -1,8 +1,6 @@
 ﻿using Command;
 using Extensions;
-using Parser;
 using System.IO;
-using static Yanp.ParserGenerator;
 
 namespace Yanp;
 
@@ -25,16 +23,6 @@ public class Program
 
     public static void Run(TextReader input)
     {
-        var syntax = ReadSyntax(input);
-    }
-
-    public static Syntax ReadSyntax(TextReader input)
-    {
-        var lex = new Lexer(new() { BaseReader = input });
-        var syntax = new Syntax();
-        ParseDeclaration(syntax, lex);
-        ParseGrammar(syntax, lex);
-        syntax.FooterCode = input.ReadToEnd();
-        return syntax;
+        var syntax = SyntaxParser.Parse(input);
     }
 }

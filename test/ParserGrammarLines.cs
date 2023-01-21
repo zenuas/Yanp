@@ -1,13 +1,12 @@
 ﻿using Parser;
 using Xunit;
-using Yanp;
 
 public class ParserGrammarLines
 {
     private static Token[][] RunString(string text)
     {
         var lex = new Lexer(new() { BaseReader = new StringReader(text) });
-        return ParserGenerator.ParserGrammarLines(lex).Select(x =>
+        return Yanp.SyntaxParser.ParserGrammarLines(lex).Select(x =>
         {
             var t = new List<Token> { x.Head };
             t.AddRange(x.Grammars);

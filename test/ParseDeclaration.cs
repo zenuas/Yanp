@@ -8,7 +8,7 @@ public class ParseDeclaration
     {
         var syntax = new Syntax();
         var lex = new Lexer(new() { BaseReader = new StringReader(text) });
-        ParserGenerator.ParseDeclaration(syntax, lex);
+        Yanp.SyntaxParser.ParseDeclaration(syntax, lex);
         return syntax;
     }
 

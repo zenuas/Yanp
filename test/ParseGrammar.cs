@@ -1,7 +1,6 @@
 ﻿using Parser;
 using Xunit;
 using Yanp;
-using static ParserGrammarLines;
 
 public class ParseGrammar
 {
@@ -9,7 +8,7 @@ public class ParseGrammar
     {
         var syntax = new Syntax();
         var lex = new Lexer(new() { BaseReader = new StringReader(text) });
-        ParserGenerator.ParseGrammar(syntax, lex);
+        Yanp.SyntaxParser.ParseGrammar(syntax, lex);
         return syntax;
     }
 
