@@ -51,4 +51,21 @@ public class LR0CreateNodes
         Assert.Equal("start : a . b", nodes[1].Lines[0].ToString());
         Assert.Equal("start : a b .", nodes[2].Lines[0].ToString());
     }
+
+    [Fact]
+    public void Node4()
+    {
+        var nodes = RunString("start : a b a : 'A'");
+        Assert.Equal(5, nodes.Length);
+        _ = Assert.Single(nodes[0].Lines);
+        _ = Assert.Single(nodes[1].Lines);
+        _ = Assert.Single(nodes[2].Lines);
+        _ = Assert.Single(nodes[3].Lines);
+        _ = Assert.Single(nodes[4].Lines);
+        Assert.Equal("start : . a b", nodes[0].Lines[0].ToString());
+        Assert.Equal("start : a . b", nodes[1].Lines[0].ToString());
+        Assert.Equal("start : a b .", nodes[2].Lines[0].ToString());
+        Assert.Equal("a : . 'A'", nodes[3].Lines[0].ToString());
+        Assert.Equal("a : 'A' .", nodes[4].Lines[0].ToString());
+    }
 }

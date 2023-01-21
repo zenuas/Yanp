@@ -10,7 +10,7 @@ public class GrammarLineIndex
 
     public override string ToString()
     {
-        var line = Line.Grammars.Select(x => x.Value).ToList();
+        var line = Line.Grammars.Select(x => x.ToString()).ToList();
         line.Insert(Index, ".");
         return $"{Name} : {string.Join(" ", line)}";
     }
