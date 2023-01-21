@@ -7,12 +7,13 @@ namespace Yanp;
 
 public class LR0
 {
-    public static void Generate(Syntax syntax)
+    public static Node[] Generate(Syntax syntax)
     {
         AddAccept(syntax);
         var nodes = CreateNodes(syntax);
-        var first = First(nodes);
-        Next(nodes, first);
+        Next(nodes, First(nodes));
+        Merge(nodes);
+        return Sweep(nodes);
     }
 
     public static void AddAccept(Syntax syntax)
@@ -77,5 +78,15 @@ public class LR0
             }
             if (!retry) break;
         }
+    }
+
+    public static void Merge(Node[] nodes)
+    {
+
+    }
+
+    public static Node[] Sweep(Node[] nodes)
+    {
+        return nodes;
     }
 }

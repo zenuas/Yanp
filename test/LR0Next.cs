@@ -11,8 +11,7 @@ public class LR0Next
         var lex = new Lexer(new() { BaseReader = new StringReader(text) });
         Yanp.SyntaxParser.ParseGrammar(syntax, lex);
         var nodes = LR0.CreateNodes(syntax);
-        var first = LR0.First(nodes);
-        LR0.Next(nodes, first);
+        LR0.Next(nodes, LR0.First(nodes));
         return nodes;
     }
 
