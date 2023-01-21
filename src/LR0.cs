@@ -38,14 +38,12 @@ public class LR0
             g.Value.Select(gl =>
                 {
                     var line = Lists.Sequence(0)
-                        .Select(i => (Node: new Node { Name = i == 0 ? g.Key : gl.Grammars[i - 1].Value }, Index: new GrammarLineIndex { Name = g.Key, Index = i, Line = gl }))
+                        .Select(i => new Node { Name = i == 0 ? g.Key : gl.Grammars[i - 1].Value, Lines = new() { new() { Name = g.Key, Index = i, Line = gl } } })
                         .Take(gl.Grammars.Count + 1)
                         .ToArray();
 
-                    line.Each(x => x.Node.Lines.Add(x.Index));
-                    line.Take(gl.Grammars.Count).Each((x, i) => x.Node.Nexts.Add(line[i + 1].Node));
-
-                    return line.Select(x => x.Node);
+                    line.Take(gl.Grammars.Count).Each((x, i) => x.Nexts.Add(line[i + 1]));
+                    return line;
                 }))
             .Flatten()
             .Flatten()
