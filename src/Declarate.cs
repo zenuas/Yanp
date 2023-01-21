@@ -1,4 +1,6 @@
-﻿namespace Yanp;
+﻿using System.Collections.Generic;
+
+namespace Yanp;
 
 public class Declarate
 {
@@ -8,4 +10,16 @@ public class Declarate
     public string Type { get; init; } = "";
     public bool IsTerminalSymbol { get; init; } = true;
     public bool IsAction { get; init; } = false;
+
+    public override string ToString()
+    {
+        var assoc_name = new Dictionary<AssocTypes, string>() {
+            { AssocTypes.Type, "%type" },
+            { AssocTypes.Left, "%left" },
+            { AssocTypes.Right, "%right" },
+            { AssocTypes.Nonassoc, "%nonassoc" },
+        };
+
+        return $"{assoc_name[Assoc]}{(Type == "" ? "" : $"<{Type}>")} {Name}";
+    }
 }
