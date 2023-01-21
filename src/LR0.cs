@@ -1,5 +1,6 @@
 ﻿using Extensions;
 using Parser;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Yanp;
@@ -11,6 +12,7 @@ public class LR0
         AddAccept(syntax);
         var nodes = CreateNodes(syntax);
         var first = First(nodes);
+        Next(nodes, first);
     }
 
     public static void AddAccept(Syntax syntax)
@@ -55,5 +57,25 @@ public class LR0
         return nodes
             .Where(x => x.Lines[0].Index == 0)
             .ToArray();
+    }
+
+    public static void Next(Node[] nodes, Node[] first)
+    {
+        while (true)
+        {
+            var retry = false;
+            foreach (var node in nodes)
+            {
+                foreach (var head in node.Nexts
+                    .Select(x => first.Where(y => y.Name == x.Name))
+                    .Flatten()
+                    .ToArray())
+                {
+                    head.Lines.Each(x => { if (!node.Lines.Contains(x)) node.Lines.Add(x); });
+                    head.Nexts.Each(x => retry = node.Nexts.Add(x) || retry);
+                }
+            }
+            if (!retry) break;
+        }
     }
 }

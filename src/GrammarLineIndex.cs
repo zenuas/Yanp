@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using Extensions;
+using System.Linq;
 
 namespace Yanp;
 
@@ -12,6 +13,6 @@ public class GrammarLineIndex
     {
         var line = Line.Grammars.Select(x => x.ToString()).ToList();
         line.Insert(Index, ".");
-        return $"{Name} : {string.Join(" ", line)}";
+        return $"{Name} : {line.Join(" ")}";
     }
 }
