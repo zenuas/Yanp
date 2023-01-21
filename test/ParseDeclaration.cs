@@ -142,7 +142,7 @@ world
     public void Define3()
     {
         var y = RunString("%define a b");
-        Assert.Single(y.Defines);
+        _ = Assert.Single(y.Defines);
         Assert.Equal("b", y.Defines["a"]);
     }
 
