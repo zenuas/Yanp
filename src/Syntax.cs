@@ -6,7 +6,7 @@ namespace Yanp;
 public class Syntax
 {
     public StringBuilder HeaderCode { get; } = new();
-    public StringBuilder FooterCode { get; } = new();
+    public string FooterCode { get; set; } = "";
     public string Start { get; set; } = "";
     public string Default { get; set; } = "";
 
