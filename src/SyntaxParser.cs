@@ -58,6 +58,21 @@ public class SyntaxParser
                     read_assoc(assoc_conv[t.Type], ++priority);
                     break;
 
+                case Symbols.DEFAULT:
+                    if (lex.PeekToken().Type != Symbols.VAR) throw new SyntaxErrorException("%default with token") { LineNumber = lex.BaseReader.LineNumber, LineColumn = lex.BaseReader.LineColumn };
+                    syntax.Default = lex.ReadToken().Value;
+                    break;
+
+                case Symbols.DEFINE:
+                    if (lex.PeekToken().Type != Symbols.VAR) throw new SyntaxErrorException("%define with name") { LineNumber = lex.BaseReader.LineNumber, LineColumn = lex.BaseReader.LineColumn };
+                    syntax.Defines.Add(lex.ReadToken().Value, (lex.BaseReader.ReadLine() ?? "").TrimStart());
+                    break;
+
+                case Symbols.START:
+                    if (lex.PeekToken().Type != Symbols.VAR) throw new SyntaxErrorException("%start with token") { LineNumber = lex.BaseReader.LineNumber, LineColumn = lex.BaseReader.LineColumn };
+                    syntax.Start = lex.ReadToken().Value;
+                    break;
+
                 case Symbols.InlineBlock:
                     _ = syntax.HeaderCode.Append(t.Value);
                     break;
