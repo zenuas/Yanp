@@ -175,8 +175,7 @@ public class SyntaxParser
         var anonymous_action = 0;
         var create_anonymous_action = (Token t) =>
         {
-            anonymous_action++;
-            var name = $"{{{anonymous_action}}}";
+            var name = $"{{{++anonymous_action}}}";
             syntax.Grammars.Add(name, new() { new() { Action = t } });
             return new Token() { LineNumber = t.LineNumber, LineColumn = t.LineColumn, Type = Symbols.VAR, Value = name };
         };
