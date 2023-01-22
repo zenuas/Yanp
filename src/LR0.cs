@@ -1,5 +1,6 @@
 ﻿using Extensions;
 using Parser;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,8 +13,8 @@ public class LR0
         AddAccept(syntax);
         var nodes = CreateNodes(syntax);
         Next(nodes, First(nodes));
-        Merge(nodes);
-        return Sweep(nodes);
+        var merged = Merge(nodes);
+        return Sweep(merged.First(x => x.Name == "$ACCEPT" && x.Lines[0].Index == 0));
     }
 
     public static void AddAccept(Syntax syntax)
@@ -80,13 +81,43 @@ public class LR0
         }
     }
 
-    public static void Merge(Node[] nodes)
+    public static Node[] Merge(Node[] nodes)
     {
-
+        var merged = nodes.ToList();
+        while (true)
+        {
+            var newnodes = new List<Node>();
+            foreach (var node in merged)
+            {
+                foreach (var group in node.Nexts
+                    .GroupBy(x => x.Name)
+                    .Where(x => x.Count() >= 2)
+                    .ToList())
+                {
+                    var merge = new Node { Name = group.Key, Lines = group.Select(x => x.Lines).Flatten().ToList() };
+                    group.Each(x => x.Nexts.Each(y => merge.Nexts.Add(y)));
+                    _ = node.Nexts.RemoveWhere(x => group.Contains(x));
+                    _ = node.Nexts.Add(merge);
+                    newnodes.Add(merge);
+                }
+            }
+            if (newnodes.IsEmpty()) break;
+            merged.AddRange(newnodes);
+        }
+        return merged.ToArray();
     }
 
-    public static Node[] Sweep(Node[] nodes)
+    public static Node[] Sweep(Node start)
     {
-        return nodes;
+        var marks = new List<Node>();
+        void mark_proc(Node node)
+        {
+            if (marks.Contains(node)) return;
+            marks.Add(node);
+            node.Nexts.Each(mark_proc);
+        };
+        mark_proc(start);
+
+        return marks.ToArray();
     }
 }

@@ -2,7 +2,6 @@
 using Xunit;
 using Yanp;
 
-
 public class LR0Next
 {
     private Node[] RunString(string text)
