@@ -1,6 +1,6 @@
-using Extensions;
 using Xunit;
-using Yanp;
+
+namespace Yanp.Test;
 
 public class Program
 {

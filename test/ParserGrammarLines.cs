@@ -1,6 +1,8 @@
 ﻿using Parser;
 using Xunit;
 
+namespace Yanp.Test;
+
 public class ParserGrammarLines
 {
     private static Token[][] RunString(string text)

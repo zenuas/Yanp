@@ -1,12 +1,12 @@
 ﻿using Parser;
 using Xunit;
 
+namespace Yanp.Test;
+
 public class ReadAction
 {
-    private static string RunString(string text)
-    {
-        return RunString2(text).Action;
-    }
+    private static string RunString(string text) => RunString2(text).Action;
+
     private static (string Action, SourceCodeReader Reader) RunString2(string text)
     {
         var reader = new SourceCodeReader() { BaseReader = new StringReader(text) };

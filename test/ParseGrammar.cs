@@ -1,6 +1,7 @@
 ﻿using Parser;
 using Xunit;
-using Yanp;
+
+namespace Yanp.Test;
 
 public class ParseGrammar
 {

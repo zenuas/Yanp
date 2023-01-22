@@ -1,10 +1,11 @@
 ﻿using Parser;
 using Xunit;
-using Yanp;
+
+namespace Yanp.Test;
 
 public class LR0Merge
 {
-    private Node[] RunString(string text, string start = "start")
+    private static Node[] RunString(string text, string start = "start")
     {
         var syntax = new Syntax();
         var lex = new Lexer(new() { BaseReader = new StringReader(text) });

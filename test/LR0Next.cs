@@ -1,10 +1,11 @@
 ﻿using Parser;
 using Xunit;
-using Yanp;
+
+namespace Yanp.Test;
 
 public class LR0Next
 {
-    private Node[] RunString(string text)
+    private static Node[] RunString(string text)
     {
         var syntax = new Syntax();
         var lex = new Lexer(new() { BaseReader = new StringReader(text) });
