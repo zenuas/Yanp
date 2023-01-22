@@ -95,6 +95,7 @@ public class SyntaxParser
             {
                 case Symbols.__VerticaLine:
                     if (prev is null) throw new SyntaxErrorException($"bad sequence grammar token") { LineNumber = head.LineNumber, LineColumn = head.LineColumn };
+                    _ = lex.ReadToken();
                     head = prev;
                     goto GRAMMAR_LINE_;
 

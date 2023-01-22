@@ -48,6 +48,25 @@ public class ParseGrammar
     }
 
     [Fact]
+    public void Gram3()
+    {
+        var y = RunString("a : b | c");
+        _ = Assert.Single(y.Grammars);
+        Assert.True(y.Grammars.ContainsKey("a"));
+        Assert.Equal(2, y.Grammars["a"].Count);
+        var yg = y.Grammars["a"][0];
+        Assert.Null(yg.Action);
+        Assert.Null(yg.Prec);
+        Assert.Single(yg.Grammars);
+        Assert.Equivalent(yg.Grammars[0], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 5, Value = "b" });
+        var yg2 = y.Grammars["a"][1];
+        Assert.Null(yg2.Action);
+        Assert.Null(yg2.Prec);
+        Assert.Single(yg2.Grammars);
+        Assert.Equivalent(yg2.Grammars[0], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 9, Value = "c" });
+    }
+
+    [Fact]
     public void Action1()
     {
         var y = RunString("a : {action}");
