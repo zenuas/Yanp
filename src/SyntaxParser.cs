@@ -6,7 +6,7 @@ using Yanp.Data;
 
 namespace Yanp;
 
-public class SyntaxParser
+public static class SyntaxParser
 {
     public static Syntax Parse(TextReader input)
     {

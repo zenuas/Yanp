@@ -7,7 +7,7 @@ using Yanp.Data;
 
 namespace Yanp;
 
-public class LR0
+public static class LR0
 {
     public static Node[] Generate(Syntax syntax)
     {
