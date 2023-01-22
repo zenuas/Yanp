@@ -155,4 +155,19 @@ public class ParseGrammar
         _ = Assert.Single(yg.Grammars);
         Assert.Equivalent(yg.Grammars[0], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 13, Value = "b" });
     }
+
+    [Fact]
+    public void Prec3()
+    {
+        var y = RunString("a : %prec p1 b %prec p2 c");
+        _ = Assert.Single(y.Grammars);
+        Assert.True(y.Grammars.ContainsKey("a"));
+        _ = Assert.Single(y.Grammars["a"]);
+        var yg = y.Grammars["a"][0];
+        Assert.Null(yg.Action);
+        Assert.Equivalent(yg.Prec, new Token { Type = Symbols.PREC, LineNumber = 1, LineColumn = 11, Value = "p1" });
+        Assert.Equal(2, yg.Grammars.Count);
+        Assert.Equivalent(yg.Grammars[0], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 14, Value = "b" });
+        Assert.Equivalent(yg.Grammars[1], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 25, Value = "c" });
+    }
 }
