@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Yanp;
+namespace Yanp.Data;
 
 public class ParseException : Exception
 {

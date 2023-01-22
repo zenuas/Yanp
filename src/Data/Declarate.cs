@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Yanp;
+namespace Yanp.Data;
 
 public class Declarate
 {

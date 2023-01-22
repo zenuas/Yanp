@@ -1,4 +1,4 @@
-﻿namespace Yanp;
+﻿namespace Yanp.Data;
 
 public enum AssocTypes
 {

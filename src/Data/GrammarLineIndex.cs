@@ -1,7 +1,7 @@
 ﻿using Extensions;
 using System.Linq;
 
-namespace Yanp;
+namespace Yanp.Data;
 
 public class GrammarLineIndex
 {

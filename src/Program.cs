@@ -1,6 +1,7 @@
 ﻿using Command;
 using Extensions;
 using System.IO;
+using Yanp.Data;
 
 namespace Yanp;
 
