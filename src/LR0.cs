@@ -29,6 +29,7 @@ public static class LR0
         // $ACCEPT : syntax.Start $END
         syntax.Grammars.Add(accept.Value, new() {
             new() {
+                Name = accept.Value,
                 Grammars = new() {
                     new() { Type = Symbols.VAR, LineNumber = 0, LineColumn = 0, Value = syntax.Start },
                     end
@@ -43,7 +44,7 @@ public static class LR0
             g.Value.Select(gl =>
                 {
                     var line = Lists.Sequence(0)
-                        .Select(i => new Node { Name = i == 0 ? g.Key : gl.Grammars[i - 1].Value, Lines = new() { new() { Name = g.Key, Index = i, Line = gl } } })
+                        .Select(i => new Node { Name = i == 0 ? g.Key : gl.Grammars[i - 1].Value, Lines = new() { new() { Index = i, Line = gl } } })
                         .Take(gl.Grammars.Count + 1)
                         .ToArray();
 

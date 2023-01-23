@@ -5,7 +5,6 @@ namespace Yanp.Data;
 
 public class GrammarLineIndex
 {
-    public required string Name { get; init; }
     public required GrammarLine Line { get; init; }
     public required int Index { get; init; }
 
@@ -13,6 +12,6 @@ public class GrammarLineIndex
     {
         var line = Line.Grammars.Select(x => x.ToString()).ToList();
         line.Insert(Index, ".");
-        return $"{Name} : {line.Join(" ")}";
+        return $"{Line.Name} : {line.Join(" ")}";
     }
 }
