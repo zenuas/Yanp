@@ -1,5 +1,4 @@
 ﻿using Extensions;
-using Parser;
 using System.Collections.Generic;
 using System.Linq;
 using Yanp.Data;
@@ -10,8 +9,8 @@ public static class LALR1
 {
     public static void Generate(Node[] nodes)
     {
-        var lines = LALR1.GrammarLines(nodes);
-        var follow = LALR1.Follow(nodes, lines, LALR1.Nullable(nodes, lines));
+        var lines = GrammarLines(nodes);
+        var follow = Follow(nodes, lines, Nullable(nodes, lines));
     }
 
     public static GrammarLine[] GrammarLines(Node[] nodes) => nodes
