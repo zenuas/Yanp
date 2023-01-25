@@ -1,4 +1,5 @@
 ﻿using Extensions;
+using Parser;
 using System.Collections.Generic;
 using System.Linq;
 using Yanp.Data;
@@ -9,17 +10,19 @@ public static class LALR1
 {
     public static void Generate(Node[] nodes)
     {
+        var lines = LALR1.GrammarLines(nodes);
+        var follow = LALR1.Follow(nodes, lines, LALR1.Nullable(nodes, lines));
     }
 
-    public static HashSet<string> Nullable(Node[] nodes)
-    {
-        var lines = nodes
-            .Select(x => x.Lines)
-            .Flatten()
-            .Select(x => x.Line)
-            .Distinct()
-            .ToArray();
+    public static GrammarLine[] GrammarLines(Node[] nodes) => nodes
+        .Select(x => x.Lines)
+        .Flatten()
+        .Select(x => x.Line)
+        .Distinct()
+        .ToArray();
 
+    public static HashSet<string> Nullable(Node[] nodes, GrammarLine[] lines)
+    {
         var nullable = lines
             .Where(x => x.Grammars.IsEmpty())
             .Select(x => x.Name)
@@ -40,5 +43,46 @@ public static class LALR1
             if (!retry) break;
         }
         return nullable;
+    }
+
+    public static Dictionary<string, HashSet<string>> Follow(Node[] nodes, GrammarLine[] lines, HashSet<string> nullable)
+    {
+        var nonterminal_symbols = lines
+            .Select(x => x.Name)
+            .Distinct()
+            .Where(x => x != "$ACCEPT")
+            .ToArray();
+
+        var last_nonterminal_lines = lines
+            .Where(x => !x.Grammars.IsEmpty())
+            .Select(x => (Head: x.Name, Last: x.Grammars.Last().Value))
+            .Where(x => nonterminal_symbols.Contains(x.Last))
+            .Distinct()
+            .ToArray();
+
+        var next_nullable_lines = nodes
+            .Select(x => x.Lines)
+            .Flatten()
+            .Where(x => x.Index <= x.Line.Grammars.Count - 2)
+            .Select(x => (Current: x.Line.Grammars[x.Index].Value, Next: x.Line.Grammars[x.Index + 1].Value))
+            .Where(x => nonterminal_symbols.Contains(x.Current) && nullable.Contains(x.Next))
+            .Distinct()
+            .ToArray();
+
+        var follow = nodes
+            .Where(x => nonterminal_symbols.Contains(x.Name))
+            .GroupBy(x => x.Name)
+            .Select(x => (Name: x.Key, Nexts: x.Select(y => y.Nexts).Flatten()))
+            .ToDictionary(x => x.Name, node => node.Nexts.Select(x => x.Name).Where(x => !nonterminal_symbols.Contains(x)).ToHashSet());
+
+        while (true)
+        {
+            var retry = false;
+            last_nonterminal_lines.Each(x => follow[x.Head].Each(y => retry = follow[x.Last].Add(y) || retry));
+            next_nullable_lines.Each(x => follow[x.Next].Each(y => retry = follow[x.Current].Add(y) || retry));
+            if (!retry) break;
+        }
+
+        return follow;
     }
 }
