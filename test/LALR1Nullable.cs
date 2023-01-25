@@ -12,7 +12,9 @@ public class LALR1Nullable
         var lex = new Lexer(new() { BaseReader = new StringReader(text) });
         Yanp.SyntaxParser.ParseGrammar(syntax, lex);
         syntax.Start = start;
-        return LALR1.Nullable(LR0.Generate(syntax));
+        var nodes = LR0.Generate(syntax);
+        var lines = LALR1.GrammarLines(nodes);
+        return LALR1.Nullable(nodes, lines);
     }
 
     [Fact]
