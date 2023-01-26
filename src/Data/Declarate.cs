@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using Parser;
+using System.Collections.Generic;
 
 namespace Yanp.Data;
 
 public class Declarate
 {
-    public required string Name { get; init; }
+    public required Token Name { get; init; }
     public required AssocTypes Assoc { get; init; }
     public int Priority { get; init; } = 0;
     public string Type { get; init; } = "";

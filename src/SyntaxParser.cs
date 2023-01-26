@@ -39,7 +39,7 @@ public static class SyntaxParser
             do
             {
                 var t = lex.ReadToken();
-                syntax.Declares.Add(t.Value, new() { Assoc = assoc, Name = t.Value, Priority = pri, Type = type });
+                syntax.Declares.Add(t.Value, new() { Assoc = assoc, Name = t, Priority = pri, Type = type });
             } while (lex.PeekToken().Type == Symbols.VAR || lex.PeekToken().Type == Symbols.CHAR);
         };
 
@@ -181,7 +181,7 @@ public static class SyntaxParser
         };
         var register_declate = (Token t) =>
         {
-            if (!syntax.Declares.ContainsKey(t.Value)) syntax.Declares.Add(t.Value, new Declarate { Assoc = AssocTypes.Type, Name = t.Value });
+            if (!syntax.Declares.ContainsKey(t.Value)) syntax.Declares.Add(t.Value, new Declarate { Assoc = AssocTypes.Type, Name = t });
         };
 
         foreach (var g in ParserGrammarLines(lex))

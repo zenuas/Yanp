@@ -26,7 +26,7 @@ public class ParseDeclaration
     {
         var y = RunString("%left a");
         _ = Assert.Single(y.Declares);
-        Assert.Equivalent(y.Declares["a"], new Declarate() { Assoc = AssocTypes.Left, Name = "a", Priority = 1 });
+        Assert.Equivalent(y.Declares["a"], new Declarate() { Assoc = AssocTypes.Left, Name = new() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 7, Value = "a" }, Priority = 1 });
     }
 
     [Fact]
@@ -34,8 +34,8 @@ public class ParseDeclaration
     {
         var y = RunString("%left a b");
         Assert.Equal(2, y.Declares.Count);
-        Assert.Equivalent(y.Declares["a"], new Declarate() { Assoc = AssocTypes.Left, Name = "a", Priority = 1 });
-        Assert.Equivalent(y.Declares["b"], new Declarate() { Assoc = AssocTypes.Left, Name = "b", Priority = 1 });
+        Assert.Equivalent(y.Declares["a"], new Declarate() { Assoc = AssocTypes.Left, Name = new() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 7, Value = "a" }, Priority = 1 });
+        Assert.Equivalent(y.Declares["b"], new Declarate() { Assoc = AssocTypes.Left, Name = new() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 9, Value = "b" }, Priority = 1 });
     }
 
     [Fact]
@@ -43,9 +43,9 @@ public class ParseDeclaration
     {
         var y = RunString("%left a b %left c");
         Assert.Equal(3, y.Declares.Count);
-        Assert.Equivalent(y.Declares["a"], new Declarate() { Assoc = AssocTypes.Left, Name = "a", Priority = 1 });
-        Assert.Equivalent(y.Declares["b"], new Declarate() { Assoc = AssocTypes.Left, Name = "b", Priority = 1 });
-        Assert.Equivalent(y.Declares["c"], new Declarate() { Assoc = AssocTypes.Left, Name = "c", Priority = 2 });
+        Assert.Equivalent(y.Declares["a"], new Declarate() { Assoc = AssocTypes.Left, Name = new() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 7, Value = "a" }, Priority = 1 });
+        Assert.Equivalent(y.Declares["b"], new Declarate() { Assoc = AssocTypes.Left, Name = new() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 9, Value = "b" }, Priority = 1 });
+        Assert.Equivalent(y.Declares["c"], new Declarate() { Assoc = AssocTypes.Left, Name = new() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 17, Value = "c" }, Priority = 2 });
     }
 
     [Fact]
@@ -59,8 +59,8 @@ public class ParseDeclaration
     {
         var y = RunString("%type<type> a b");
         Assert.Equal(2, y.Declares.Count);
-        Assert.Equivalent(y.Declares["a"], new Declarate() { Assoc = AssocTypes.Type, Name = "a", Priority = 1, Type = "type" });
-        Assert.Equivalent(y.Declares["b"], new Declarate() { Assoc = AssocTypes.Type, Name = "b", Priority = 1, Type = "type" });
+        Assert.Equivalent(y.Declares["a"], new Declarate() { Assoc = AssocTypes.Type, Name = new() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 13, Value = "a" }, Priority = 1, Type = "type" });
+        Assert.Equivalent(y.Declares["b"], new Declarate() { Assoc = AssocTypes.Type, Name = new() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 15, Value = "b" }, Priority = 1, Type = "type" });
     }
 
     [Fact]
@@ -68,9 +68,9 @@ public class ParseDeclaration
     {
         var y = RunString("%type<type> a b %type<type2> c");
         Assert.Equal(3, y.Declares.Count);
-        Assert.Equivalent(y.Declares["a"], new Declarate() { Assoc = AssocTypes.Type, Name = "a", Priority = 1, Type = "type" });
-        Assert.Equivalent(y.Declares["b"], new Declarate() { Assoc = AssocTypes.Type, Name = "b", Priority = 1, Type = "type" });
-        Assert.Equivalent(y.Declares["c"], new Declarate() { Assoc = AssocTypes.Type, Name = "c", Priority = 2, Type = "type2" });
+        Assert.Equivalent(y.Declares["a"], new Declarate() { Assoc = AssocTypes.Type, Name = new() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 13, Value = "a" }, Priority = 1, Type = "type" });
+        Assert.Equivalent(y.Declares["b"], new Declarate() { Assoc = AssocTypes.Type, Name = new() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 15, Value = "b" }, Priority = 1, Type = "type" });
+        Assert.Equivalent(y.Declares["c"], new Declarate() { Assoc = AssocTypes.Type, Name = new() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 30, Value = "c" }, Priority = 2, Type = "type2" });
     }
 
     [Fact]
@@ -78,7 +78,7 @@ public class ParseDeclaration
     {
         var y = RunString("%left 'a'");
         _ = Assert.Single(y.Declares);
-        Assert.Equivalent(y.Declares["'a"], new Declarate() { Assoc = AssocTypes.Left, Name = "'a", Priority = 1 });
+        Assert.Equivalent(y.Declares["'a"], new Declarate() { Assoc = AssocTypes.Left, Name = new() { Type = Symbols.CHAR, LineNumber = 1, LineColumn = 7, Value = "'a" }, Priority = 1 });
     }
 
     [Fact]
@@ -86,8 +86,8 @@ public class ParseDeclaration
     {
         var y = RunString("%left 'a' a");
         Assert.Equal(2, y.Declares.Count);
-        Assert.Equivalent(y.Declares["'a"], new Declarate() { Assoc = AssocTypes.Left, Name = "'a", Priority = 1 });
-        Assert.Equivalent(y.Declares["a"], new Declarate() { Assoc = AssocTypes.Left, Name = "a", Priority = 1 });
+        Assert.Equivalent(y.Declares["'a"], new Declarate() { Assoc = AssocTypes.Left, Name = new() { Type = Symbols.CHAR, LineNumber = 1, LineColumn = 7, Value = "'a" }, Priority = 1 });
+        Assert.Equivalent(y.Declares["a"], new Declarate() { Assoc = AssocTypes.Left, Name = new() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 11, Value = "a" }, Priority = 1 });
     }
 
     [Fact]
@@ -102,8 +102,8 @@ world
 %token b
 ");
         Assert.Equal(2, y.Declares.Count);
-        Assert.Equivalent(y.Declares["a"], new Declarate() { Assoc = AssocTypes.Type, Name = "a", Priority = 1 });
-        Assert.Equivalent(y.Declares["b"], new Declarate() { Assoc = AssocTypes.Type, Name = "b", Priority = 2 });
+        Assert.Equivalent(y.Declares["a"], new Declarate() { Assoc = AssocTypes.Type, Name = new() { Type = Symbols.VAR, LineNumber = 2, LineColumn = 8, Value = "a" }, Priority = 1 });
+        Assert.Equivalent(y.Declares["b"], new Declarate() { Assoc = AssocTypes.Type, Name = new() { Type = Symbols.VAR, LineNumber = 7, LineColumn = 8, Value = "b" }, Priority = 2 });
         Assert.Equal("hello\r\nworld\r\n", y.HeaderCode.ToString());
     }
 

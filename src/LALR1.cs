@@ -7,10 +7,11 @@ namespace Yanp;
 
 public static class LALR1
 {
-    public static void Generate(Node[] nodes)
+    public static void Generate(Syntax syntax, Node[] nodes)
     {
         var lines = GrammarLines(nodes);
         var follow = Follow(nodes, lines, Nullable(nodes, lines));
+        Lookahead(syntax, nodes, follow);
     }
 
     public static GrammarLine[] GrammarLines(Node[] nodes) => nodes
@@ -83,5 +84,12 @@ public static class LALR1
         }
 
         return follow;
+    }
+
+    public static void Lookahead(Syntax syntax, Node[] nodes, Dictionary<string, HashSet<string>> follow)
+    {
+        nodes.Each(node => node.Lines
+            .Where(x => x.Line.Grammars.Count == x.Index && follow.ContainsKey(x.Line.Name))
+            .Each(line => follow[line.Line.Name].Each(x => line.Lookahead.Add(syntax.Declares[x].Name))));
     }
 }

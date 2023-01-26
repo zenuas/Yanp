@@ -23,8 +23,8 @@ public static class LR0
         var accept = new Token { Type = Symbols.VAR, LineNumber = 0, LineColumn = 0, Value = "$ACCEPT" };
         var end = new Token { Type = Symbols.VAR, LineNumber = 0, LineColumn = 0, Value = "$END" };
 
-        syntax.Declares.Add(accept.Value, new Declarate { Name = accept.Value, Assoc = AssocTypes.Type, IsTerminalSymbol = false });
-        syntax.Declares.Add(end.Value, new Declarate { Name = end.Value, Assoc = AssocTypes.Type });
+        syntax.Declares.Add(accept.Value, new Declarate { Name = accept, Assoc = AssocTypes.Type, IsTerminalSymbol = false });
+        syntax.Declares.Add(end.Value, new Declarate { Name = end, Assoc = AssocTypes.Type });
 
         // $ACCEPT : syntax.Start $END
         syntax.Grammars.Add(accept.Value, new() {

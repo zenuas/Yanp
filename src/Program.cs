@@ -30,6 +30,6 @@ public static class Program
         if (!syntax.Grammars.Contains(x => x.Key == syntax.Start)) throw new ParseException("no grammar has been specified");
 
         var nodes = LR0.Generate(syntax);
-        LALR1.Generate(nodes);
+        LALR1.Generate(syntax, nodes);
     }
 }
