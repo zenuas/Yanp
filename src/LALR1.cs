@@ -53,6 +53,7 @@ public static class LALR1
             .Where(x => x != "$ACCEPT")
             .ToArray();
 
+        // s : a b => (Head: s, Last: b)
         var last_nonterminal_lines = lines
             .Where(x => !x.Grammars.IsEmpty())
             .Select(x => (Head: x.Name, Last: x.Grammars.Last().Value))
@@ -60,6 +61,7 @@ public static class LALR1
             .Distinct()
             .ToArray();
 
+        // s : . a void b => (Current: a, Next: void)
         var next_nullable_lines = nodes
             .Select(x => x.Lines)
             .Flatten()
