@@ -1,6 +1,7 @@
 ﻿using Extensions;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 
@@ -79,7 +80,19 @@ public static class CommandLine
     public static string[] Run<T>(T receiver, params string[] args)
     {
         var (xargs, opt) = Parse<T>(args);
-        opt.Each(x => x.Method.Invoke(receiver, x.Arguments));
+        opt.Each(x => x.Method.Invoke(receiver, x.Arguments.Select((arg, i) => Convert(x.Method.GetParameters()[i].ParameterType, arg)).ToArray()));
         return xargs;
+    }
+
+    public static object Convert(Type t, string s)
+    {
+        return t switch
+        {
+            Type a when a == typeof(TextReader) => new StreamReader(s),
+            Type a when a == typeof(StreamReader) => new StreamReader(s),
+            Type a when a == typeof(TextWriter) => new StreamWriter(s),
+            Type a when a == typeof(StreamWriter) => new StreamWriter(s),
+            _ => s,
+        };
     }
 }
