@@ -1,10 +1,13 @@
 ﻿using Command;
 using Extensions;
 using RazorEngine;
+using RazorEngine.Compilation;
+using RazorEngine.Compilation.ReferenceResolver;
 using RazorEngine.Configuration;
 using RazorEngine.Templating;
 using RazorEngine.Text;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Yanp.Data;
@@ -51,7 +54,30 @@ public static class Program
         {
             Language = Language.CSharp,
             EncodedStringFactory = new RawStringFactory(),
+            ReferenceResolver = new ReferenceResolver(),
         };
-        RazorEngineService.Create(config).RunCompile(source, "Yanp", output, null, new { Option = opt, Syntax = syntax, Nodes = nodes, GetDefine = get_define });
+        var model = new Model { Option = opt, Syntax = syntax, Nodes = nodes, GetDefine = get_define };
+        RazorEngineService.Create(config).RunCompile(source, "Yanp", output, model.GetType(), model);
+    }
+
+    public class Model
+    {
+        public required Option Option;
+        public required Syntax Syntax;
+        public required Node[] Nodes;
+        public required Func<string, string, string> GetDefine;
+    }
+
+    public class ReferenceResolver : IReferenceResolver
+    {
+        public IEnumerable<CompilerReference> GetReferences(TypeContext context, IEnumerable<CompilerReference> includeAssemblies)
+        {
+            foreach (var x in new UseCurrentAssembliesReferenceResolver().GetReferences(context, includeAssemblies))
+            {
+                yield return x;
+            }
+
+            yield return CompilerReference.From(GetType().Assembly);
+        }
     }
 }

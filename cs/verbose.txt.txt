@@ -1,0 +1,26 @@
+@using System.Linq
+
+@{
+var node_to_int = Model.Nodes
+	.Select((x, i) => (x, i))
+	.ToDictionary(x => x.x, x => x.i);
+}
+@foreach (var node in Model.Nodes)
+{
+@:state @node_to_int[node]
+	foreach (var line in node.get_Lines())
+	{
+	@:@line
+	}
+@:
+	var shift_found = false;
+	foreach (var next in node.Nexts)
+	{
+		shift_found = true;
+	@:@next.get_Name()  shift @node_to_int[next]
+	}
+	if (shift_found)
+	{
+@:
+	}
+}

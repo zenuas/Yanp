@@ -72,10 +72,10 @@ public static class LALR1
             .ToArray();
 
         var follow = nodes
-            .Where(x => nonterminal_symbols.Contains(x.Name))
-            .GroupBy(x => x.Name)
+            .Where(x => nonterminal_symbols.Contains(x.Name.Value))
+            .GroupBy(x => x.Name.Value)
             .Select(x => (Name: x.Key, Nexts: x.Select(y => y.Nexts).Flatten()))
-            .ToDictionary(x => x.Name, node => node.Nexts.Select(x => x.Name).Where(x => !nonterminal_symbols.Contains(x)).ToHashSet());
+            .ToDictionary(x => x.Name, node => node.Nexts.Select(x => x.Name.Value).Where(x => !nonterminal_symbols.Contains(x)).ToHashSet());
 
         while (true)
         {

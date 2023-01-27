@@ -14,8 +14,8 @@ public static class LR0
         AddAccept(syntax);
         var nodes = CreateNodes(syntax);
         Next(nodes, First(nodes));
-        var merged = Merge(nodes);
-        return Sweep(merged.First(x => x.Name == "$ACCEPT" && x.Lines[0].Index == 0));
+        var merged = Merge(syntax, nodes);
+        return Sweep(merged.First(x => x.Name.Value == "$ACCEPT" && x.Lines[0].Index == 0));
     }
 
     public static void AddAccept(Syntax syntax)
@@ -44,7 +44,7 @@ public static class LR0
             g.Value.Select(gl =>
                 {
                     var line = Lists.Sequence(0)
-                        .Select(i => new Node { Name = i == 0 ? g.Key : gl.Grammars[i - 1].Value, Lines = new() { new() { Index = i, Line = gl } } })
+                        .Select(i => new Node { Name = i == 0 ? syntax.Declares[g.Key].Name : gl.Grammars[i - 1], Lines = new() { new() { Index = i, Line = gl } } })
                         .Take(gl.Grammars.Count + 1)
                         .ToArray();
 
@@ -71,7 +71,7 @@ public static class LR0
             foreach (var node in nodes)
             {
                 foreach (var head in node.Nexts
-                    .Select(x => first.Where(y => y.Name == x.Name))
+                    .Select(x => first.Where(y => y.Name.Value == x.Name.Value))
                     .Flatten()
                     .ToArray())
                 {
@@ -83,7 +83,7 @@ public static class LR0
         }
     }
 
-    public static Node[] Merge(Node[] nodes)
+    public static Node[] Merge(Syntax syntax, Node[] nodes)
     {
         var merged = nodes.ToList();
         while (true)
@@ -92,11 +92,11 @@ public static class LR0
             foreach (var node in merged)
             {
                 foreach (var group in node.Nexts
-                    .GroupBy(x => x.Name)
+                    .GroupBy(x => x.Name.Value)
                     .Where(x => x.Count() >= 2)
                     .ToList())
                 {
-                    var merge = new Node { Name = group.Key, Lines = group.Select(x => x.Lines).Flatten().ToList() };
+                    var merge = new Node { Name = syntax.Declares[group.Key].Name, Lines = group.Select(x => x.Lines).Flatten().ToList() };
                     group.Each(x => x.Nexts.Each(y => merge.Nexts.Add(y)));
                     _ = node.Nexts.RemoveWhere(x => group.Contains(x));
                     _ = node.Nexts.Add(merge);

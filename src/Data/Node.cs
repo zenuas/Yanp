@@ -1,4 +1,5 @@
 ﻿using Extensions;
+using Parser;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,7 +7,7 @@ namespace Yanp.Data;
 
 public class Node
 {
-    public required string Name { get; init; }
+    public required Token Name { get; init; }
     public List<GrammarLineIndex> Lines { get; init; } = new();
     public HashSet<Node> Nexts { get; } = new();
 
