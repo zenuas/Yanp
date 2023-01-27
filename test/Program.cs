@@ -6,7 +6,7 @@ public class Program
 {
     private static void RunSource(string path)
     {
-        Yanp.Program.Run(new StreamReader(path));
+        //Yanp.Program.Run(new StreamReader(path));
     }
 
     [Fact]

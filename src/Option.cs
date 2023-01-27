@@ -17,4 +17,8 @@ public class Option
     [ShortOption('t')]
     [LongOption("template")]
     public string Template { get; set; } = Path.Combine(AppContext.BaseDirectory, "cs");
+
+    [ShortOption('o')]
+    [LongOption("output")]
+    public string Output { get; set; } = "";
 }
