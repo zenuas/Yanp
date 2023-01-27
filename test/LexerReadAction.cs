@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Yanp.Test;
 
-public class ReadAction
+public class LexerReadAction
 {
     private static string RunString(string text) => RunString2(text).Action;
 

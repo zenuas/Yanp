@@ -3,9 +3,9 @@ using Yanp.Data;
 
 namespace Yanp.Test;
 
-public class SyntaxParser
+public class SyntaxParserParse
 {
-    private static Syntax RunString(string text) => Yanp.SyntaxParser.Parse(new StringReader(text));
+    private static Syntax RunString(string text) => SyntaxParser.Parse(new StringReader(text));
 
     [Fact]
     public void Null1()

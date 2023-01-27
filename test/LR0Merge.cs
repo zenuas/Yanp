@@ -10,7 +10,7 @@ public class LR0Merge
     {
         var syntax = new Syntax();
         var lex = new Lexer(new() { BaseReader = new StringReader(text) });
-        Yanp.SyntaxParser.ParseGrammar(syntax, lex);
+        SyntaxParser.ParseGrammar(syntax, lex);
         syntax.Start = start;
         return LR0.Generate(syntax);
     }

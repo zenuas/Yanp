@@ -3,12 +3,12 @@ using Xunit;
 
 namespace Yanp.Test;
 
-public class ParserGrammarLines
+public class SyntaxParserParserGrammarLines
 {
     private static Token[][] RunString(string text)
     {
         var lex = new Lexer(new() { BaseReader = new StringReader(text) });
-        return Yanp.SyntaxParser.ParserGrammarLines(lex).Select(x =>
+        return SyntaxParser.ParserGrammarLines(lex).Select(x =>
         {
             var t = new List<Token> { x.Head };
             t.AddRange(x.Grammars);

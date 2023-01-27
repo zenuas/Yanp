@@ -4,13 +4,13 @@ using Yanp.Data;
 
 namespace Yanp.Test;
 
-public class ParseGrammar
+public class SyntaxParserParseGrammar
 {
     private static Syntax RunString(string text)
     {
         var syntax = new Syntax();
         var lex = new Lexer(new() { BaseReader = new StringReader(text) });
-        Yanp.SyntaxParser.ParseGrammar(syntax, lex);
+        SyntaxParser.ParseGrammar(syntax, lex);
         return syntax;
     }
 

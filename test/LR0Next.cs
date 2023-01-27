@@ -10,7 +10,7 @@ public class LR0Next
     {
         var syntax = new Syntax();
         var lex = new Lexer(new() { BaseReader = new StringReader(text) });
-        Yanp.SyntaxParser.ParseGrammar(syntax, lex);
+        SyntaxParser.ParseGrammar(syntax, lex);
         var nodes = LR0.CreateNodes(syntax);
         LR0.Next(nodes, LR0.First(nodes));
         return nodes;
