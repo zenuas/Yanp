@@ -25,6 +25,7 @@ public class SyntaxParserParseGrammar
     public void Gram1()
     {
         var y = RunString("a :");
+        Assert.Equal("a", y.Start);
         _ = Assert.Single(y.Grammars);
         Assert.True(y.Grammars.ContainsKey("a"));
         _ = Assert.Single(y.Grammars["a"]);
@@ -38,6 +39,7 @@ public class SyntaxParserParseGrammar
     public void Gram2()
     {
         var y = RunString("a : b 'c'");
+        Assert.Equal("a", y.Start);
         _ = Assert.Single(y.Grammars);
         Assert.True(y.Grammars.ContainsKey("a"));
         _ = Assert.Single(y.Grammars["a"]);
@@ -53,6 +55,7 @@ public class SyntaxParserParseGrammar
     public void Gram3()
     {
         var y = RunString("a : b | c");
+        Assert.Equal("a", y.Start);
         _ = Assert.Single(y.Grammars);
         Assert.True(y.Grammars.ContainsKey("a"));
         Assert.Equal(2, y.Grammars["a"].Count);
@@ -72,6 +75,7 @@ public class SyntaxParserParseGrammar
     public void Action1()
     {
         var y = RunString("a : {action}");
+        Assert.Equal("a", y.Start);
         _ = Assert.Single(y.Grammars);
         Assert.True(y.Grammars.ContainsKey("a"));
         _ = Assert.Single(y.Grammars["a"]);
@@ -86,6 +90,7 @@ public class SyntaxParserParseGrammar
     public void Action2()
     {
         var y = RunString("a : b b : 'B'");
+        Assert.Equal("a", y.Start);
         Assert.Equal(2, y.Grammars.Count);
         Assert.True(y.Grammars.ContainsKey("a"));
         _ = Assert.Single(y.Grammars["a"]);
@@ -108,6 +113,7 @@ public class SyntaxParserParseGrammar
     public void AnonymousAction1()
     {
         var y = RunString("a : b {anon_action} c {action}");
+        Assert.Equal("a", y.Start);
         Assert.Equal(2, y.Grammars.Count);
         Assert.True(y.Grammars.ContainsKey("a"));
         _ = Assert.Single(y.Grammars["a"]);
@@ -132,6 +138,7 @@ public class SyntaxParserParseGrammar
     public void Prec1()
     {
         var y = RunString("a : b %prec p");
+        Assert.Equal("a", y.Start);
         _ = Assert.Single(y.Grammars);
         Assert.True(y.Grammars.ContainsKey("a"));
         _ = Assert.Single(y.Grammars["a"]);
@@ -146,6 +153,7 @@ public class SyntaxParserParseGrammar
     public void Prec2()
     {
         var y = RunString("a : %prec p b");
+        Assert.Equal("a", y.Start);
         _ = Assert.Single(y.Grammars);
         Assert.True(y.Grammars.ContainsKey("a"));
         _ = Assert.Single(y.Grammars["a"]);
@@ -160,6 +168,7 @@ public class SyntaxParserParseGrammar
     public void Prec3()
     {
         var y = RunString("a : %prec p1 b %prec p2 c");
+        Assert.Equal("a", y.Start);
         _ = Assert.Single(y.Grammars);
         Assert.True(y.Grammars.ContainsKey("a"));
         _ = Assert.Single(y.Grammars["a"]);

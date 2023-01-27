@@ -191,6 +191,10 @@ public static class SyntaxParser
                 _ = syntax.HeaderCode.Append(g.Head.Value);
                 continue;
             }
+            if (syntax.Start == "")
+            {
+                syntax.Start = g.Head.Value;
+            }
 
             var prec = g.Grammars.Where(x => x.Type == Symbols.PREC).FirstOrDefault();
             var action = g.Grammars.Length > 0 && g.Grammars.Last().Type == Symbols.ACTION ? g.Grammars.Last() : null;
