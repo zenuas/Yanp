@@ -29,6 +29,8 @@
 
 :release
 	dotnet publish src --nologo -v q --clp:NoSummary -c Release -o .tmp
+	mkdir .tmp\template.cs
+	copy template.cs\ .tmp\template.cs\ /Y
 	git archive HEAD --output=Yanp-%DATE:/=%.zip
 	powershell -NoProfile Compress-Archive -Force -Path .tmp\*, README.md, LICENSE -DestinationPath Yanp-bin-%DATE:/=%.zip
 	rmdir /S /Q .tmp 2>nul
