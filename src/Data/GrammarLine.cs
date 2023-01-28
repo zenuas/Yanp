@@ -11,6 +11,8 @@ public class GrammarLine
     public Token? Prec { get; init; }
     public Token? Action { get; init; }
     public List<Token> Grammars { get; init; } = new();
+    public int Priority { get; init; } = 0;
+    public AssocTypes Assoc { get; init; } = AssocTypes.Type;
 
     public override string ToString()
     {

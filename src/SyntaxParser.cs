@@ -207,7 +207,8 @@ public static class SyntaxParser
             register_declate(g.Head);
             line.ForEach(register_declate);
             if (!syntax.Grammars.ContainsKey(g.Head.Value)) syntax.Grammars.Add(g.Head.Value, new());
-            syntax.Grammars[g.Head.Value].Add(new() { Name = g.Head.Value, Grammars = line, Prec = prec, Action = action });
+            var d = prec is { } ? syntax.Declares[prec.Value] : syntax.Declares[g.Head.Value];
+            syntax.Grammars[g.Head.Value].Add(new() { Name = g.Head.Value, Grammars = line, Prec = prec, Action = action, Priority = d.Priority, Assoc = d.Assoc });
         }
     }
 }

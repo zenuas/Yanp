@@ -1,6 +1,8 @@
 ﻿using Extensions;
+using Parser;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 using Yanp.Data;
 
 namespace Yanp;
@@ -93,5 +95,59 @@ public static class LALR1
         nodes.Each(node => node.Lines
             .Where(x => x.Line.Grammars.Count == x.Index && follow.ContainsKey(x.Line.Name))
             .Each(line => follow[line.Line.Name].Each(x => line.Lookahead.Add(syntax.Declares[x].Name))));
+    }
+
+    public static Table[] CreateTables(Syntax syntax, Node[] nodes)
+    {
+        return nodes.Select((node, i) =>
+        {
+            var actions = node.Nexts.ToDictionary(x => x.Name, x => (IParserAction)new ShiftAction { Next = x });
+            var reduces = node.Lines.Where(x => x.Index >= x.Line.Grammars.Count);
+            var any_reduce = reduces.Any(x => x.Lookahead.IsEmpty());
+            var conflicts = new List<string>();
+
+            void add_reduce(Token name, GrammarLine reduce)
+            {
+                if (!actions.ContainsKey(name))
+                {
+                    actions.Add(name, new ReduceAction { Reduce = reduce });
+                }
+                else if (actions[name] is ReduceAction p)
+                {
+                    conflicts.Add($"reduce/reduce conflict ([reduce] {p.Reduce}, [reduce] {reduce})");
+                }
+                else
+                {
+                    var shift = actions[name].Cast<ShiftAction>();
+                    var d = syntax.Declares[name.Value];
+                    switch (
+                        reduce.Priority > d.Priority ? AssocTypes.Right :
+                        reduce.Priority < d.Priority ? d.Assoc :
+                        reduce.Assoc)
+                    {
+                        case AssocTypes.Left:
+                            break;
+
+                        case AssocTypes.Right:
+                            actions[name] = new ReduceAction { Reduce = reduce };
+                            break;
+
+                        default:
+                            conflicts.Add($"shift/reduce conflict ([shift] {shift.Next.Name}, [reduce] {reduce.Name})");
+                            break;
+                    }
+                }
+            }
+
+            reduces
+                .Where(x => x.Lookahead.IsEmpty())
+                .Each(x => syntax.Declares.Values.Where(y => y.IsTerminalSymbol).Each(y => add_reduce(y.Name, x.Line)));
+
+            reduces
+                .Where(x => !x.Lookahead.IsEmpty())
+                .Each(x => x.Lookahead.Each(y => add_reduce(y, x.Line)));
+
+            return new Table { Index = i, Node = node, AnyReduce = any_reduce, Conflicts = conflicts.ToArray(), Actions = actions };
+        }).ToArray();
     }
 }

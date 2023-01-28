@@ -33,7 +33,8 @@ public static class Program
 
         var nodes = LR0.Generate(syntax);
         LALR1.Generate(syntax, nodes);
+        var tables = LALR1.CreateTables(syntax, nodes);
 
-        Directory.GetFiles(opt.Template).AsParallel().ForAll(x => TemplateEngine.Engine.Run(opt, syntax, nodes, x));
+        Directory.GetFiles(opt.Template).AsParallel().ForAll(x => TemplateEngine.Engine.Run(opt, syntax, nodes, tables, x));
     }
 }

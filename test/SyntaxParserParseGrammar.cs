@@ -14,6 +14,15 @@ public class SyntaxParserParseGrammar
         return syntax;
     }
 
+    private static Syntax RunString2(string text)
+    {
+        var syntax = new Syntax();
+        var lex = new Lexer(new() { BaseReader = new StringReader(text) });
+        SyntaxParser.ParseDeclaration(syntax, lex);
+        SyntaxParser.ParseGrammar(syntax, lex);
+        return syntax;
+    }
+
     [Fact]
     public void Null()
     {
@@ -137,46 +146,52 @@ public class SyntaxParserParseGrammar
     [Fact]
     public void Prec1()
     {
-        var y = RunString("a : b %prec p");
+        var y = RunString2("%right p %% a : b %prec p");
         Assert.Equal("a", y.Start);
         _ = Assert.Single(y.Grammars);
         Assert.True(y.Grammars.ContainsKey("a"));
         _ = Assert.Single(y.Grammars["a"]);
         var yg = y.Grammars["a"][0];
         Assert.Null(yg.Action);
-        Assert.Equivalent(yg.Prec, new Token { Type = Symbols.PREC, LineNumber = 1, LineColumn = 13, Value = "p" });
+        Assert.Equal(1, yg.Priority);
+        Assert.Equal(AssocTypes.Right, yg.Assoc);
+        Assert.Equivalent(yg.Prec, new Token { Type = Symbols.PREC, LineNumber = 1, LineColumn = 25, Value = "p" });
         _ = Assert.Single(yg.Grammars);
-        Assert.Equivalent(yg.Grammars[0], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 5, Value = "b" });
+        Assert.Equivalent(yg.Grammars[0], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 17, Value = "b" });
     }
 
     [Fact]
     public void Prec2()
     {
-        var y = RunString("a : %prec p b");
+        var y = RunString2("%right p %% a : %prec p b");
         Assert.Equal("a", y.Start);
         _ = Assert.Single(y.Grammars);
         Assert.True(y.Grammars.ContainsKey("a"));
         _ = Assert.Single(y.Grammars["a"]);
         var yg = y.Grammars["a"][0];
         Assert.Null(yg.Action);
-        Assert.Equivalent(yg.Prec, new Token { Type = Symbols.PREC, LineNumber = 1, LineColumn = 11, Value = "p" });
+        Assert.Equal(1, yg.Priority);
+        Assert.Equal(AssocTypes.Right, yg.Assoc);
+        Assert.Equivalent(yg.Prec, new Token { Type = Symbols.PREC, LineNumber = 1, LineColumn = 23, Value = "p" });
         _ = Assert.Single(yg.Grammars);
-        Assert.Equivalent(yg.Grammars[0], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 13, Value = "b" });
+        Assert.Equivalent(yg.Grammars[0], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 25, Value = "b" });
     }
 
     [Fact]
     public void Prec3()
     {
-        var y = RunString("a : %prec p1 b %prec p2 c");
+        var y = RunString2("%right p1 p2 %% a : %prec p1 b %prec p2 c");
         Assert.Equal("a", y.Start);
         _ = Assert.Single(y.Grammars);
         Assert.True(y.Grammars.ContainsKey("a"));
         _ = Assert.Single(y.Grammars["a"]);
         var yg = y.Grammars["a"][0];
         Assert.Null(yg.Action);
-        Assert.Equivalent(yg.Prec, new Token { Type = Symbols.PREC, LineNumber = 1, LineColumn = 11, Value = "p1" });
+        Assert.Equal(1, yg.Priority);
+        Assert.Equal(AssocTypes.Right, yg.Assoc);
+        Assert.Equivalent(yg.Prec, new Token { Type = Symbols.PREC, LineNumber = 1, LineColumn = 27, Value = "p1" });
         Assert.Equal(2, yg.Grammars.Count);
-        Assert.Equivalent(yg.Grammars[0], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 14, Value = "b" });
-        Assert.Equivalent(yg.Grammars[1], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 25, Value = "c" });
+        Assert.Equivalent(yg.Grammars[0], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 30, Value = "b" });
+        Assert.Equivalent(yg.Grammars[1], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 41, Value = "c" });
     }
 }
