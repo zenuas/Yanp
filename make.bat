@@ -30,7 +30,7 @@
 :release
 	dotnet publish src --nologo -v q --clp:NoSummary -c Release -o .tmp
 	git archive HEAD --output=Yanp-%DATE:/=%.zip
-	powershell -NoProfile Compress-Archive -Force -Path .tmp\yanp.exe, .tmp\yanp.dll, .tmp\yanp.runtimeconfig.json, README.md, LICENSE -DestinationPath Yanp-bin-%DATE:/=%.zip
+	powershell -NoProfile Compress-Archive -Force -Path .tmp\*, README.md, LICENSE -DestinationPath Yanp-bin-%DATE:/=%.zip
 	rmdir /S /Q .tmp 2>nul
 	@exit /b %ERRORLEVEL%
 
