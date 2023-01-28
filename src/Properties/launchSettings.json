@@ -1,9 +1,0 @@
-{
-  "profiles": {
-    "Yanp": {
-      "commandName": "Project",
-      "commandLineArgs": "test-case\\start01.y -t template.cs -o @out",
-      "workingDirectory": "..\\"
-    }
-  }
-}
