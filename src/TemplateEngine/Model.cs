@@ -5,9 +5,9 @@ namespace Yanp.TemplateEngine;
 
 public class Model
 {
-    public required Option Option;
     public required Syntax Syntax;
     public required Node[] Nodes;
     public required Table[] Tables;
     public required Func<string, string, string> GetDefine;
+    public required Func<Node, Table> NodeToTable;
 }

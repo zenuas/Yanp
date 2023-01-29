@@ -3,17 +3,15 @@ using RazorEngine.Configuration;
 using RazorEngine.Templating;
 using RazorEngine.Text;
 using System.IO;
+using System.Linq;
 using Yanp.Data;
 
 namespace Yanp.TemplateEngine;
 
 public static class Engine
 {
-    public static void Run(Option opt, Syntax syntax, Node[] nodes, Table[] tables, string path)
+    public static void Run(Syntax syntax, Node[] nodes, Table[] tables, string source, TextWriter output)
     {
-        using var output = new StreamWriter(Path.Combine(opt.Output, Path.GetFileNameWithoutExtension(path)));
-        var source = File.ReadAllText(path);
-
         var config = new TemplateServiceConfiguration()
         {
             Language = Language.CSharp,
@@ -22,11 +20,11 @@ public static class Engine
         };
         var model = new Model
         {
-            Option = opt,
             Syntax = syntax,
             Nodes = nodes,
             Tables = tables,
-            GetDefine = (x, def) => syntax.Defines.TryGetValue(x, out var value) ? value : def
+            GetDefine = (x, def) => syntax.Defines.TryGetValue(x, out var value) ? value : def,
+            NodeToTable = (node) => tables.First(x => x.Node.Equals(node)),
         };
         RazorEngineService.Create(config).RunCompile(source, "templateKey", output, model.GetType(), model);
     }
