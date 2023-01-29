@@ -49,6 +49,21 @@ public class SyntaxParserParse
     }
 
     [Fact]
+    public void Comment1()
+    {
+        var y = RunString(@"
+#%left A
+%%
+%%
+");
+        Assert.Equal("", y.Start);
+        Assert.Equal("", y.HeaderCode.ToString());
+        Assert.Equal("\r\n", y.FooterCode);
+        Assert.Empty(y.Declares);
+        Assert.Empty(y.Grammars);
+    }
+
+    [Fact]
     public void Test1()
     {
         var y = RunString(@"

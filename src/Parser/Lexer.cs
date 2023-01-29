@@ -79,6 +79,11 @@ public class Lexer
 
         switch (c)
         {
+            case '#':
+                _ = reader.ReadLine();
+                _ = ReadSkipWhiteSpace(reader);
+                return ReadToken(reader);
+
             case '\'':
                 return ReadChar(reader);
 
