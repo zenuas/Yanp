@@ -1,0 +1,13 @@
+﻿@Include("Utility.cs")
+namespace @Model.GetDefine("YYNAMESPACE", "Parser");
+
+public enum Symbols
+{
+@foreach (var symbol in Model.GetSymbols())
+{
+    var s = ((Func<string, string>)Model.KeyValues["csterms"])(symbol);
+    @:/// <summary>@s.Replace("<", "&lt;")</summary>
+    @:@s,
+@:
+}
+}
