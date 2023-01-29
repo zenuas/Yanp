@@ -1,5 +1,6 @@
 ﻿using Extensions;
 using RazorEngine;
+using RazorEngine.Compilation.ReferenceResolver;
 using RazorEngine.Configuration;
 using RazorEngine.Templating;
 using RazorEngine.Text;
@@ -17,7 +18,7 @@ public static class Engine
         {
             Language = Language.CSharp,
             EncodedStringFactory = new RawStringFactory(),
-            ReferenceResolver = new ReferenceResolver(),
+            ReferenceResolver = new UseCurrentAssembliesReferenceResolver(),
             TemplateManager = new DelegateTemplateManager(key => File.ReadAllText(Path.Combine(basepath, key))),
         };
         var model = new Model
