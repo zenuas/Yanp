@@ -41,6 +41,8 @@ public class SyntaxParserParseGrammar
         var yg = y.Grammars["a"][0];
         Assert.Null(yg.Action);
         Assert.Null(yg.Prec);
+        Assert.Equal(1, yg.LineNumber);
+        Assert.Equal(1, yg.LineColumn);
         Assert.Empty(yg.Grammars);
     }
 
@@ -55,6 +57,8 @@ public class SyntaxParserParseGrammar
         var yg = y.Grammars["a"][0];
         Assert.Null(yg.Action);
         Assert.Null(yg.Prec);
+        Assert.Equal(1, yg.LineNumber);
+        Assert.Equal(1, yg.LineColumn);
         Assert.Equal(2, yg.Grammars.Count);
         Assert.Equivalent(yg.Grammars[0], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 5, Value = "b" });
         Assert.Equivalent(yg.Grammars[1], new Token() { Type = Symbols.CHAR, LineNumber = 1, LineColumn = 7, Value = "'c" });
@@ -71,12 +75,16 @@ public class SyntaxParserParseGrammar
         var yg = y.Grammars["a"][0];
         Assert.Null(yg.Action);
         Assert.Null(yg.Prec);
-        Assert.Single(yg.Grammars);
+        Assert.Equal(1, yg.LineNumber);
+        Assert.Equal(1, yg.LineColumn);
+        _ = Assert.Single(yg.Grammars);
         Assert.Equivalent(yg.Grammars[0], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 5, Value = "b" });
         var yg2 = y.Grammars["a"][1];
         Assert.Null(yg2.Action);
         Assert.Null(yg2.Prec);
-        Assert.Single(yg2.Grammars);
+        Assert.Equal(1, yg2.LineNumber);
+        Assert.Equal(7, yg2.LineColumn);
+        _ = Assert.Single(yg2.Grammars);
         Assert.Equivalent(yg2.Grammars[0], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 9, Value = "c" });
     }
 
@@ -92,6 +100,8 @@ public class SyntaxParserParseGrammar
         Assert.True(yg.Action is { });
         Assert.Equivalent(yg.Action!, new Token() { Type = Symbols.ACTION, LineNumber = 1, LineColumn = 5, Value = "action" });
         Assert.Null(yg.Prec);
+        Assert.Equal(1, yg.LineNumber);
+        Assert.Equal(1, yg.LineColumn);
         Assert.Empty(yg.Grammars);
     }
 
@@ -106,6 +116,8 @@ public class SyntaxParserParseGrammar
         var yg = y.Grammars["a"][0];
         Assert.Null(yg.Action);
         Assert.Null(yg.Prec);
+        Assert.Equal(1, yg.LineNumber);
+        Assert.Equal(1, yg.LineColumn);
         _ = Assert.Single(yg.Grammars);
         Assert.Equivalent(yg.Grammars[0], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 5, Value = "b" });
 
@@ -114,6 +126,8 @@ public class SyntaxParserParseGrammar
         var yg2 = y.Grammars["b"][0];
         Assert.Null(yg2.Action);
         Assert.Null(yg2.Prec);
+        Assert.Equal(1, yg2.LineNumber);
+        Assert.Equal(7, yg2.LineColumn);
         _ = Assert.Single(yg2.Grammars);
         Assert.Equivalent(yg2.Grammars[0], new Token() { Type = Symbols.CHAR, LineNumber = 1, LineColumn = 11, Value = "'B" });
     }
@@ -130,6 +144,8 @@ public class SyntaxParserParseGrammar
         Assert.True(yg.Action is { });
         Assert.Equivalent(yg.Action!, new Token() { Type = Symbols.ACTION, LineNumber = 1, LineColumn = 23, Value = "action" });
         Assert.Null(yg.Prec);
+        Assert.Equal(1, yg.LineNumber);
+        Assert.Equal(1, yg.LineColumn);
         Assert.Equal(3, yg.Grammars.Count);
         Assert.Equivalent(yg.Grammars[0], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 5, Value = "b" });
         Assert.Equivalent(yg.Grammars[1], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 7, Value = "{1}" });
@@ -140,6 +156,8 @@ public class SyntaxParserParseGrammar
         Assert.True(yg2.Action is { });
         Assert.Equivalent(yg2.Action!, new Token() { Type = Symbols.ACTION, LineNumber = 1, LineColumn = 7, Value = "anon_action" });
         Assert.Null(yg2.Prec);
+        Assert.Equal(1, yg2.LineNumber);
+        Assert.Equal(7, yg2.LineColumn);
         Assert.Empty(yg2.Grammars);
     }
 
@@ -156,6 +174,8 @@ public class SyntaxParserParseGrammar
         Assert.Equal(1, yg.Priority);
         Assert.Equal(AssocTypes.Right, yg.Assoc);
         Assert.Equivalent(yg.Prec, new Token { Type = Symbols.PREC, LineNumber = 1, LineColumn = 25, Value = "p" });
+        Assert.Equal(1, yg.LineNumber);
+        Assert.Equal(13, yg.LineColumn);
         _ = Assert.Single(yg.Grammars);
         Assert.Equivalent(yg.Grammars[0], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 17, Value = "b" });
     }
@@ -173,6 +193,8 @@ public class SyntaxParserParseGrammar
         Assert.Equal(1, yg.Priority);
         Assert.Equal(AssocTypes.Right, yg.Assoc);
         Assert.Equivalent(yg.Prec, new Token { Type = Symbols.PREC, LineNumber = 1, LineColumn = 23, Value = "p" });
+        Assert.Equal(1, yg.LineNumber);
+        Assert.Equal(13, yg.LineColumn);
         _ = Assert.Single(yg.Grammars);
         Assert.Equivalent(yg.Grammars[0], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 25, Value = "b" });
     }
@@ -190,6 +212,8 @@ public class SyntaxParserParseGrammar
         Assert.Equal(1, yg.Priority);
         Assert.Equal(AssocTypes.Right, yg.Assoc);
         Assert.Equivalent(yg.Prec, new Token { Type = Symbols.PREC, LineNumber = 1, LineColumn = 27, Value = "p1" });
+        Assert.Equal(1, yg.LineNumber);
+        Assert.Equal(17, yg.LineColumn);
         Assert.Equal(2, yg.Grammars.Count);
         Assert.Equivalent(yg.Grammars[0], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 30, Value = "b" });
         Assert.Equivalent(yg.Grammars[1], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 41, Value = "c" });

@@ -8,6 +8,8 @@ namespace Yanp.Data;
 public class GrammarLine
 {
     public required string Name { get; init; }
+    public required int LineNumber { get; init; }
+    public required int LineColumn { get; init; }
     public Token? Prec { get; init; }
     public Token? Action { get; init; }
     public List<Token> Grammars { get; init; } = new();

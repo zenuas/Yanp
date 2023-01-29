@@ -30,6 +30,8 @@ public static class LR0
         syntax.Grammars.Add(accept.Value, new() {
             new() {
                 Name = accept.Value,
+                LineNumber = 0,
+                LineColumn = 0,
                 Grammars = new() {
                     new() { Type = Symbols.VAR, LineNumber = 0, LineColumn = 0, Value = syntax.Start },
                     end
