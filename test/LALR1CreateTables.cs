@@ -43,7 +43,7 @@ public class LALR1CreateTables
     }
 
     [Fact]
-    public void CreateTables1()
+    public void DanglingElse1()
     {
         var verbose = RunString(@"
 %%
@@ -106,10 +106,182 @@ state 7
 
 shift/reduce conflict ([shift] ELSE, [reduce] if)
 state 8
-	if : IF expr stmt . [$END, ELSE]
+	if : IF expr stmt . [$END]
 	if : IF expr stmt . ELSE stmt
 
 	ELSE  shift 9
+
+state 9
+	if : IF expr stmt ELSE . stmt
+	stmt : . if
+	if : . IF expr stmt
+	if : . IF expr stmt ELSE stmt
+	stmt : . '1'
+
+	stmt  shift 10
+	if  shift 3
+	IF  shift 4
+	'1'  shift 7
+
+state 10
+	if : IF expr stmt ELSE stmt . [$END, ELSE]
+
+", verbose);
+    }
+
+    [Fact]
+    public void DanglingElse2()
+    {
+        var verbose = RunString(@"
+%left ELSE
+%%
+stmt : if
+     | '1'
+if : IF expr stmt
+   | IF expr stmt ELSE stmt
+expr : '2'
+");
+        Assert.Equal(@"
+state 0
+	$ACCEPT : . stmt $END
+	stmt : . if
+	if : . IF expr stmt
+	if : . IF expr stmt ELSE stmt
+	stmt : . '1'
+
+	stmt  shift 1
+	if  shift 3
+	IF  shift 4
+	'1'  shift 7
+
+state 1
+	$ACCEPT : stmt . $END
+
+	$END  shift 2
+
+state 2
+	$ACCEPT : stmt $END .
+
+state 3
+	stmt : if . [$END, ELSE]
+
+state 4
+	if : IF . expr stmt
+	expr : . '2'
+	if : IF . expr stmt ELSE stmt
+
+	'2'  shift 5
+	expr  shift 6
+
+state 5
+	expr : '2' . ['1', IF]
+
+state 6
+	if : IF expr . stmt
+	stmt : . if
+	if : . IF expr stmt
+	if : . IF expr stmt ELSE stmt
+	stmt : . '1'
+	if : IF expr . stmt ELSE stmt
+
+	if  shift 3
+	IF  shift 4
+	'1'  shift 7
+	stmt  shift 8
+
+state 7
+	stmt : '1' . [$END, ELSE]
+
+state 8
+	if : IF expr stmt . [$END]
+	if : IF expr stmt . ELSE stmt
+
+	ELSE  shift 9
+
+state 9
+	if : IF expr stmt ELSE . stmt
+	stmt : . if
+	if : . IF expr stmt
+	if : . IF expr stmt ELSE stmt
+	stmt : . '1'
+
+	stmt  shift 10
+	if  shift 3
+	IF  shift 4
+	'1'  shift 7
+
+state 10
+	if : IF expr stmt ELSE stmt . [$END, ELSE]
+
+", verbose);
+    }
+
+    [Fact]
+    public void DanglingElse3()
+    {
+        var verbose = RunString(@"
+%right ELSE
+%%
+stmt : if
+     | '1'
+if : IF expr stmt
+   | IF expr stmt ELSE stmt
+expr : '2'
+");
+        Assert.Equal(@"
+state 0
+	$ACCEPT : . stmt $END
+	stmt : . if
+	if : . IF expr stmt
+	if : . IF expr stmt ELSE stmt
+	stmt : . '1'
+
+	stmt  shift 1
+	if  shift 3
+	IF  shift 4
+	'1'  shift 7
+
+state 1
+	$ACCEPT : stmt . $END
+
+	$END  shift 2
+
+state 2
+	$ACCEPT : stmt $END .
+
+state 3
+	stmt : if . [$END, ELSE]
+
+state 4
+	if : IF . expr stmt
+	expr : . '2'
+	if : IF . expr stmt ELSE stmt
+
+	'2'  shift 5
+	expr  shift 6
+
+state 5
+	expr : '2' . ['1', IF]
+
+state 6
+	if : IF expr . stmt
+	stmt : . if
+	if : . IF expr stmt
+	if : . IF expr stmt ELSE stmt
+	stmt : . '1'
+	if : IF expr . stmt ELSE stmt
+
+	if  shift 3
+	IF  shift 4
+	'1'  shift 7
+	stmt  shift 8
+
+state 7
+	stmt : '1' . [$END, ELSE]
+
+state 8
+	if : IF expr stmt . [$END, ELSE]
+	if : IF expr stmt . ELSE stmt
 
 state 9
 	if : IF expr stmt ELSE . stmt

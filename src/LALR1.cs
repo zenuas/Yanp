@@ -105,19 +105,21 @@ public static class LALR1
             var any_reduce = reduces.Any(x => x.Lookahead.IsEmpty());
             var conflicts = new List<string>();
 
-            void add_reduce(Token name, GrammarLine reduce)
+            bool add_reduce(Token name, GrammarLine reduce)
             {
-                if (!actions.ContainsKey(name))
+                var act = actions.FirstOrDefault(x => x.Key.Value == name.Value);
+                if (act.Value is null)
                 {
                     actions.Add(name, new ReduceAction { Reduce = reduce });
                 }
-                else if (actions[name] is ReduceAction p)
+                else if (act.Value is ReduceAction p)
                 {
                     conflicts.Add($"reduce/reduce conflict ([reduce] {p.Reduce}, [reduce] {reduce})");
+                    return false;
                 }
                 else
                 {
-                    var shift = actions[name].Cast<ShiftAction>();
+                    var shift = act.Value.Cast<ShiftAction>();
                     var d = syntax.Declares[name.Value];
                     switch (
                         reduce.Priority > d.Priority ? AssocTypes.Right :
@@ -125,17 +127,19 @@ public static class LALR1
                         reduce.Assoc)
                     {
                         case AssocTypes.Left:
-                            break;
+                            return false;
 
                         case AssocTypes.Right:
-                            actions[name] = new ReduceAction { Reduce = reduce };
+                            actions.Remove(act.Key);
+                            actions.Add(name, new ReduceAction { Reduce = reduce });
                             break;
 
                         default:
                             conflicts.Add($"shift/reduce conflict ([shift] {shift.Next.Name}, [reduce] {reduce.Name})");
-                            break;
+                            return false;
                     }
                 }
+                return true;
             }
 
             reduces
@@ -144,7 +148,18 @@ public static class LALR1
 
             reduces
                 .Where(x => !x.Lookahead.IsEmpty())
-                .Each(x => x.Lookahead.Each(y => add_reduce(y, x.Line)));
+                .Each(x => x.Lookahead.Each(y =>
+                    {
+                        if (add_reduce(y, x.Line))
+                        {
+                            _ = node.Nexts.RemoveWhere(n => n.Name.Value == y.Value);
+                        }
+                        else
+                        {
+                            _ = x.Lookahead.Remove(y);
+                        }
+                    })
+                );
 
             return new Table { Index = i, Node = node, AnyReduce = any_reduce, Conflicts = conflicts.ToArray(), Actions = actions };
         }).ToArray();
