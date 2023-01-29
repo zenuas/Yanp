@@ -232,4 +232,13 @@ public static class Lists
 
     [DebuggerHidden]
     public static IEnumerable<T> Distinct<T>(this IEnumerable<T> self, Func<T?, T?, bool> f) => Enumerable.Distinct(self, new EqualityComparerBinder<T>() { Equals = f });
+
+    [DebuggerHidden]
+    public static IEnumerable<T> Union<T>(this IEnumerable<T> self, IEnumerable<T> second, Func<T?, T?, bool> f) => Enumerable.Union(self, second, new EqualityComparerBinder<T>() { Equals = f });
+
+    [DebuggerHidden]
+    public static IEnumerable<T> Intersect<T>(this IEnumerable<T> self, IEnumerable<T> second, Func<T?, T?, bool> f) => Enumerable.Intersect(self, second, new EqualityComparerBinder<T>() { Equals = f });
+
+    [DebuggerHidden]
+    public static IEnumerable<T> Except<T>(this IEnumerable<T> self, IEnumerable<T> second, Func<T?, T?, bool> f) => Enumerable.Except(self, second, new EqualityComparerBinder<T>() { Equals = f });
 }
