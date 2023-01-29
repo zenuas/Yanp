@@ -85,28 +85,33 @@ public static class LR0
 
     public static Node[] Merge(Syntax syntax, Node[] nodes)
     {
-        var merged = nodes.ToList();
+        var currents = nodes.ToList();
         while (true)
         {
             var newnodes = new List<Node>();
-            foreach (var node in merged)
+            foreach (var node in currents)
             {
                 foreach (var group in node.Nexts
                     .GroupBy(x => x.Name.Value)
                     .Where(x => x.Count() >= 2)
                     .ToList())
                 {
-                    var merge = new Node { Name = syntax.Declares[group.Key].Name, Lines = group.Select(x => x.Lines).Flatten().ToList() };
-                    group.Each(x => x.Nexts.Each(y => merge.Nexts.Add(y)));
+                    var lines = group.Select(x => x.Lines).Flatten().Distinct().ToList();
+                    var found = currents.Concat(newnodes).FindFirstOrNull(x => x.Lines.Count == lines.Count && !x.Lines.Except(lines).Any());
+                    var merge = found ?? new Node { Name = syntax.Declares[group.Key].Name, Lines = lines };
+                    if (found is null)
+                    {
+                        group.Select(x => x.Nexts).Flatten().Distinct((a, b) => a!.Equals(b)).Each(y => merge.Nexts.Add(y));
+                        newnodes.Add(merge);
+                    }
                     _ = node.Nexts.RemoveWhere(x => group.Contains(x));
                     _ = node.Nexts.Add(merge);
-                    newnodes.Add(merge);
                 }
             }
             if (newnodes.IsEmpty()) break;
-            merged.AddRange(newnodes);
+            currents.AddRange(newnodes);
         }
-        return merged.ToArray();
+        return currents.ToArray();
     }
 
     public static Node[] Sweep(Node start)
