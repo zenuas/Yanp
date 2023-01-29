@@ -6,7 +6,7 @@ namespace Extensions;
 
 public class ComparerBinder<T> : IComparer<T>
 {
-    public Func<T, T, int>? Compare;
+    public required Func<T, T, int> Compare;
 
-    int IComparer<T>.Compare([AllowNull] T x, [AllowNull] T y) => Compare!(x!, y!);
+    int IComparer<T>.Compare([AllowNull] T x, [AllowNull] T y) => Compare(x!, y!);
 }
