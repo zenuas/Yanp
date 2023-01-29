@@ -130,7 +130,7 @@ public static class LALR1
                             return false;
 
                         case AssocTypes.Right:
-                            actions.Remove(act.Key);
+                            _ = actions.Remove(act.Key);
                             actions.Add(name, new ReduceAction { Reduce = reduce });
                             break;
 

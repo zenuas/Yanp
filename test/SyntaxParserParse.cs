@@ -82,7 +82,7 @@ a : 'A'
         var yg = y.Grammars["a"][0];
         Assert.Null(yg.Action);
         Assert.Null(yg.Prec);
-        Assert.Single(yg.Grammars);
+        _ = Assert.Single(yg.Grammars);
         Assert.Equivalent(yg.Grammars[0], new Token() { Type = Symbols.CHAR, LineNumber = 4, LineColumn = 5, Value = "'A" });
     }
 }
