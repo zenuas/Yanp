@@ -1,4 +1,5 @@
-﻿using RazorEngine;
+﻿using Extensions;
+using RazorEngine;
 using RazorEngine.Configuration;
 using RazorEngine.Templating;
 using RazorEngine.Text;
@@ -24,6 +25,16 @@ public static class Engine
             Nodes = nodes,
             Tables = tables,
             GetDefine = (x, def) => syntax.Defines.TryGetValue(x, out var value) ? value : def,
+            GetSymbols = () => syntax.Declares
+                .Where(x => x.Key != "$ACCEPT")
+                .Sort((a, b) =>
+                    a.Value.Name.Type == Parser.Symbols.CHAR && b.Value.Name.Type == Parser.Symbols.VAR ? -1 :
+                    a.Value.Name.Type == Parser.Symbols.VAR && b.Value.Name.Type == Parser.Symbols.CHAR ? 1 :
+                    a.Value.Name.Type == Parser.Symbols.VAR && b.Value.Name.Type == Parser.Symbols.VAR && a.Value.IsTerminalSymbol && !b.Value.IsTerminalSymbol ? -1 :
+                    a.Value.Name.Type == Parser.Symbols.VAR && b.Value.Name.Type == Parser.Symbols.VAR && !a.Value.IsTerminalSymbol && b.Value.IsTerminalSymbol ? 1 :
+                    string.Compare(a.Value.Name.Value, b.Value.Name.Value))
+                .Select(x => x.Key)
+                .ToArray(),
             NodeToTable = (node) => tables.First(x => x.Node.Equals(node)),
         };
         RazorEngineService.Create(config).RunCompile(source, "templateKey", output, model.GetType(), model);

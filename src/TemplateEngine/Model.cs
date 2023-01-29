@@ -9,5 +9,6 @@ public class Model
     public required Node[] Nodes;
     public required Table[] Tables;
     public required Func<string, string, string> GetDefine;
+    public required Func<string[]> GetSymbols;
     public required Func<Node, Table> NodeToTable;
 }

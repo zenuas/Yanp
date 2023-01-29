@@ -1,1 +1,87 @@
+@using Extensions
+@using Yanp.Data
 namespace @Model.GetDefine("YYNAMESPACE", "Parser");
+
+public partial class Parser
+{
+    public List<@Model.GetDefine("YYTOKEN", $"IToken<{Model.Syntax.Default}>")> TokenStack { get; } = new();
+    public static int[,] Tables { get; } = new [,]
+        {
+@{
+var reduce_to_index = Model.Syntax.Grammars.Values
+    .Flatten()
+    .Select((x, i) => (x, i))
+    .ToDictionary(x => x.x, x => -x.i - 1);
+
+var symbol_to_index = Model.GetSymbols()
+    .Select((x, i) => (x, i))
+    .ToDictionary(x => x.x, x => x.i);
+
+foreach (var table in Model.Tables)
+{
+    var line = new int[symbol_to_index.Count];
+    table.get_Actions().Where(x => x.Value is ShiftAction).Each(x => line[symbol_to_index[x.Key.get_Value()]] = Model.NodeToTable(x.Value.Cast<ShiftAction>().get_Next()).get_Index());
+    table.get_Actions().Where(x => x.Value is ReduceAction).Each(x => line[symbol_to_index[x.Key.get_Value()]] = reduce_to_index[x.Value.Cast<ReduceAction>().get_Reduce()]);
+            @:{@string.Join(", ", line)},
+}
+}
+        };
+
+    public @Model.Syntax.Default Parse(ILexer<@Model.Syntax.Default> lex)
+    {
+        var current = 0;
+
+        while (true)
+        {
+            var token = (@Model.GetDefine("YYTOKEN", $"IToken<{Model.Syntax.Default}>"))lex.PeekToken();
+            var x = Tables[current, token.InputToken];
+
+            if (x < 0)
+            {
+                token = RunAction(x);
+                if (token.IsAccept) return token.Value!;
+                current = TokenStack.Count == 0 ? 0 : TokenStack[^1].TableIndex;
+                x = Tables[current, token.InputToken];
+
+                token.TableIndex = x;
+                TokenStack.Add(token);
+                current = x;
+            }
+            else if (x == 0)
+            {
+                OnError(lex);
+            }
+            else
+            {
+                _ = lex.ReadToken();
+                token.TableIndex = x;
+                TokenStack.Add(token);
+                current = x;
+            }
+        }
+    }
+
+    public @Model.GetDefine("YYTOKEN", $"IToken<{Model.Syntax.Default}>") RunAction(int yy_no)
+    {
+        @Model.GetDefine("YYTOKEN", $"IToken<{Model.Syntax.Default}>")? yy_token;
+        @Model.Syntax.Default? yy_value = null;
+
+        switch (yy_no)
+        {
+@{
+foreach (var reduce in reduce_to_index)
+{
+            @:case @reduce.Value:
+                @:TraceAction("@reduce.Key");
+                @:@reduce.Key.get_Action()
+                @:break;
+@:
+}
+}
+            default:
+                throw new InvalidProgramException();
+        }
+
+        return yy_token;
+    }
+}
