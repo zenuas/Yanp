@@ -11,13 +11,14 @@ namespace Yanp.TemplateEngine;
 
 public static class Engine
 {
-    public static void Run(Syntax syntax, Node[] nodes, Table[] tables, string source, TextWriter output)
+    public static void Run(string basepath, Syntax syntax, Node[] nodes, Table[] tables, string source, TextWriter output)
     {
         var config = new TemplateServiceConfiguration()
         {
             Language = Language.CSharp,
             EncodedStringFactory = new RawStringFactory(),
             ReferenceResolver = new ReferenceResolver(),
+            TemplateManager = new DelegateTemplateManager(key => File.ReadAllText(Path.Combine(basepath, key))),
         };
         var model = new Model
         {

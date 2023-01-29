@@ -38,7 +38,7 @@ public class LALR1CreateTables
 }
 ";
         using var output = new StringWriter();
-        TemplateEngine.Engine.Run(syntax, nodes, tables, source, output);
+        TemplateEngine.Engine.Run("", syntax, nodes, tables, source, output);
         return output.ToString();
     }
 
