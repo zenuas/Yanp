@@ -1,4 +1,5 @@
-﻿using Parser;
+﻿using Extensions;
+using Parser;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -14,6 +15,7 @@ public static class SyntaxParser
         var syntax = new Syntax();
         ParseDeclaration(syntax, lex);
         ParseGrammar(syntax, lex);
+        GrammarsToTerminalSymbol(syntax);
         syntax.FooterCode = input.ReadToEnd();
         return syntax;
     }
@@ -210,5 +212,12 @@ public static class SyntaxParser
             var d = prec is { } ? syntax.Declares[prec.Value] : syntax.Declares[g.Head.Value];
             syntax.Grammars[g.Head.Value].Add(new() { Name = g.Head.Value, LineNumber = g.Head.LineNumber, LineColumn = g.Head.LineColumn, Grammars = line, Prec = prec, Action = action, Priority = d.Priority, Assoc = d.Assoc });
         }
+    }
+
+    public static void GrammarsToTerminalSymbol(Syntax syntax)
+    {
+        syntax.Declares.Values
+            .Where(x => x.Name.Type == Symbols.VAR)
+            .Each(x => x.IsTerminalSymbol = !syntax.Grammars.ContainsKey(x.Name.Value));
     }
 }
