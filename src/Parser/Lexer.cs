@@ -10,23 +10,23 @@ public class Lexer
     public SourceCodeReader BaseReader { get; }
     public List<Token> Store { get; } = new();
     public static Dictionary<char, Symbols> ReservedChar { get; } = new()
-            {
-                { ':', Symbols.__Colon },
-                { ';', Symbols.__Semicolon },
-                { '|', Symbols.__VerticaLine },
-            };
+        {
+            { ':', Symbols.__Colon },
+            { ';', Symbols.__Semicolon },
+            { '|', Symbols.__VerticaLine },
+        };
     public static Dictionary<string, Symbols> ReservedString { get; } = new()
-            {
-                { "%token", Symbols.TOKEN },
-                { "%left", Symbols.LEFT },
-                { "%right", Symbols.RIGHT },
-                { "%nonassoc", Symbols.NONASSOC },
-                { "%type", Symbols.TYPE },
-                { "%default", Symbols.DEFAULT },
-                { "%define", Symbols.DEFINE },
-                { "%start", Symbols.START },
-                { "%prec", Symbols.PREC },
-            };
+        {
+            { "%token", Symbols.TOKEN },
+            { "%left", Symbols.LEFT },
+            { "%right", Symbols.RIGHT },
+            { "%nonassoc", Symbols.NONASSOC },
+            { "%type", Symbols.TYPE },
+            { "%default", Symbols.DEFAULT },
+            { "%define", Symbols.DEFINE },
+            { "%start", Symbols.START },
+            { "%prec", Symbols.PREC },
+        };
 
     public Lexer(SourceCodeReader reader)
     {
