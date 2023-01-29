@@ -8,8 +8,7 @@ public partial class Parser
     public static int[,] Tables { get; } = new [,]
         {
 @{
-var reduce_to_index = Model.Syntax.Grammars.Values
-    .Flatten()
+var reduce_to_index = Model.GetGrammarLines()
     .Select((x, i) => (x, i))
     .ToDictionary(x => x.x, x => -x.i - 1);
 

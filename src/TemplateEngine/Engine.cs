@@ -35,6 +35,13 @@ public static class Engine
                     string.Compare(a.Value.Name.Value, b.Value.Name.Value))
                 .Select(x => x.Key)
                 .ToArray(),
+            GetGrammarLines = () => syntax.Grammars.Values
+                .Flatten()
+                .Sort((a, b) =>
+                    a.LineNumber < b.LineNumber ? -1 :
+                    a.LineColumn < b.LineColumn ? -1 :
+                    a.LineColumn - b.LineColumn)
+                .ToArray(),
             NodeToTable = (node) => tables.First(x => x.Node.Equals(node)),
         };
         RazorEngineService.Create(config).RunCompile(source, "templateKey", output, model.GetType(), model);

@@ -10,5 +10,6 @@ public class Model
     public required Table[] Tables;
     public required Func<string, string, string> GetDefine;
     public required Func<string[]> GetSymbols;
+    public required Func<GrammarLine[]> GetGrammarLines;
     public required Func<Node, Table> NodeToTable;
 }
