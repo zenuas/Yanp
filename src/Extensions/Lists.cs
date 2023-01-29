@@ -229,4 +229,7 @@ public static class Lists
 
     [DebuggerHidden]
     public static IOrderedEnumerable<T> StableSort<T>(this IEnumerable<T> self, Func<T, T, int> f) => Enumerable.OrderBy(self, x => x, new ComparerBinder<T>() { Compare = f });
+
+    [DebuggerHidden]
+    public static IEnumerable<T> Distinct<T>(this IEnumerable<T> self, Func<T?, T?, bool> f) => Enumerable.Distinct(self, new EqualityComparerBinder<T>() { Equals = f });
 }
