@@ -1,0 +1,8 @@
+﻿namespace @Model.GetDefine("YYNAMESPACE", "Parser");
+
+public interface ILexer<T>
+{
+    public IToken<T> PeekToken();
+
+    public IToken<T> ReadToken();
+}

@@ -1,0 +1,9 @@
+﻿namespace @Model.GetDefine("YYNAMESPACE", "Parser");
+
+public interface IToken<T>
+{
+    public required bool IsAccept { get; init; }
+    public required T Value { get; init; }
+    public int TableIndex { get; set; }
+    public required int InputToken { get; init; }
+}
