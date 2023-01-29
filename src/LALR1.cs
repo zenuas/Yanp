@@ -2,7 +2,6 @@
 using Parser;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Linq;
 using Yanp.Data;
 
 namespace Yanp;
@@ -102,7 +101,7 @@ public static class LALR1
         return nodes.Select((node, i) =>
         {
             var actions = node.Nexts.ToDictionary(x => x.Name, x => (IParserAction)new ShiftAction { Next = x });
-            var reduces = node.Lines.Where(x => x.Index >= x.Line.Grammars.Count);
+            var reduces = node.Lines.Where(x => x.Index >= x.Line.Grammars.Count).ToArray();
             var any_reduce = reduces.Any(x => x.Lookahead.IsEmpty());
             var conflicts = new List<string>();
 
