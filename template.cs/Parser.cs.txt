@@ -40,7 +40,7 @@ foreach (var table in Model.Tables)
             if (x < 0)
             {
                 token = RunAction(x);
-                if (token.IsAccept) return token.Value;
+                if (token.InputToken == Symbols._ACCEPT) return token.Value;
                 current = TokenStack.Count == 0 ? 0 : TokenStack[^1].TableIndex;
                 x = Tables[current, token.InputToken];
 
@@ -62,7 +62,7 @@ foreach (var table in Model.Tables)
         }
     }
 
-    public IToken<T> RunAction(int yy_no)
+    public ReduceToken RunAction(int yy_no)
     {
         switch (yy_no)
         {
@@ -72,21 +72,24 @@ foreach (var reduce in reduce_to_index)
     var length = reduce.Key.get_Grammars().Count();
     var action = reduce.Key.get_Action()?.get_Value();
     var actformat = action is { } a ?
-        a
-        /*
         Regex.Replace(a, @"\$(\$|\d+)", m =>
         {
-            if (m.Groups[1] == "$") return "var yy_value";
-            return "var yy_value2";
+            if (m.Groups[1].Value == "$") return "var yy_value";
+
+            var n = Int32.Parse(m.Groups[1].Value) - 1;
+            var g = reduce.Key.get_Grammars()[n];
+            var d = Model.Syntax.Declares[g.get_Value()];
+
+            if (d.get_Type() != "") return $"(({d.get_Type()})GetValue({n - length}))";
+            return $"GetValue({n - length})";
         })
-        */
         : $"var yy_value = GetValue({length});";
     var sym = ((Func<Token, string>)Model.KeyValues["csterms"])(reduce.Key.get_Name());
 
             @:case @reduce.Value:
                 @:TraceAction("@reduce.Key");
                 @:@actformat
-                @:return DoAction(Symbols.@sym, @length, yy_value);
+                @:return DoAction(Symbols.@sym, yy_value, @length);
 @:
 }
 }
@@ -101,12 +104,10 @@ foreach (var reduce in reduce_to_index)
 
     public bool IsAccept(IToken<T> token) => Tables[TokenStack.Count == 0 ? 0 : TokenStack[^1].TableIndex, token.InputToken] != 0;
 
-    public IToken<T> DoAction(Symbols type, int length, T value) => DoAction(new Token { Type = type, Value = value }, length);
-
-    public IToken<T> DoAction(IToken<T> token, int length)
+    public ReduceToken DoAction(Symbols type, T value, int length)
     {
         TokenStack.RemoveRange(TokenStack.Count - length, length);
-        return token;
+        return new ReduceToken { InputToken = type, Value = value };
     }
 
     public void OnError(ILexer<T> lex)
