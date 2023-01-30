@@ -35,7 +35,7 @@ public static class Engine
                     a.Value.Name.Type == Parser.Symbols.VAR && b.Value.Name.Type == Parser.Symbols.VAR && a.Value.IsTerminalSymbol && !b.Value.IsTerminalSymbol ? -1 :
                     a.Value.Name.Type == Parser.Symbols.VAR && b.Value.Name.Type == Parser.Symbols.VAR && !a.Value.IsTerminalSymbol && b.Value.IsTerminalSymbol ? 1 :
                     string.Compare(a.Value.Name.Value, b.Value.Name.Value))
-                .Select(x => x.Key)
+                .Select(x => x.Value.Name)
                 .ToArray(),
             GetGrammarLines = () => syntax.Grammars.Values
                 .Flatten()

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Parser;
+using System;
 using System.Collections.Generic;
 using Yanp.Data;
 
@@ -10,7 +11,7 @@ public class Model
     public required Node[] Nodes;
     public required Table[] Tables;
     public required Func<string, string, string> GetDefine;
-    public required Func<string[]> GetSymbols;
+    public required Func<Token[]> GetSymbols;
     public required Func<GrammarLine[]> GetGrammarLines;
     public required Func<Node, Table> NodeToTable;
     public Dictionary<string, object> KeyValues = new();

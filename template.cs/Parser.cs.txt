@@ -2,9 +2,9 @@
 @using Yanp.Data
 namespace @Model.GetDefine("YYNAMESPACE", "Parser");
 
-public partial class Parser
+public partial class Parser<T>
 {
-    public List<@Model.GetDefine("YYTOKEN", $"IToken<{Model.Syntax.Default}>")> TokenStack { get; } = new();
+    public List<IToken<T>> TokenStack { get; } = new();
     public static int[,] Tables { get; } = new [,]
         {
 @{
@@ -14,7 +14,7 @@ var reduce_to_index = Model.GetGrammarLines()
 
 var symbol_to_index = Model.GetSymbols()
     .Select((x, i) => (x, i))
-    .ToDictionary(x => x.x, x => x.i);
+    .ToDictionary(x => x.x.get_Value(), x => x.i);
 
 foreach (var table in Model.Tables)
 {
@@ -26,13 +26,13 @@ foreach (var table in Model.Tables)
 }
         };
 
-    public @Model.Syntax.Default Parse(ILexer<@Model.Syntax.Default> lex)
+    public T Parse(ILexer<T> lex)
     {
         var current = 0;
 
         while (true)
         {
-            var token = (@Model.GetDefine("YYTOKEN", $"IToken<{Model.Syntax.Default}>"))lex.PeekToken();
+            var token = lex.PeekToken();
             var x = Tables[current, token.InputToken];
 
             if (x < 0)
@@ -60,11 +60,8 @@ foreach (var table in Model.Tables)
         }
     }
 
-    public @Model.GetDefine("YYTOKEN", $"IToken<{Model.Syntax.Default}>") RunAction(int yy_no)
+    public IToken<T> RunAction(int yy_no)
     {
-        @Model.GetDefine("YYTOKEN", $"IToken<{Model.Syntax.Default}>")? yy_token;
-        @Model.Syntax.Default? yy_value = null;
-
         switch (yy_no)
         {
 @{
