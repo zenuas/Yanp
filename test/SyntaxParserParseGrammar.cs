@@ -61,7 +61,7 @@ public class SyntaxParserParseGrammar
         Assert.Equal(1, yg.LineColumn);
         Assert.Equal(2, yg.Grammars.Count);
         Assert.Equivalent(yg.Grammars[0], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 5, Value = "b" });
-        Assert.Equivalent(yg.Grammars[1], new Token() { Type = Symbols.CHAR, LineNumber = 1, LineColumn = 7, Value = "'c" });
+        Assert.Equivalent(yg.Grammars[1], new Token() { Type = Symbols.CHAR, LineNumber = 1, LineColumn = 7, Value = "'c'" });
     }
 
     [Fact]
@@ -129,7 +129,7 @@ public class SyntaxParserParseGrammar
         Assert.Equal(1, yg2.LineNumber);
         Assert.Equal(7, yg2.LineColumn);
         _ = Assert.Single(yg2.Grammars);
-        Assert.Equivalent(yg2.Grammars[0], new Token() { Type = Symbols.CHAR, LineNumber = 1, LineColumn = 11, Value = "'B" });
+        Assert.Equivalent(yg2.Grammars[0], new Token() { Type = Symbols.CHAR, LineNumber = 1, LineColumn = 11, Value = "'B'" });
     }
 
     [Fact]

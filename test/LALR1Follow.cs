@@ -23,9 +23,9 @@ public class LALR1Follow
         var follow = RunString("start : void a b a : 'A' b : 'B' void :");
         Assert.Equal(4, follow.Count);
         Assert.Superset(follow["start"], new HashSet<string> { "$END" });
-        Assert.Superset(follow["a"], new HashSet<string> { "'B" });
+        Assert.Superset(follow["a"], new HashSet<string> { "'B'" });
         Assert.Superset(follow["b"], new HashSet<string> { "$END" });
-        Assert.Superset(follow["void"], new HashSet<string> { "'A" });
+        Assert.Superset(follow["void"], new HashSet<string> { "'A'" });
     }
 
     [Fact]
@@ -45,6 +45,6 @@ public class LALR1Follow
         var follow = RunString("start : 'A' void 'B' | 'C' void 'D' void :");
         Assert.Equal(2, follow.Count);
         Assert.Superset(follow["start"], new HashSet<string> { "$END" });
-        Assert.Superset(follow["void"], new HashSet<string> { "'B", "'D" });
+        Assert.Superset(follow["void"], new HashSet<string> { "'B'", "'D'" });
     }
 }
