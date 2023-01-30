@@ -26,17 +26,17 @@ public static class LALR1
     {
         var nullable = lines
             .Where(x => x.Grammars.IsEmpty())
-            .Select(x => x.Name)
+            .Select(x => x.Name.Value)
             .ToHashSet();
 
         while (true)
         {
             var retry = false;
-            foreach (var line in lines.Where(x => !nullable.Contains(x.Name)))
+            foreach (var line in lines.Where(x => !nullable.Contains(x.Name.Value)))
             {
                 if (line.Grammars.Where(x => !nullable.Contains(x.Value)).IsEmpty())
                 {
-                    _ = nullable.Add(line.Name);
+                    _ = nullable.Add(line.Name.Value);
                     retry = true;
                     break;
                 }
@@ -49,7 +49,7 @@ public static class LALR1
     public static Dictionary<string, HashSet<string>> Follow(Node[] nodes, GrammarLine[] lines, HashSet<string> nullable)
     {
         var nonterminal_symbols = lines
-            .Select(x => x.Name)
+            .Select(x => x.Name.Value)
             .Distinct()
             .Where(x => x != "$ACCEPT")
             .ToArray();
@@ -81,7 +81,7 @@ public static class LALR1
         while (true)
         {
             var retry = false;
-            last_nonterminal_lines.Each(x => follow[x.Head].Each(y => retry = follow[x.Last].Add(y) || retry));
+            last_nonterminal_lines.Each(x => follow[x.Head.Value].Each(y => retry = follow[x.Last].Add(y) || retry));
             next_nullable_lines.Each(x => follow[x.Next].Each(y => retry = follow[x.Current].Add(y) || retry));
             if (!retry) break;
         }
@@ -92,8 +92,8 @@ public static class LALR1
     public static void Lookahead(Syntax syntax, Node[] nodes, Dictionary<string, HashSet<string>> follow)
     {
         nodes.Each(node => node.Lines
-            .Where(x => x.Line.Grammars.Count == x.Index && follow.ContainsKey(x.Line.Name))
-            .Each(line => follow[line.Line.Name].Each(x => line.Lookahead.Add(syntax.Declares[x].Name))));
+            .Where(x => x.Line.Grammars.Count == x.Index && follow.ContainsKey(x.Line.Name.Value))
+            .Each(line => follow[line.Line.Name.Value].Each(x => line.Lookahead.Add(syntax.Declares[x].Name))));
     }
 
     public static Table[] CreateTables(Syntax syntax, Node[] nodes)

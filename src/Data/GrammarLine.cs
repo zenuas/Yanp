@@ -7,7 +7,7 @@ namespace Yanp.Data;
 
 public class GrammarLine
 {
-    public required string Name { get; init; }
+    public required Token Name { get; init; }
     public required int LineNumber { get; init; }
     public required int LineColumn { get; init; }
     public Token? Prec { get; init; }

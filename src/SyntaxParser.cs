@@ -178,7 +178,16 @@ public static class SyntaxParser
         var create_anonymous_action = (Token t) =>
         {
             var name = $"{{{++anonymous_action}}}";
-            syntax.Grammars.Add(name, new() { new() { Name = name, LineNumber = t.LineNumber, LineColumn = t.LineColumn, Action = t } });
+            syntax.Grammars.Add(name, new()
+            {
+                new()
+                {
+                    Name = new() { Type = Symbols.VAR, LineNumber = t.LineNumber, LineColumn = t.LineColumn, Value = name },
+                    LineNumber = t.LineNumber,
+                    LineColumn = t.LineColumn,
+                    Action = t
+                }
+            });
             return new Token() { LineNumber = t.LineNumber, LineColumn = t.LineColumn, Type = Symbols.VAR, Value = name };
         };
         var register_declate = (Token t) =>
@@ -210,7 +219,7 @@ public static class SyntaxParser
             line.ForEach(register_declate);
             if (!syntax.Grammars.ContainsKey(g.Head.Value)) syntax.Grammars.Add(g.Head.Value, new());
             var d = prec is { } ? syntax.Declares[prec.Value] : syntax.Declares[g.Head.Value];
-            syntax.Grammars[g.Head.Value].Add(new() { Name = g.Head.Value, LineNumber = g.Head.LineNumber, LineColumn = g.Head.LineColumn, Grammars = line, Prec = prec, Action = action, Priority = d.Priority, Assoc = d.Assoc });
+            syntax.Grammars[g.Head.Value].Add(new() { Name = g.Head, LineNumber = g.Head.LineNumber, LineColumn = g.Head.LineColumn, Grammars = line, Prec = prec, Action = action, Priority = d.Priority, Assoc = d.Assoc });
         }
     }
 

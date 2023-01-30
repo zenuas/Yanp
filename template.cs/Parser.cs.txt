@@ -1,7 +1,9 @@
 @using Extensions
+@using Parser
+@using System.Text.RegularExpressions
 @using Yanp.Data
 namespace @Model.GetDefine("YYNAMESPACE", "Parser");
-
+@Include("Utility.cs")
 public partial class Parser<T>
 {
     public List<IToken<T>> TokenStack { get; } = new();
@@ -38,7 +40,7 @@ foreach (var table in Model.Tables)
             if (x < 0)
             {
                 token = RunAction(x);
-                if (token.IsAccept) return token.Value!;
+                if (token.IsAccept) return token.Value;
                 current = TokenStack.Count == 0 ? 0 : TokenStack[^1].TableIndex;
                 x = Tables[current, token.InputToken];
 
@@ -67,17 +69,52 @@ foreach (var table in Model.Tables)
 @{
 foreach (var reduce in reduce_to_index)
 {
+    var length = reduce.Key.get_Grammars().Count();
+    var action = reduce.Key.get_Action()?.get_Value();
+    var actformat = action is { } a ?
+        a
+        /*
+        Regex.Replace(a, @"\$(\$|\d+)", m =>
+        {
+            if (m.Groups[1] == "$") return "var yy_value";
+            return "var yy_value2";
+        })
+        */
+        : $"var yy_value = GetValue({length});";
+    var sym = ((Func<Token, string>)Model.KeyValues["csterms"])(reduce.Key.get_Name());
+
             @:case @reduce.Value:
                 @:TraceAction("@reduce.Key");
-                @:@reduce.Key.get_Action()
-                @:break;
+                @:@actformat
+                @:return DoAction(Symbols.@sym, @length, yy_value);
 @:
 }
 }
             default:
                 throw new InvalidProgramException();
         }
-
-        return yy_token;
     }
+
+    public IToken<T> GetToken(int from_last_index) => TokenStack[TokenStack.Count - from_last_index];
+
+    public T GetValue(int from_last_index) => GetToken(from_last_index).Value;
+
+    public bool IsAccept(IToken<T> token) => Tables[TokenStack.Count == 0 ? 0 : TokenStack[^1].TableIndex, token.InputToken] != 0;
+
+    public IToken<T> DoAction(Symbols type, int length, T value) => DoAction(new Token { Type = type, Value = value }, length);
+
+    public IToken<T> DoAction(IToken<T> token, int length)
+    {
+        TokenStack.RemoveRange(TokenStack.Count - length, length);
+        return token;
+    }
+
+    public void OnError(ILexer<T> lex)
+    {
+        Debug.Fail("syntax error");
+        SyntaxError(lex.PeekToken());
+    }
+
+    [Conditional("TRACE")]
+    public void TraceAction(string s) => Debug.WriteLine(s);
 }

@@ -27,12 +27,15 @@ public static class LR0
         syntax.Declares.Add(end.Value, new Declarate { Name = end, Assoc = AssocTypes.Type });
 
         // $ACCEPT : syntax.Start $END
-        syntax.Grammars.Add(accept.Value, new() {
-            new() {
-                Name = accept.Value,
+        syntax.Grammars.Add(accept.Value, new()
+        {
+            new()
+            {
+                Name = accept,
                 LineNumber = 0,
                 LineColumn = 0,
-                Grammars = new() {
+                Grammars = new()
+                {
                     new() { Type = Symbols.VAR, LineNumber = 0, LineColumn = 0, Value = syntax.Start },
                     end
                 }
