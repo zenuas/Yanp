@@ -226,7 +226,8 @@ Func<Token, string> csterms = t =>
             return "__ACTION_" + v.Substring(1);
 
         default:
-            if (v == "$END") return $"_END";
+            if (v == "$ACCEPT") return "_ACCEPT";
+            if (v == "$END") return "_END";
             if (cs_reserved_word.Contains(v)) return $"@{v}";
             return v;
     }
