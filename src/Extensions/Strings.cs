@@ -16,10 +16,10 @@ public static class Strings
             .Count();
 
     [DebuggerHidden]
-    public static string SubstringAsByte(this string self, int startIndex, Encoding enc) => self.Substring(self.CountAsByte(startIndex, enc));
+    public static string SubstringAsByte(this string self, int startIndex, Encoding enc) => self[self.CountAsByte(startIndex, enc)..];
 
     [DebuggerHidden]
-    public static string SubstringAsByte(this string self, int startIndex, int length, Encoding enc) => self.SubstringAsByte(startIndex, enc).To(x => x.Substring(0, x.CountAsByte(length, enc)));
+    public static string SubstringAsByte(this string self, int startIndex, int length, Encoding enc) => self.SubstringAsByte(startIndex, enc).To(x => x[..x.CountAsByte(length, enc)]);
 
     [DebuggerHidden]
     public static string Join(this IEnumerable<string> self, char separator) => string.Join(separator, self);
