@@ -1,11 +1,13 @@
 ﻿using Extensions;
 using RazorEngine;
+using RazorEngine.Compilation;
 using RazorEngine.Compilation.ReferenceResolver;
 using RazorEngine.Configuration;
 using RazorEngine.Templating;
 using RazorEngine.Text;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using Yanp.Data;
 
 namespace Yanp.TemplateEngine;
@@ -18,7 +20,17 @@ public static class Engine
         {
             Language = Language.CSharp,
             EncodedStringFactory = new RawStringFactory(),
-            ReferenceResolver = new UseCurrentAssembliesReferenceResolver(),
+            ReferenceResolver = new ReferenceResolverBinder
+            {
+                GetReferences = (context, includeAssemblies) => CompilerServicesUtility
+                    .GetLoadedAssemblies()
+                    .Where(a => !a.IsDynamic && File.Exists(a.Location) && !a.Location.Contains("CompiledRazorTemplates.Dynamic"))
+                    .GroupBy(a => a.GetName().Name)
+                    .Select(grp => grp.First(y => y.GetName().Version == Enumerable.Max(grp, x => x.GetName().Version)))
+                    .Select(a => CompilerReference.From(a))
+                    .Concat(includeAssemblies ?? Enumerable.Empty<CompilerReference>())
+                    .Concat(new[] { CompilerReference.From(Assembly.Load("System.Text.RegularExpressions")) })
+            },
             TemplateManager = new DelegateTemplateManager(key => File.ReadAllText(Path.Combine(basepath, key))),
         };
         var model = new Model
