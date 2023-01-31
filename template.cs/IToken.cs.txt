@@ -2,7 +2,7 @@
 
 public interface IToken<T>
 {
-    public required T Value { get; init; }
+    public T Value { get; init; }
     public int TableIndex { get; set; }
-    public required int InputToken { get; init; }
+    public int InputToken { get; init; }
 }

@@ -1,0 +1,26 @@
+@using Extensions
+@using Parser
+@using Yanp.Data
+using System.Collections.Generic;
+
+namespace @Model.GetDefine("YYNAMESPACE", "Parser");
+@Include("Utility.cs")
+public partial class Lexer : ILexer<@Model.Syntax.Default>
+{
+    public static Dictionary<char, Symbols> ReservedChar { get; } = new()
+        {
+@foreach (var symbol in Model.GetSymbols().Where(x => x.get_Type() == Symbols.CHAR))
+{
+            @:{ @symbol.get_Value(), Symbols.@(((Func<Token, string>)Model.KeyValues["csterms"])(symbol)) },
+}
+        };
+    public static Dictionary<string, Symbols> ReservedString { get; } = new()
+        {
+@foreach (var symbol in Model.GetSymbols().Where(x => x.get_Type() == Symbols.VAR && x.get_Value() != "$END" && Model.Syntax.Declares[x.get_Value()].IsTerminalSymbol))
+{
+            @:{ "@symbol.get_Value()", Symbols.@(((Func<Token, string>)Model.KeyValues["csterms"])(symbol)) },
+}
+        };
+
+    public static ReduceToken<@Model.Syntax.Default> CreateEndOfToken() => new() { InputToken = (int)Symbols._END, Value = default! };
+}

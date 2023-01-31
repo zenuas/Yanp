@@ -1,0 +1,8 @@
+using System;
+
+namespace @Model.GetDefine("YYNAMESPACE", "Parser");
+
+public partial class Parser
+{
+    public void SyntaxError(IToken<@Model.Syntax.Default> token) => throw new NotImplementedException();
+}

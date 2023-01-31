@@ -1,0 +1,69 @@
+@using Extensions
+@using Parser
+@using Yanp.Data
+using System;
+using System.IO;
+using System.Text;
+
+namespace @Model.GetDefine("YYNAMESPACE", "Parser");
+@Include("Utility.cs")
+public partial class Lexer
+{
+    public required TextReader BaseReader { get; init; }
+    public IToken<@Model.Syntax.Default>? Store { get; set; } = null;
+
+    public IToken<@Model.Syntax.Default> PeekToken()
+    {
+        if (Store is { } p) return p;
+
+        while (true)
+        {
+            var c = BaseReader.Peek();
+            if (c < 0)
+            {
+                Store = CreateEndOfToken();
+                return Store;
+            }
+            else if (!char.IsWhiteSpace((char)c))
+            {
+                break;
+            }
+            _ = BaseReader.Read();
+        }
+
+        if (ReservedChar.TryGetValue((char)BaseReader.Peek(), out var value))
+        {
+            _ = BaseReader.Read();
+            Store = new ReduceToken<@Model.Syntax.Default> { InputToken = (int)value, Value = default! };
+        }
+        else
+        {
+            var word = new StringBuilder();
+            while (true)
+            {
+                var c = BaseReader.Peek();
+                if (c < 0 || char.IsWhiteSpace((char)c)) break;
+                if (ReservedChar.ContainsKey((char)c)) break;
+                _ = word.Append((char)c);
+                _ = BaseReader.Read();
+            }
+            var s = word.ToString();
+            if (ReservedString.TryGetValue(s, out var value2))
+            {
+                Store = new ReduceToken<@Model.Syntax.Default> { InputToken = (int)value2, Value = s };
+            }
+            else
+            {
+                throw new Exception("unknown word");
+            }
+        }
+        return Store;
+    }
+
+    public IToken<@Model.Syntax.Default> ReadToken()
+    {
+        var token = PeekToken();
+        if (token.InputToken != (int)Symbols._END) Store = null;
+        return token;
+    }
+}
