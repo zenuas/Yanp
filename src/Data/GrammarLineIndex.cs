@@ -18,7 +18,7 @@ public class GrammarLineIndex
 
         var lookahead = Lookahead
             .Select(x => x.ToString())
-            .Sort((a, b) => a.CompareTo(b))
+            .Order((a, b) => a.CompareTo(b))
             .Join(", ");
 
         return $"{Line.Name} : {line.Join(" ")}{(lookahead == "" ? "" : $" [{lookahead}]")}";

@@ -40,7 +40,7 @@ public static class Engine
             Tables = tables,
             GetDefine = (x, def) => syntax.Defines.TryGetValue(x, out var value) ? value : def,
             GetSymbols = () => syntax.Declares
-                .Sort((a, b) =>
+                .Order((a, b) =>
                     a.Value.Name.Type == Parser.Symbols.CHAR && b.Value.Name.Type == Parser.Symbols.VAR ? -1 :
                     a.Value.Name.Type == Parser.Symbols.VAR && b.Value.Name.Type == Parser.Symbols.CHAR ? 1 :
                     a.Value.Name.Type == Parser.Symbols.VAR && b.Value.Name.Type == Parser.Symbols.VAR && a.Value.IsTerminalSymbol && !b.Value.IsTerminalSymbol ? -1 :
@@ -50,7 +50,7 @@ public static class Engine
                 .ToArray(),
             GetGrammarLines = () => syntax.Grammars.Values
                 .Flatten()
-                .Sort((a, b) =>
+                .Order((a, b) =>
                     a.LineNumber < b.LineNumber ? -1 :
                     a.LineColumn < b.LineColumn ? -1 :
                     a.LineColumn - b.LineColumn)
