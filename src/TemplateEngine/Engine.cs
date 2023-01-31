@@ -26,7 +26,7 @@ public static class Engine
                     .GetLoadedAssemblies()
                     .Where(a => !a.IsDynamic && File.Exists(a.Location) && !a.Location.Contains("CompiledRazorTemplates.Dynamic"))
                     .GroupBy(a => a.GetName().Name)
-                    .Select(grp => grp.First(y => y.GetName().Version == Enumerable.Max(grp, x => x.GetName().Version)))
+                    .Select(grp => grp.First(y => y.GetName().Version == grp.Max(x => x.GetName().Version)))
                     .Select(a => CompilerReference.From(a))
                     .Concat(includeAssemblies ?? Enumerable.Empty<CompilerReference>())
                     .Concat(new[] { CompilerReference.From(Assembly.Load("System.Text.RegularExpressions")) })
