@@ -122,17 +122,18 @@ public static class LALR1
                     var shift = act.Value.Cast<ShiftAction>();
                     var d = syntax.Declares[name.Value];
                     switch (
-                        reduce.Priority > d.Priority ? AssocTypes.Right :
-                        reduce.Priority < d.Priority ? d.Assoc :
+                        reduce.Priority == d.Priority && reduce.Priority == 0 ? AssocTypes.Type :
+                        reduce.Priority > d.Priority ? AssocTypes.Left :
+                        reduce.Priority < d.Priority ? AssocTypes.Right :
                         reduce.Assoc)
                     {
                         case AssocTypes.Left:
-                            return false;
-
-                        case AssocTypes.Right:
                             _ = actions.Remove(act.Key);
                             actions.Add(name, new ReduceAction { Reduce = reduce });
                             break;
+
+                        case AssocTypes.Right:
+                            return false;
 
                         default:
                             conflicts.Add($"shift/reduce conflict ([shift] {shift.Next.Name}, [reduce] {reduce.Name})");

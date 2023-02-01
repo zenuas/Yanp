@@ -280,8 +280,10 @@ state 7
 	stmt : '1' . [$END, ELSE]
 
 state 8
-	if : IF expr stmt . [$END, ELSE]
+	if : IF expr stmt . [$END]
 	if : IF expr stmt . ELSE stmt
+
+	ELSE  shift 9
 
 state 9
 	if : IF expr stmt ELSE . stmt
@@ -297,6 +299,508 @@ state 9
 
 state 10
 	if : IF expr stmt ELSE stmt . [$END, ELSE]
+
+", verbose);
+    }
+
+    [Fact]
+    public void Expr1()
+    {
+        var verbose = RunString(@"
+%%
+expr : expr '+' expr
+     | NUM
+");
+        Assert.Equal(@"
+state 0
+	$ACCEPT : . expr $END
+	expr : . expr '+' expr
+	expr : . NUM
+
+	expr  shift 1
+	NUM  shift 5
+
+state 1
+	$ACCEPT : expr . $END
+	expr : expr . '+' expr
+
+	$END  shift 2
+	'+'  shift 3
+
+state 2
+	$ACCEPT : expr $END .
+
+state 3
+	expr : expr '+' . expr
+	expr : . expr '+' expr
+	expr : . NUM
+
+	expr  shift 4
+	NUM  shift 5
+
+shift/reduce conflict ([shift] '+', [reduce] expr)
+state 4
+	expr : expr '+' expr . [$END]
+	expr : expr . '+' expr
+
+	'+'  shift 3
+
+state 5
+	expr : NUM . ['+', $END]
+
+", verbose);
+    }
+
+    [Fact]
+    public void Expr2()
+    {
+        var verbose = RunString(@"
+%left '+'
+%%
+expr : expr '+' expr
+     | NUM
+");
+        Assert.Equal(@"
+state 0
+	$ACCEPT : . expr $END
+	expr : . expr '+' expr
+	expr : . NUM
+
+	expr  shift 1
+	NUM  shift 5
+
+state 1
+	$ACCEPT : expr . $END
+	expr : expr . '+' expr
+
+	$END  shift 2
+	'+'  shift 3
+
+state 2
+	$ACCEPT : expr $END .
+
+state 3
+	expr : expr '+' . expr
+	expr : . expr '+' expr
+	expr : . NUM
+
+	expr  shift 4
+	NUM  shift 5
+
+state 4
+	expr : expr '+' expr . ['+', $END]
+	expr : expr . '+' expr
+
+state 5
+	expr : NUM . ['+', $END]
+
+", verbose);
+    }
+
+    [Fact]
+    public void Expr3()
+    {
+        var verbose = RunString(@"
+%right '+'
+%%
+expr : expr '+' expr
+     | NUM
+");
+        Assert.Equal(@"
+state 0
+	$ACCEPT : . expr $END
+	expr : . expr '+' expr
+	expr : . NUM
+
+	expr  shift 1
+	NUM  shift 5
+
+state 1
+	$ACCEPT : expr . $END
+	expr : expr . '+' expr
+
+	$END  shift 2
+	'+'  shift 3
+
+state 2
+	$ACCEPT : expr $END .
+
+state 3
+	expr : expr '+' . expr
+	expr : . expr '+' expr
+	expr : . NUM
+
+	expr  shift 4
+	NUM  shift 5
+
+state 4
+	expr : expr '+' expr . [$END]
+	expr : expr . '+' expr
+
+	'+'  shift 3
+
+state 5
+	expr : NUM . ['+', $END]
+
+", verbose);
+    }
+
+    [Fact]
+    public void Expr4()
+    {
+        var verbose = RunString(@"
+%left '+'
+%left '*'
+%%
+expr : expr '+' expr
+     | expr '*' expr
+     | NUM
+");
+        Assert.Equal(@"
+state 0
+	$ACCEPT : . expr $END
+	expr : . expr '+' expr
+	expr : . expr '*' expr
+	expr : . NUM
+
+	expr  shift 1
+	NUM  shift 7
+
+state 1
+	$ACCEPT : expr . $END
+	expr : expr . '+' expr
+	expr : expr . '*' expr
+
+	$END  shift 2
+	'+'  shift 3
+	'*'  shift 5
+
+state 2
+	$ACCEPT : expr $END .
+
+state 3
+	expr : expr '+' . expr
+	expr : . expr '+' expr
+	expr : . expr '*' expr
+	expr : . NUM
+
+	expr  shift 4
+	NUM  shift 7
+
+state 4
+	expr : expr '+' expr . ['+', $END]
+	expr : expr . '+' expr
+	expr : expr . '*' expr
+
+	'*'  shift 5
+
+state 5
+	expr : expr '*' . expr
+	expr : . expr '+' expr
+	expr : . expr '*' expr
+	expr : . NUM
+
+	expr  shift 6
+	NUM  shift 7
+
+state 6
+	expr : expr '*' expr . ['*', '+', $END]
+	expr : expr . '+' expr
+	expr : expr . '*' expr
+
+state 7
+	expr : NUM . ['*', '+', $END]
+
+", verbose);
+    }
+
+    [Fact]
+    public void Expr5()
+    {
+        var verbose = RunString(@"
+%left '+' '-'
+%left '*' '/'
+%%
+expr : expr '+' expr
+     | expr '-' expr
+     | expr '*' expr
+     | expr '/' expr
+     | NUM
+");
+        Assert.Equal(@"
+state 0
+	$ACCEPT : . expr $END
+	expr : . expr '+' expr
+	expr : . expr '-' expr
+	expr : . expr '*' expr
+	expr : . expr '/' expr
+	expr : . NUM
+
+	expr  shift 1
+	NUM  shift 11
+
+state 1
+	$ACCEPT : expr . $END
+	expr : expr . '+' expr
+	expr : expr . '-' expr
+	expr : expr . '*' expr
+	expr : expr . '/' expr
+
+	$END  shift 2
+	'+'  shift 3
+	'-'  shift 5
+	'*'  shift 7
+	'/'  shift 9
+
+state 2
+	$ACCEPT : expr $END .
+
+state 3
+	expr : expr '+' . expr
+	expr : . expr '+' expr
+	expr : . expr '-' expr
+	expr : . expr '*' expr
+	expr : . expr '/' expr
+	expr : . NUM
+
+	expr  shift 4
+	NUM  shift 11
+
+state 4
+	expr : expr '+' expr . ['-', '+', $END]
+	expr : expr . '+' expr
+	expr : expr . '-' expr
+	expr : expr . '*' expr
+	expr : expr . '/' expr
+
+	'*'  shift 7
+	'/'  shift 9
+
+state 5
+	expr : expr '-' . expr
+	expr : . expr '+' expr
+	expr : . expr '-' expr
+	expr : . expr '*' expr
+	expr : . expr '/' expr
+	expr : . NUM
+
+	expr  shift 6
+	NUM  shift 11
+
+state 6
+	expr : expr '-' expr . ['-', '+', $END]
+	expr : expr . '+' expr
+	expr : expr . '-' expr
+	expr : expr . '*' expr
+	expr : expr . '/' expr
+
+	'*'  shift 7
+	'/'  shift 9
+
+state 7
+	expr : expr '*' . expr
+	expr : . expr '+' expr
+	expr : . expr '-' expr
+	expr : . expr '*' expr
+	expr : . expr '/' expr
+	expr : . NUM
+
+	expr  shift 8
+	NUM  shift 11
+
+state 8
+	expr : expr '*' expr . ['-', '*', '/', '+', $END]
+	expr : expr . '+' expr
+	expr : expr . '-' expr
+	expr : expr . '*' expr
+	expr : expr . '/' expr
+
+state 9
+	expr : expr '/' . expr
+	expr : . expr '+' expr
+	expr : . expr '-' expr
+	expr : . expr '*' expr
+	expr : . expr '/' expr
+	expr : . NUM
+
+	expr  shift 10
+	NUM  shift 11
+
+state 10
+	expr : expr '/' expr . ['-', '*', '/', '+', $END]
+	expr : expr . '+' expr
+	expr : expr . '-' expr
+	expr : expr . '*' expr
+	expr : expr . '/' expr
+
+state 11
+	expr : NUM . ['-', '*', '/', '+', $END]
+
+", verbose);
+    }
+
+    [Fact]
+    public void Expr6()
+    {
+        var verbose = RunString(@"
+%left '+' '-'
+%left '*' '/'
+%right '^'
+%%
+expr : expr '+' expr
+     | expr '-' expr
+     | expr '*' expr
+     | expr '/' expr
+     | expr '^' expr
+     | NUM
+");
+        Assert.Equal(@"
+state 0
+	$ACCEPT : . expr $END
+	expr : . expr '+' expr
+	expr : . expr '-' expr
+	expr : . expr '*' expr
+	expr : . expr '/' expr
+	expr : . expr '^' expr
+	expr : . NUM
+
+	expr  shift 1
+	NUM  shift 13
+
+state 1
+	$ACCEPT : expr . $END
+	expr : expr . '+' expr
+	expr : expr . '-' expr
+	expr : expr . '*' expr
+	expr : expr . '/' expr
+	expr : expr . '^' expr
+
+	$END  shift 2
+	'+'  shift 3
+	'-'  shift 5
+	'*'  shift 7
+	'/'  shift 9
+	'^'  shift 11
+
+state 2
+	$ACCEPT : expr $END .
+
+state 3
+	expr : expr '+' . expr
+	expr : . expr '+' expr
+	expr : . expr '-' expr
+	expr : . expr '*' expr
+	expr : . expr '/' expr
+	expr : . expr '^' expr
+	expr : . NUM
+
+	expr  shift 4
+	NUM  shift 13
+
+state 4
+	expr : expr '+' expr . ['-', '+', $END]
+	expr : expr . '+' expr
+	expr : expr . '-' expr
+	expr : expr . '*' expr
+	expr : expr . '/' expr
+	expr : expr . '^' expr
+
+	'*'  shift 7
+	'/'  shift 9
+	'^'  shift 11
+
+state 5
+	expr : expr '-' . expr
+	expr : . expr '+' expr
+	expr : . expr '-' expr
+	expr : . expr '*' expr
+	expr : . expr '/' expr
+	expr : . expr '^' expr
+	expr : . NUM
+
+	expr  shift 6
+	NUM  shift 13
+
+state 6
+	expr : expr '-' expr . ['-', '+', $END]
+	expr : expr . '+' expr
+	expr : expr . '-' expr
+	expr : expr . '*' expr
+	expr : expr . '/' expr
+	expr : expr . '^' expr
+
+	'*'  shift 7
+	'/'  shift 9
+	'^'  shift 11
+
+state 7
+	expr : expr '*' . expr
+	expr : . expr '+' expr
+	expr : . expr '-' expr
+	expr : . expr '*' expr
+	expr : . expr '/' expr
+	expr : . expr '^' expr
+	expr : . NUM
+
+	expr  shift 8
+	NUM  shift 13
+
+state 8
+	expr : expr '*' expr . ['-', '*', '/', '+', $END]
+	expr : expr . '+' expr
+	expr : expr . '-' expr
+	expr : expr . '*' expr
+	expr : expr . '/' expr
+	expr : expr . '^' expr
+
+	'^'  shift 11
+
+state 9
+	expr : expr '/' . expr
+	expr : . expr '+' expr
+	expr : . expr '-' expr
+	expr : . expr '*' expr
+	expr : . expr '/' expr
+	expr : . expr '^' expr
+	expr : . NUM
+
+	expr  shift 10
+	NUM  shift 13
+
+state 10
+	expr : expr '/' expr . ['-', '*', '/', '+', $END]
+	expr : expr . '+' expr
+	expr : expr . '-' expr
+	expr : expr . '*' expr
+	expr : expr . '/' expr
+	expr : expr . '^' expr
+
+	'^'  shift 11
+
+state 11
+	expr : expr '^' . expr
+	expr : . expr '+' expr
+	expr : . expr '-' expr
+	expr : . expr '*' expr
+	expr : . expr '/' expr
+	expr : . expr '^' expr
+	expr : . NUM
+
+	expr  shift 12
+	NUM  shift 13
+
+state 12
+	expr : expr '^' expr . ['-', '*', '/', '+', $END]
+	expr : expr . '+' expr
+	expr : expr . '-' expr
+	expr : expr . '*' expr
+	expr : expr . '/' expr
+	expr : expr . '^' expr
+
+	'^'  shift 11
+
+state 13
+	expr : NUM . ['-', '*', '/', '^', '+', $END]
 
 ", verbose);
     }
