@@ -4,5 +4,5 @@ public interface IToken<T>
 {
     public T Value { get; init; }
     public int TableIndex { get; set; }
-    public int InputToken { get; init; }
+    public Symbols InputToken { get; init; }
 }

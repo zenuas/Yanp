@@ -4,5 +4,5 @@ public class ReduceToken<T> : IToken<T>
 {
     public required T Value { get; init; }
     public int TableIndex { get; set; }
-    public required int InputToken { get; init; }
+    public required Symbols InputToken { get; init; }
 }
