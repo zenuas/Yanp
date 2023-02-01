@@ -54,7 +54,8 @@ foreach (var table in Model.Tables)
             }
             else if (x == 0)
             {
-                OnError(lex);
+                Debug.Fail("syntax error");
+                SyntaxError(lex.PeekToken());
             }
             else
             {
@@ -112,12 +113,6 @@ foreach (var reduce in reduce_to_index)
     {
         TokenStack.RemoveRange(TokenStack.Count - length, length);
         return new() { InputToken = (int)type, Value = value };
-    }
-
-    public void OnError(ILexer<@Model.Syntax.Default> lex)
-    {
-        Debug.Fail("syntax error");
-        SyntaxError(lex.PeekToken());
     }
 
     [Conditional("TRACE")]
