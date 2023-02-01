@@ -104,9 +104,7 @@ foreach (var reduce in reduce_to_index)
         }
     }
 
-    public IToken<@Model.Syntax.Default> GetToken(int from_last_index) => TokenStack[TokenStack.Count - from_last_index];
-
-    public @Model.Syntax.Default GetValue(int from_last_index) => GetToken(from_last_index).Value;
+    public @Model.Syntax.Default GetValue(int from_last_index) => TokenStack[^from_last_index].Value;
 
     public bool IsAccept(IToken<@Model.Syntax.Default> token) => Tables[TokenStack.Count == 0 ? 0 : TokenStack[^1].TableIndex, token.InputToken] != 0;
 
