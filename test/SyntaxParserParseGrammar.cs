@@ -218,4 +218,44 @@ public class SyntaxParserParseGrammar
         Assert.Equivalent(yg.Grammars[0], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 30, Value = "b" });
         Assert.Equivalent(yg.Grammars[1], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 41, Value = "c" });
     }
+
+    [Fact]
+    public void Expr1()
+    {
+        var y = RunString2("%left '+' %% expr : NUM '+' NUM");
+        Assert.Equal("expr", y.Start);
+        _ = Assert.Single(y.Grammars);
+        _ = Assert.Single(y.Grammars["expr"]);
+        var yg = y.Grammars["expr"][0];
+        Assert.Equal(1, yg.Priority);
+        Assert.Equal(AssocTypes.Left, yg.Assoc);
+        Assert.Equivalent(yg.Prec, new Token { Type = Symbols.CHAR, LineNumber = 1, LineColumn = 25, Value = "'+'" });
+        Assert.Equivalent(yg.Grammars[0], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 21, Value = "NUM" });
+        Assert.Equivalent(yg.Grammars[1], new Token() { Type = Symbols.CHAR, LineNumber = 1, LineColumn = 25, Value = "'+'" });
+        Assert.Equivalent(yg.Grammars[2], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 29, Value = "NUM" });
+    }
+
+    [Fact]
+    public void Expr2()
+    {
+        var y = RunString2("%left '+' %left '*' %% expr : NUM '+' NUM | NUM '*' NUM");
+        Assert.Equal("expr", y.Start);
+        _ = Assert.Single(y.Grammars);
+        Assert.Equal(2, y.Grammars["expr"].Count);
+        var yg = y.Grammars["expr"][0];
+        Assert.Equal(1, yg.Priority);
+        Assert.Equal(AssocTypes.Left, yg.Assoc);
+        Assert.Equivalent(yg.Prec, new Token { Type = Symbols.CHAR, LineNumber = 1, LineColumn = 35, Value = "'+'" });
+        Assert.Equivalent(yg.Grammars[0], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 31, Value = "NUM" });
+        Assert.Equivalent(yg.Grammars[1], new Token() { Type = Symbols.CHAR, LineNumber = 1, LineColumn = 35, Value = "'+'" });
+        Assert.Equivalent(yg.Grammars[2], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 39, Value = "NUM" });
+
+        var yg2 = y.Grammars["expr"][1];
+        Assert.Equal(2, yg2.Priority);
+        Assert.Equal(AssocTypes.Left, yg2.Assoc);
+        Assert.Equivalent(yg2.Prec, new Token { Type = Symbols.CHAR, LineNumber = 1, LineColumn = 49, Value = "'*'" });
+        Assert.Equivalent(yg2.Grammars[0], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 45, Value = "NUM" });
+        Assert.Equivalent(yg2.Grammars[1], new Token() { Type = Symbols.CHAR, LineNumber = 1, LineColumn = 49, Value = "'*'" });
+        Assert.Equivalent(yg2.Grammars[2], new Token() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 53, Value = "NUM" });
+    }
 }

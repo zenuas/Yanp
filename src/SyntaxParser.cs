@@ -207,7 +207,10 @@ public static class SyntaxParser
                 syntax.Start = g.Head.Value;
             }
 
-            var prec = g.Grammars.Where(x => x.Type == Symbols.PREC).FirstOrDefault();
+            var prec = g.Grammars.Where(x => x.Type == Symbols.PREC).FirstOrDefault() ??
+                g.Grammars
+                    .Where(x => syntax.Declares.ContainsKey(x.Value) && syntax.Declares[x.Value].Priority > 0)
+                    .MaxBy(x => syntax.Declares[x.Value].Priority);
             var action = g.Grammars.Length > 0 && g.Grammars.Last().Type == Symbols.ACTION ? g.Grammars.Last() : null;
 
             var line = g.Grammars
