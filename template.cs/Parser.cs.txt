@@ -43,13 +43,13 @@ foreach (var table in Model.Tables)
 
             if (x < 0)
             {
-                token = RunAction(x);
-                if (token.InputToken == (int)Symbols._ACCEPT) return token.Value;
+                var reduce = RunAction(x);
+                if (reduce.InputToken == (int)Symbols._ACCEPT) return reduce.Value;
                 current = TokenStack.Count == 0 ? 0 : TokenStack[^1].TableIndex;
-                x = Tables[current, token.InputToken];
+                x = Tables[current, reduce.InputToken];
 
-                token.TableIndex = x;
-                TokenStack.Add(token);
+                reduce.TableIndex = x;
+                TokenStack.Add(reduce);
                 current = x;
             }
             else if (x == 0)
