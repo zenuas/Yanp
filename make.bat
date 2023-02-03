@@ -28,12 +28,29 @@
 	@exit /b %ERRORLEVEL%
 
 :release
+	git archive HEAD --output=Yanp-%DATE:/=%.zip
+	
 	dotnet publish src --nologo -v q --clp:NoSummary -c Release -o .tmp
 	mkdir .tmp\template.cs
-	copy template.cs\ .tmp\template.cs\ /Y
-	git archive HEAD --output=Yanp-%DATE:/=%.zip
-	powershell -NoProfile Compress-Archive -Force -Path .tmp\*, README.md, LICENSE -DestinationPath Yanp-bin-%DATE:/=%.zip
+	copy template.cs\*.txt .tmp\template.cs\ /Y >nul
+	copy template.cs\*.cs  .tmp\template.cs\ /Y >nul
+	powershell -NoProfile $ProgressPreference = 'SilentlyContinue' ; Compress-Archive -Force -Path .tmp\*, README.md, LICENSE -DestinationPath Yanp-bin-%DATE:/=%.zip
 	rmdir /S /Q .tmp 2>nul
+	
+	dotnet publish src --nologo -v q --clp:NoSummary -c Release -o .tmp -r win-x64 --sc false -p:PublishSingleFile=true
+	mkdir .tmp\template.cs
+	copy template.cs\*.txt .tmp\template.cs\ /Y >nul
+	copy template.cs\*.cs  .tmp\template.cs\ /Y >nul
+	powershell -NoProfile $ProgressPreference = 'SilentlyContinue' ; Compress-Archive -Force -Path .tmp\*, README.md, LICENSE -DestinationPath Yanp-win-x64-noruntime-%DATE:/=%.zip
+	rmdir /S /Q .tmp 2>nul
+	
+	dotnet publish src --nologo -v q --clp:NoSummary -c Release -o .tmp -r win-x64 --sc true -p:PublishSingleFile=true
+	mkdir .tmp\template.cs
+	copy template.cs\*.txt .tmp\template.cs\ /Y >nul
+	copy template.cs\*.cs  .tmp\template.cs\ /Y >nul
+	powershell -NoProfile $ProgressPreference = 'SilentlyContinue' ; Compress-Archive -Force -Path .tmp\*, README.md, LICENSE -DestinationPath Yanp-win-x64-%DATE:/=%.zip
+	rmdir /S /Q .tmp 2>nul
+	
 	@exit /b %ERRORLEVEL%
 
 :test
