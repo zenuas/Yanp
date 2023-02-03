@@ -10,7 +10,7 @@ namespace @Model.GetDefine("YYNAMESPACE", "Parser");
 @Include("Utility.cs")
 public partial class Parser
 {
-    public List<IToken<@Model.Syntax.Default>> TokenStack { get; } = new();
+    public List<(int Index, @Model.Syntax.Default Value)> TokenStack { get; } = new();
     public static int[,] Tables { get; } = new [,]
         {
 @{
@@ -39,16 +39,16 @@ foreach (var table in Model.Tables)
         while (true)
         {
             var token = lex.PeekToken();
-            var x = Tables[current, (int)token.InputToken];
+            var x = Tables[current, (int)token.Symbol];
 
             if (x < 0)
             {
-                var reduce = RunAction(x);
-                if (reduce.InputToken == Symbols._ACCEPT) return reduce.Value;
-                var head = TokenStack.Count == 0 ? 0 : TokenStack[^1].TableIndex;
-                current = reduce.TableIndex = Tables[head, (int)reduce.InputToken];
+                var (symbol, value) = RunAction(x);
+                if (symbol == Symbols._ACCEPT) return value;
+                var head = TokenStack.Count == 0 ? 0 : TokenStack[^1].Index;
+                current = Tables[head, (int)symbol];
 
-                TokenStack.Add(reduce);
+                TokenStack.Add((current, value));
             }
             else if (x == 0)
             {
@@ -58,13 +58,13 @@ foreach (var table in Model.Tables)
             else
             {
                 _ = lex.ReadToken();
-                current = token.TableIndex = x;
-                TokenStack.Add(token);
+                current = x;
+                TokenStack.Add((x, token.Value));
             }
         }
     }
 
-    public ReduceToken<@Model.Syntax.Default> RunAction(int yy_no)
+    public (Symbols Symbol, @Model.Syntax.Default Value) RunAction(int yy_no)
     {
         switch (yy_no)
         {
@@ -104,12 +104,12 @@ foreach (var reduce in reduce_to_index)
 
     public @Model.Syntax.Default GetValueFromLast(int from_last_index) => TokenStack[^from_last_index].Value;
 
-    public bool IsAccept(IToken<@Model.Syntax.Default> token) => Tables[TokenStack.Count == 0 ? 0 : TokenStack[^1].TableIndex, (int)token.InputToken] != 0;
+    public bool IsAccept(Symbols type) => Tables[TokenStack.Count == 0 ? 0 : TokenStack[^1].Index, (int)type] != 0;
 
-    public ReduceToken<@Model.Syntax.Default> DoAction(Symbols type, @Model.Syntax.Default value, int length)
+    public (Symbols Symbol, @Model.Syntax.Default Value) DoAction(Symbols type, @Model.Syntax.Default value, int length)
     {
         TokenStack.RemoveRange(TokenStack.Count - length, length);
-        return new() { InputToken = type, Value = value };
+        return (type, value);
     }
 
     [Conditional("TRACE")]

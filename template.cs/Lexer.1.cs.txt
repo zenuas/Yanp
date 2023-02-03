@@ -34,7 +34,7 @@ public partial class Lexer
         if (ReservedChar.TryGetValue((char)BaseReader.Peek(), out var value))
         {
             _ = BaseReader.Read();
-            Store = new ReduceToken<@Model.Syntax.Default> { InputToken = value, Value = default! };
+            Store = new Token<@Model.Syntax.Default> { Symbol = value, Value = default! };
         }
         else
         {
@@ -50,7 +50,7 @@ public partial class Lexer
             var s = word.ToString();
             if (ReservedString.TryGetValue(s, out var value2))
             {
-                Store = new ReduceToken<@Model.Syntax.Default> { InputToken = value2, Value = s };
+                Store = new Token<@Model.Syntax.Default> { Symbol = value2, Value = (dynamic)s };
             }
             else
             {
@@ -63,7 +63,7 @@ public partial class Lexer
     public IToken<@Model.Syntax.Default> ReadToken()
     {
         var token = PeekToken();
-        if (token.InputToken != Symbols._END) Store = null;
+        if (token.Symbol != Symbols._END) Store = null;
         return token;
     }
 }

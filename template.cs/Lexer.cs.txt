@@ -22,5 +22,5 @@ public partial class Lexer : ILexer<@Model.Syntax.Default>
 }
         };
 
-    public static ReduceToken<@Model.Syntax.Default> CreateEndOfToken() => new() { InputToken = Symbols._END, Value = default! };
+    public static Token<@Model.Syntax.Default> CreateEndOfToken() => new() { Symbol = Symbols._END, Value = default! };
 }
