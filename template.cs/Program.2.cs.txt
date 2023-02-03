@@ -1,0 +1,7 @@
+﻿using System;
+using Parser;
+
+var lex = new Lexer { BaseReader = Console.In };
+var parser = new Parser.Parser();
+var value = parser.Parse(lex);
+Console.WriteLine($"value = {value}");
