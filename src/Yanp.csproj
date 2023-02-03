@@ -8,6 +8,10 @@
 		<AssemblyName>yanp</AssemblyName>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	  <DebugType>none</DebugType>
+	</PropertyGroup>
+
 	<ItemGroup>
 	  <PackageReference Include="RazorEngine.NetCore" Version="3.1.0" />
 	</ItemGroup>
