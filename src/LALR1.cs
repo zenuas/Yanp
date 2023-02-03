@@ -135,6 +135,10 @@ public static class LALR1
                         case AssocTypes.Right:
                             return false;
 
+                        case AssocTypes.Nonassoc:
+                            conflicts.Add($"nonassociative ([shift] {shift.Next.Name}, [reduce] {reduce.Name})");
+                            return false;
+
                         default:
                             conflicts.Add($"shift/reduce conflict ([shift] {shift.Next.Name}, [reduce] {reduce.Name})");
                             return false;

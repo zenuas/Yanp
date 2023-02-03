@@ -804,4 +804,78 @@ state 13
 
 ", verbose);
     }
+
+    [Fact]
+    public void Nonassoc1()
+    {
+        var verbose = RunString(@"
+%nonassoc '+'
+%nonassoc '-'
+%%
+expr : expr '+' expr
+     | expr '-' expr
+     | NUM
+");
+        Assert.Equal(@"
+state 0
+	$ACCEPT : . expr $END
+	expr : . expr '+' expr
+	expr : . expr '-' expr
+	expr : . NUM
+
+	expr  shift 1
+	NUM  shift 7
+
+state 1
+	$ACCEPT : expr . $END
+	expr : expr . '+' expr
+	expr : expr . '-' expr
+
+	$END  shift 2
+	'+'  shift 3
+	'-'  shift 5
+
+state 2
+	$ACCEPT : expr $END .
+
+state 3
+	expr : expr '+' . expr
+	expr : . expr '+' expr
+	expr : . expr '-' expr
+	expr : . NUM
+
+	expr  shift 4
+	NUM  shift 7
+
+nonassociative ([shift] '+', [reduce] expr)
+state 4
+	expr : expr '+' expr . [$END]
+	expr : expr . '+' expr
+	expr : expr . '-' expr
+
+	'+'  shift 3
+	'-'  shift 5
+
+state 5
+	expr : expr '-' . expr
+	expr : . expr '+' expr
+	expr : . expr '-' expr
+	expr : . NUM
+
+	expr  shift 6
+	NUM  shift 7
+
+nonassociative ([shift] '-', [reduce] expr)
+state 6
+	expr : expr '-' expr . ['+', $END]
+	expr : expr . '+' expr
+	expr : expr . '-' expr
+
+	'-'  shift 5
+
+state 7
+	expr : NUM . ['-', '+', $END]
+
+", verbose);
+    }
 }
