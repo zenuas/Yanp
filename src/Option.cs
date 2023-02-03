@@ -18,6 +18,10 @@ public class Option
     [LongOption("template")]
     public string Template { get; set; } = Path.Combine(AppContext.BaseDirectory, "template.cs");
 
+    [ShortOption('l')]
+    [LongOption("template-level")]
+    public int TemplateLevel { get; set; } = 1;
+
     [ShortOption('o')]
     [LongOption("output")]
     public string Output { get; set; } = "";

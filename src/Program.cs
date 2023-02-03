@@ -35,11 +35,15 @@ public static class Program
         LALR1.Generate(syntax, nodes);
         var tables = LALR1.CreateTables(syntax, nodes);
 
-        Directory.GetFiles(opt.Template, "*.txt").AsParallel().ForAll(x =>
-        {
-            var source = File.ReadAllText(x);
-            using var output = new StreamWriter(Path.Combine(opt.Output, Path.GetFileNameWithoutExtension(x)));
-            TemplateEngine.Engine.Run(opt.Template, syntax, nodes, tables, source, output);
-        });
+        Directory
+            .GetFiles(opt.Template, "*.txt")
+            .Where(x => !int.TryParse(Path.GetExtension(Path.GetFileNameWithoutExtension(Path.GetFileNameWithoutExtension(x))).Skip(1).ToStringByChars(), out var value) || value <= opt.TemplateLevel)
+            .AsParallel()
+            .ForAll(x =>
+            {
+                var source = File.ReadAllText(x);
+                using var output = new StreamWriter(Path.Combine(opt.Output, Path.GetFileNameWithoutExtension(x)));
+                TemplateEngine.Engine.Run(opt.Template, syntax, nodes, tables, source, output);
+            });
     }
 }
