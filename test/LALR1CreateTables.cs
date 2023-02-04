@@ -1,4 +1,5 @@
 ﻿using Xunit;
+using Yanp.TemplateEngine;
 
 namespace Yanp.Test;
 
@@ -38,7 +39,8 @@ public class LALR1CreateTables
 }
 ";
         using var output = new StringWriter();
-        TemplateEngine.Engine.Run("", syntax, nodes, tables, source, output);
+        var model = Engine.CreateModel(syntax, nodes, tables);
+        Engine.Run(Engine.CreateConfig(""), model, source, output);
         return output.ToString();
     }
 

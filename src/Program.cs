@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Linq;
 using Yanp.Data;
+using Yanp.TemplateEngine;
 
 namespace Yanp;
 
@@ -35,6 +36,7 @@ public static class Program
         LALR1.Generate(syntax, nodes);
         var tables = LALR1.CreateTables(syntax, nodes);
 
+        var model = Engine.CreateModel(syntax, nodes, tables);
         Directory
             .GetFiles(opt.Template, "*.txt")
             .Select(x => (Path: x, TemplateLevel: Path.GetExtension(Path.GetFileNameWithoutExtension(Path.GetFileNameWithoutExtension(x))).Skip(1).ToStringByChars()))
@@ -44,7 +46,7 @@ public static class Program
             {
                 var source = File.ReadAllText(x.Path);
                 using var output = new StreamWriter(Path.Combine(opt.Output, Path.GetFileNameWithoutExtension(x.Path)));
-                TemplateEngine.Engine.Run(opt.Template, syntax, nodes, tables, source, output);
+                Engine.Run(Engine.CreateConfig(opt.Template), model, source, output);
             });
     }
 }

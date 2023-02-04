@@ -14,9 +14,11 @@ namespace Yanp.TemplateEngine;
 
 public static class Engine
 {
-    public static void Run(string basepath, Syntax syntax, Node[] nodes, Table[] tables, string source, TextWriter output)
+    public static void Run(ITemplateServiceConfiguration config, Model model, string source, TextWriter output) => RazorEngineService.Create(config).RunCompile(source, "templateKey", output, model.GetType(), model);
+
+    public static ITemplateServiceConfiguration CreateConfig(string basepath)
     {
-        var config = new TemplateServiceConfiguration()
+        return new TemplateServiceConfiguration()
         {
             Language = Language.CSharp,
             EncodedStringFactory = new RawStringFactory(),
@@ -33,12 +35,16 @@ public static class Engine
             },
             TemplateManager = new DelegateTemplateManager(key => File.ReadAllText(Path.Combine(basepath, key))),
         };
-        var model = new Model
+    }
+
+    public static Model CreateModel(Syntax syntax, Node[] nodes, Table[] tables)
+    {
+        return new()
         {
             Syntax = syntax,
             Nodes = nodes,
             Tables = tables,
-            GetDefine = (x, def) => syntax.Defines.TryGetValue(x, out var value) ? value : def,
+            GetDefine = (name, default_value) => syntax.Defines.TryGetValue(name, out var value) ? value : default_value,
             GetSymbols = () => syntax.Declares
                 .Order((a, b) =>
                     a.Value.Name.Type == Parser.Symbols.CHAR && b.Value.Name.Type == Parser.Symbols.VAR ? -1 :
@@ -57,6 +63,5 @@ public static class Engine
                 .ToArray(),
             NodeToTable = (node) => tables.First(x => x.Node.Equals(node)),
         };
-        RazorEngineService.Create(config).RunCompile(source, "templateKey", output, model.GetType(), model);
     }
 }
