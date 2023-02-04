@@ -16,7 +16,12 @@ public static class SyntaxParser
         ParseDeclaration(syntax, lex);
         ParseGrammar(syntax, lex);
         GrammarsToTerminalSymbol(syntax);
-        syntax.FooterCode = input.ReadToEnd();
+        if (!lex.BaseReader.EndOfStream)
+        {
+            var first = lex.BaseReader.ReadLine();
+            if (first is { } s && s != "") syntax.FooterCode = s;
+        }
+        syntax.FooterCode += input.ReadToEnd();
         return syntax;
     }
 

@@ -43,7 +43,7 @@ public class SyntaxParserParse
 ");
         Assert.Equal("", y.Start);
         Assert.Equal("", y.HeaderCode.ToString());
-        Assert.Equal("\r\n", y.FooterCode);
+        Assert.Equal("", y.FooterCode);
         Assert.Empty(y.Declares);
         Assert.Empty(y.Grammars);
     }
@@ -58,7 +58,7 @@ public class SyntaxParserParse
 ");
         Assert.Equal("", y.Start);
         Assert.Equal("", y.HeaderCode.ToString());
-        Assert.Equal("\r\n", y.FooterCode);
+        Assert.Equal("", y.FooterCode);
         Assert.Empty(y.Declares);
         Assert.Empty(y.Grammars);
     }
@@ -191,7 +191,7 @@ z
 x y z");
         Assert.Equal("", y.Start);
         Assert.Equal("", y.HeaderCode.ToString());
-        Assert.Equal("\r\nx y z", y.FooterCode);
+        Assert.Equal("x y z", y.FooterCode);
         Assert.Empty(y.Declares);
         Assert.Empty(y.Grammars);
     }
@@ -208,7 +208,26 @@ z
 ");
         Assert.Equal("", y.Start);
         Assert.Equal("", y.HeaderCode.ToString());
-        Assert.Equal("\r\nx\r\ny\r\nz\r\n", y.FooterCode);
+        Assert.Equal("x\r\ny\r\nz\r\n", y.FooterCode);
+        Assert.Empty(y.Declares);
+        Assert.Empty(y.Grammars);
+    }
+
+    [Fact]
+    public void FooterCode4()
+    {
+        var y = RunString(@"
+%%
+%%
+
+x
+y
+z
+
+");
+        Assert.Equal("", y.Start);
+        Assert.Equal("", y.HeaderCode.ToString());
+        Assert.Equal("\r\nx\r\ny\r\nz\r\n\r\n", y.FooterCode);
         Assert.Empty(y.Declares);
         Assert.Empty(y.Grammars);
     }
