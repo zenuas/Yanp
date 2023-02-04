@@ -41,8 +41,7 @@ public class Lexer
             Store.Add(ReadToken(BaseReader));
         }
 
-        var first = Store.First();
-        return first;
+        return Store.First();
     }
 
     public Token ReadToken()
