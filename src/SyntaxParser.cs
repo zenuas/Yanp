@@ -31,20 +31,6 @@ public static class SyntaxParser
         };
         var priority = 0;
 
-        var read_assoc = (AssocTypes assoc, int pri) =>
-        {
-            if (lex.PeekToken().Type == Symbols.__EOF) throw new SyntaxErrorException($"assoc {assoc} with token") { LineNumber = lex.BaseReader.LineNumber, LineColumn = lex.BaseReader.LineColumn };
-
-            var type = lex.PeekToken().Type == Symbols.DECLARE ? lex.ReadToken().Value : "";
-
-            if (lex.PeekToken().Type != Symbols.VAR && lex.PeekToken().Type != Symbols.CHAR) throw new SyntaxErrorException($"assoc {assoc} with token") { LineNumber = lex.BaseReader.LineNumber, LineColumn = lex.BaseReader.LineColumn };
-            do
-            {
-                var t = lex.ReadToken();
-                syntax.Declares.Add(t.Value, new() { Assoc = assoc, Name = t, Priority = pri, Type = type });
-            } while (lex.PeekToken().Type == Symbols.VAR || lex.PeekToken().Type == Symbols.CHAR);
-        };
-
         while (lex.PeekToken().Type != Symbols.__EOF)
         {
             var t = lex.ReadToken();
@@ -58,7 +44,21 @@ public static class SyntaxParser
                 case Symbols.LEFT:
                 case Symbols.RIGHT:
                 case Symbols.NONASSOC:
-                    read_assoc(assoc_conv[t.Type], ++priority);
+                    {
+                        var assoc = assoc_conv[t.Type];
+                        priority++;
+
+                        if (lex.PeekToken().Type == Symbols.__EOF) throw new SyntaxErrorException($"assoc {assoc} with token") { LineNumber = lex.BaseReader.LineNumber, LineColumn = lex.BaseReader.LineColumn };
+
+                        var type = lex.PeekToken().Type == Symbols.DECLARE ? lex.ReadToken().Value : "";
+
+                        if (lex.PeekToken().Type != Symbols.VAR && lex.PeekToken().Type != Symbols.CHAR) throw new SyntaxErrorException($"assoc {assoc} with token") { LineNumber = lex.BaseReader.LineNumber, LineColumn = lex.BaseReader.LineColumn };
+                        do
+                        {
+                            var v = lex.ReadToken();
+                            syntax.Declares.Add(v.Value, new() { Assoc = assoc, Name = v, Priority = priority, Type = type });
+                        } while (lex.PeekToken().Type == Symbols.VAR || lex.PeekToken().Type == Symbols.CHAR);
+                    }
                     break;
 
                 case Symbols.DEFAULT:
