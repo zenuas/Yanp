@@ -37,12 +37,13 @@ public static class Program
 
         Directory
             .GetFiles(opt.Template, "*.txt")
-            .Where(x => !int.TryParse(Path.GetExtension(Path.GetFileNameWithoutExtension(Path.GetFileNameWithoutExtension(x))).Skip(1).ToStringByChars(), out var value) || value <= opt.TemplateLevel)
+            .Select(x => (Path: x, TemplateLevel: Path.GetExtension(Path.GetFileNameWithoutExtension(Path.GetFileNameWithoutExtension(x))).Skip(1).ToStringByChars()))
+            .Where(x => !int.TryParse(x.TemplateLevel, out var value) || value <= opt.TemplateLevel)
             .AsParallel()
             .ForAll(x =>
             {
-                var source = File.ReadAllText(x);
-                using var output = new StreamWriter(Path.Combine(opt.Output, Path.GetFileNameWithoutExtension(x)));
+                var source = File.ReadAllText(x.Path);
+                using var output = new StreamWriter(Path.Combine(opt.Output, Path.GetFileNameWithoutExtension(x.Path)));
                 TemplateEngine.Engine.Run(opt.Template, syntax, nodes, tables, source, output);
             });
     }
