@@ -17,11 +17,7 @@ public static class Lists
     [DebuggerHidden]
     public static IEnumerable<char> Range(char start, int length)
     {
-        for (var i = 0; i < length; start++)
-        {
-            yield return start;
-            if (++i >= length) break;
-        }
+        for (var i = 0; i < length; i++, start++) yield return start;
     }
 
     [DebuggerHidden]
