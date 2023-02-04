@@ -15,13 +15,15 @@ public static class Program
         var opt = new Option();
         var xs = CommandLine.Run(opt, args);
 
+        if (xs.Length > 1) throw new Exception($"extra operand '{xs[1]}'");
         if (xs.Length == 0)
         {
             Run(opt, opt.Input);
         }
         else
         {
-            xs.AsParallel().ForAll(x => Run(opt, new StreamReader(x)));
+            using var input = new StreamReader(xs[0]);
+            Run(opt, input);
         }
     }
 
