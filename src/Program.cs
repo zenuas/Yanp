@@ -38,17 +38,18 @@ public static class Program
         LALR1.Generate(syntax, nodes);
         var tables = LALR1.CreateTables(syntax, nodes);
 
-        var model = Engine.CreateModel(syntax, nodes, tables);
         Directory
             .GetFiles(opt.Template, "*.txt")
             .Select(x => (Path: x, TemplateLevel: Path.GetExtension(Path.GetFileNameWithoutExtension(Path.GetFileNameWithoutExtension(x))).Skip(1).ToStringByChars()))
             .Where(x => !int.TryParse(x.TemplateLevel, out var value) || value <= opt.TemplateLevel)
             .AsParallel()
-            .ForAll(x =>
+            .ForAll(async x =>
             {
-                var source = File.ReadAllText(x.Path);
+                var source = File.ReadAllTextAsync(x.Path);
                 using var output = new StreamWriter(Path.Combine(opt.Output, Path.GetFileNameWithoutExtension(x.Path)));
-                Engine.Run(Engine.CreateConfig(opt.Template), model, source, output);
+                var config = Engine.CreateConfig(opt.Template);
+                var model = Engine.CreateModel(syntax, nodes, tables);
+                Engine.Run(config, model, await source, output);
             });
     }
 }

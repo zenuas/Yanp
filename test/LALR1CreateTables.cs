@@ -39,8 +39,9 @@ public class LALR1CreateTables
 }
 ";
         using var output = new StringWriter();
+        var config = Engine.CreateConfig("");
         var model = Engine.CreateModel(syntax, nodes, tables);
-        Engine.Run(Engine.CreateConfig(""), model, source, output);
+        Engine.Run(config, model, source, output);
         return output.ToString();
     }
 
