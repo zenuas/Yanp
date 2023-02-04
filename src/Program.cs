@@ -3,7 +3,6 @@ using Extensions;
 using System;
 using System.IO;
 using System.Linq;
-using Yanp.Data;
 using Yanp.TemplateEngine;
 
 namespace Yanp;
@@ -31,8 +30,8 @@ public static class Program
     {
         var syntax = SyntaxParser.Parse(input);
 
-        if (syntax.Grammars.IsEmpty()) throw new ParseException("no grammar has been specified");
-        if (!syntax.Grammars.Contains(x => x.Key == syntax.Start)) throw new ParseException("no grammar has been specified");
+        if (syntax.Grammars.IsEmpty()) throw new Exception("no grammar has been specified");
+        if (!syntax.Grammars.Contains(x => x.Key == syntax.Start)) throw new Exception("no grammar has been specified");
 
         var nodes = LR0.Generate(syntax);
         LALR1.Generate(syntax, nodes);
