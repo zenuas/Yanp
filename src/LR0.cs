@@ -21,6 +21,7 @@ public static class LR0
     public static void AddAccept(Syntax syntax)
     {
         var accept = new Token { Type = Symbols.VAR, LineNumber = 0, LineColumn = 0, Value = "$ACCEPT" };
+        var start = new Token { Type = Symbols.VAR, LineNumber = 0, LineColumn = 0, Value = syntax.Start };
         var end = new Token { Type = Symbols.VAR, LineNumber = 0, LineColumn = 0, Value = "$END" };
 
         syntax.Declares.Add(accept.Value, new Declarate { Name = accept, Assoc = AssocTypes.Type, IsTerminalSymbol = false });
@@ -34,11 +35,7 @@ public static class LR0
                 Name = accept,
                 LineNumber = 0,
                 LineColumn = 0,
-                Grammars = new()
-                {
-                    new() { Type = Symbols.VAR, LineNumber = 0, LineColumn = 0, Value = syntax.Start },
-                    end
-                }
+                Grammars = new() { start, end },
             }
         });
     }
