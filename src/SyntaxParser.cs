@@ -19,9 +19,9 @@ public static class SyntaxParser
         if (!lex.BaseReader.EndOfStream)
         {
             var first = lex.BaseReader.ReadLine();
-            if (first is { } s && s != "") syntax.FooterCode = s;
+            if (first != "") _ = syntax.FooterCode.AppendLine(first);
         }
-        syntax.FooterCode += input.ReadToEnd();
+        syntax.FooterCode.Append(input.ReadToEnd());
         return syntax;
     }
 
