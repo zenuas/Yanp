@@ -102,7 +102,6 @@ public static class LALR1
         {
             var actions = node.Nexts.ToDictionary(x => x.Name, x => (IParserAction)new ShiftAction { Next = x });
             var reduces = node.Lines.Where(x => x.Index >= x.Line.Grammars.Count).ToArray();
-            var any_reduce = reduces.Any(x => x.Lookahead.IsEmpty());
             var conflicts = new List<string>();
 
             bool add_reduce(Token name, GrammarLine reduce)
@@ -166,7 +165,7 @@ public static class LALR1
                     })
                 );
 
-            return new Table { Index = i, Node = node, AnyReduce = any_reduce, Conflicts = conflicts.ToArray(), Actions = actions };
+            return new Table { Index = i, Node = node, Conflicts = conflicts.ToArray(), Actions = actions };
         }).ToArray();
     }
 }
