@@ -14,7 +14,7 @@ namespace Yanp.TemplateEngine;
 
 public static class Engine
 {
-    public static void Run(ITemplateServiceConfiguration config, Model model, string source, TextWriter output) => RazorEngineService.Create(config).RunCompile(source, "templateKey", output, model.GetType(), model);
+    public static void Run(ITemplateServiceConfiguration config, object model, string source, TextWriter output) => RazorEngineService.Create(config).RunCompile(source, "templateKey", output, model.GetType(), model);
 
     public static ITemplateServiceConfiguration CreateConfig(string basepath)
     {
