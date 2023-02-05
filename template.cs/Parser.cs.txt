@@ -79,10 +79,15 @@ foreach (var reduce in reduce_to_index)
 {
     var length = reduce.Key.get_Grammars().Count();
     var action = reduce.Key.get_Action()?.get_Value();
+    var value = action is { } || length == 0 ? Model.GetDefine("YYDEFAULT", "default!") : "yy_value";
     var actformat = action is { } a ?
         Regex.Replace(a, @"\$(\$|\d+)", m =>
         {
-            if (m.Groups[1].Value == "$") return "var yy_value";
+            if (m.Groups[1].Value == "$")
+            {
+                value = "yy_value";
+                return "var yy_value";
+            }
 
             var n = int.Parse(m.Groups[1].Value) - 1;
             var g = reduce.Key.get_Grammars()[n];
@@ -91,6 +96,7 @@ foreach (var reduce in reduce_to_index)
             if (d.get_Type() != "") return $"(({d.get_Type()})GetValueFromLast({length - n}))";
             return $"GetValueFromLast({length - n})";
         })
+        : length == 0 ? ""
         : $"var yy_value = GetValueFromLast({length});";
     var sym = ((Func<Token, string>)Model.KeyValues["csterms"])(reduce.Key.get_Name());
 
@@ -98,7 +104,7 @@ foreach (var reduce in reduce_to_index)
                 @:{
                     @:Debug.WriteLine("@reduce.Key");
                     @:@actformat
-                    @:return DoAction(Symbols.@sym, yy_value, @length);
+                    @:return DoAction(Symbols.@sym, @value, @length);
                 @:}
 @:
 }

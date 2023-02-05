@@ -93,7 +93,7 @@ public static class LALR1
     {
         nodes.Each(node => node.Lines
             .Where(x => x.Line.Grammars.Count == x.Index && follow.ContainsKey(x.Line.Name.Value))
-            .Each(line => follow[line.Line.Name.Value].Each(x => line.Lookahead.Add(syntax.Declares[x].Name))));
+            .Each(line => node.Lookahead.Add(line, follow[line.Line.Name.Value].Select(x => syntax.Declares[x].Name).ToHashSet())));
     }
 
     public static Table[] CreateTables(Syntax syntax, Node[] nodes)
@@ -147,12 +147,12 @@ public static class LALR1
             }
 
             reduces
-                .Where(x => x.Lookahead.IsEmpty())
+                .Where(x => !node.Lookahead.ContainsKey(x) || node.Lookahead[x].IsEmpty())
                 .Each(x => syntax.Declares.Values.Where(y => y.IsTerminalSymbol).Each(y => add_reduce(y.Name, x.Line)));
 
             reduces
-                .Where(x => !x.Lookahead.IsEmpty())
-                .Each(x => x.Lookahead.Each(y =>
+                .Where(x => node.Lookahead.ContainsKey(x) && !node.Lookahead[x].IsEmpty())
+                .Each(x => node.Lookahead[x].ToList().Each(y =>
                     {
                         if (add_reduce(y, x.Line))
                         {
@@ -160,7 +160,7 @@ public static class LALR1
                         }
                         else
                         {
-                            _ = x.Lookahead.Remove(y);
+                            _ = node.Lookahead[x].Remove(y);
                         }
                     })
                 );

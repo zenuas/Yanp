@@ -21,7 +21,7 @@ public class LALR1CreateTables
 @:@string.Join(""\r\n"", table.get_Conflicts())
 	}
 @:state @table.get_Index()
-	foreach (var line in table.get_Node().get_Lines())
+	foreach (var line in table.get_Node().LinesToString())
 	{
 	@:@line
 	}
