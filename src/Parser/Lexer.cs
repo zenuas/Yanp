@@ -183,7 +183,7 @@ public class Lexer
                 case '"':
                 case '\'':
                     _ = text.Append(c);
-                    if (quot is null) quot = c;
+                    quot ??= c;
                     break;
 
                 default:
