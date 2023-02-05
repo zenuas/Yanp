@@ -1,3 +1,9 @@
+@{
+if(Model.Syntax.HeaderCode.Length > 0)
+{
+@:@Model.Syntax.HeaderCode
+}
+}
 using System;
 
 namespace @Model.GetDefine("YYNAMESPACE", "Parser");

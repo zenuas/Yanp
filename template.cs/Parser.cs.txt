@@ -2,6 +2,12 @@
 @using Parser
 @using System.Text.RegularExpressions
 @using Yanp.Data
+@{
+if(Model.Syntax.HeaderCode.Length > 0)
+{
+@:@Model.Syntax.HeaderCode
+}
+}
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

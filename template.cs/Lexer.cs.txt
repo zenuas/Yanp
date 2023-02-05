@@ -1,6 +1,12 @@
 @using Extensions
 @using Parser
 @using Yanp.Data
+@{
+if(Model.Syntax.HeaderCode.Length > 0)
+{
+@:@Model.Syntax.HeaderCode
+}
+}
 using System.Collections.Generic;
 
 namespace @Model.GetDefine("YYNAMESPACE", "Parser");

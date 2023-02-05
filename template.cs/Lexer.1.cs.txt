@@ -1,6 +1,12 @@
 @using Extensions
 @using Parser
 @using Yanp.Data
+@{
+if(Model.Syntax.HeaderCode.Length > 0)
+{
+@:@Model.Syntax.HeaderCode
+}
+}
 using System;
 using System.IO;
 using System.Text;
