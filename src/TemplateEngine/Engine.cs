@@ -58,6 +58,7 @@ public static class Engine
                 .Flatten()
                 .Order((a, b) =>
                     a.LineNumber < b.LineNumber ? -1 :
+                    a.LineNumber > b.LineNumber ? 1 :
                     a.LineColumn < b.LineColumn ? -1 :
                     a.LineColumn - b.LineColumn)
                 .ToArray(),
