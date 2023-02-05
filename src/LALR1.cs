@@ -100,7 +100,7 @@ public static class LALR1
     {
         return nodes.Select((node, i) =>
         {
-            var actions = node.Nexts.ToDictionary(x => x.Name, x => (IParserAction)new ShiftAction { Next = x });
+            var actions = node.Nexts.ToDictionary(x => x.Name, x => (IParserAction)new ShiftAction { Next = x, Priority = x.Lines.Select(y => y.Line.Priority).Max() });
             var reduces = node.Lines.Where(x => x.Index >= x.Line.Grammars.Count).ToArray();
             var conflicts = new List<string>();
 
@@ -119,11 +119,10 @@ public static class LALR1
                 else
                 {
                     var shift = act.Value.Cast<ShiftAction>();
-                    var d = syntax.Declares[name.Value];
                     switch (
-                        reduce.Priority == d.Priority && reduce.Priority == 0 ? AssocTypes.Type :
-                        reduce.Priority > d.Priority ? AssocTypes.Left :
-                        reduce.Priority < d.Priority ? AssocTypes.Right :
+                        reduce.Priority == shift.Priority && reduce.Priority == 0 ? AssocTypes.Type :
+                        reduce.Priority > shift.Priority ? AssocTypes.Left :
+                        reduce.Priority < shift.Priority ? AssocTypes.Right :
                         reduce.Assoc)
                     {
                         case AssocTypes.Left:
