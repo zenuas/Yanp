@@ -100,7 +100,14 @@ public static class LALR1
     {
         return nodes.Select((node, i) =>
         {
-            var actions = node.Nexts.ToDictionary(x => x.Name, x => (IParserAction)new ShiftAction { Next = x, Priority = x.Lines.Select(y => y.Line.Priority).Max() });
+            var actions = node.Nexts.ToDictionary(x => x.Name, x => (IParserAction)new ShiftAction
+            {
+                Next = x,
+                Priority = x.Lines
+                    .Where(y => y.Index > 0 && y.Line.Grammars[y.Index - 1].Value == x.Name.Value)
+                    .Select(y => y.Line.Priority)
+                    .Max(),
+            });
             var reduces = node.Lines.Where(x => x.Index >= x.Line.Grammars.Count).ToArray();
             var conflicts = new List<string>();
 
