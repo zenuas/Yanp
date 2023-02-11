@@ -11,7 +11,7 @@ public static class LALR1
     public static void Generate(Syntax syntax, Node[] nodes)
     {
         var lines = GrammarLines(nodes);
-        var follow = Follow(nodes, lines, Nullable(nodes, lines));
+        var follow = Follow(nodes, lines, Nullable(lines));
         Lookahead(syntax, nodes, follow);
     }
 
@@ -22,7 +22,7 @@ public static class LALR1
         .Distinct()
         .ToArray();
 
-    public static HashSet<string> Nullable(Node[] nodes, GrammarLine[] lines)
+    public static HashSet<string> Nullable(GrammarLine[] lines)
     {
         var nullable = lines
             .Where(x => x.Grammars.IsEmpty())

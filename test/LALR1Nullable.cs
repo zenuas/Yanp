@@ -14,7 +14,7 @@ public class LALR1Nullable
         syntax.Start = start;
         var nodes = LR0.Generate(syntax);
         var lines = LALR1.GrammarLines(nodes);
-        return LALR1.Nullable(nodes, lines);
+        return LALR1.Nullable(lines);
     }
 
     [Fact]
