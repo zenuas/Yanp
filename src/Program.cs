@@ -35,7 +35,7 @@ public static class Program
 
         var nodes = LR0.Generate(syntax);
         LALR1.Generate(syntax, nodes);
-        var tables = LALR1.CreateTables(syntax, nodes);
+        var tables = nodes.Select((x, i) => LALR1.CreateTables(syntax, x, i)).ToArray();
 
         Directory
             .GetFiles(opt.Template, "*.txt")

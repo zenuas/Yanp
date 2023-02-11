@@ -10,7 +10,7 @@ public class LALR1CreateTables
         var syntax = SyntaxParser.Parse(new StringReader(text));
         var nodes = LR0.Generate(syntax);
         LALR1.Generate(syntax, nodes);
-        var tables = LALR1.CreateTables(syntax, nodes);
+        var tables = nodes.Select((x, i) => LALR1.CreateTables(syntax, x, i)).ToArray();
 
         var source = @"
 @using System.Linq

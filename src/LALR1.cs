@@ -96,82 +96,79 @@ public static class LALR1
             .Each(line => node.Lookahead.Add(line, follow[line.Line.Name.Value].Select(x => syntax.Declares[x].Name).ToHashSet())));
     }
 
-    public static Table[] CreateTables(Syntax syntax, Node[] nodes)
+    public static Table CreateTables(Syntax syntax, Node node, int index)
     {
-        return nodes.Select((node, i) =>
+        var actions = node.Nexts.ToDictionary(x => x.Name, x => (IParserAction)new ShiftAction
         {
-            var actions = node.Nexts.ToDictionary(x => x.Name, x => (IParserAction)new ShiftAction
+            Next = x,
+            Priority = x.Lines
+                .Where(y => y.Index > 0 && y.Line.Grammars[y.Index - 1].Value == x.Name.Value)
+                .Select(y => y.Line.Priority)
+                .Max(),
+        });
+        var reduces = node.Lines.Where(x => x.Index >= x.Line.Grammars.Count).ToArray();
+        var conflicts = new List<string>();
+
+        bool add_reduce(Token name, GrammarLine reduce)
+        {
+            var act = actions.FirstOrDefault(x => x.Key.Value == name.Value);
+            if (act.Value is null)
             {
-                Next = x,
-                Priority = x.Lines
-                    .Where(y => y.Index > 0 && y.Line.Grammars[y.Index - 1].Value == x.Name.Value)
-                    .Select(y => y.Line.Priority)
-                    .Max(),
-            });
-            var reduces = node.Lines.Where(x => x.Index >= x.Line.Grammars.Count).ToArray();
-            var conflicts = new List<string>();
-
-            bool add_reduce(Token name, GrammarLine reduce)
-            {
-                var act = actions.FirstOrDefault(x => x.Key.Value == name.Value);
-                if (act.Value is null)
-                {
-                    actions.Add(name, new ReduceAction { Reduce = reduce });
-                }
-                else if (act.Value is ReduceAction p)
-                {
-                    conflicts.Add($"reduce/reduce conflict ([reduce] {p.Reduce}, [reduce] {reduce})");
-                    return false;
-                }
-                else
-                {
-                    var shift = act.Value.Cast<ShiftAction>();
-                    switch (
-                        reduce.Priority == shift.Priority && reduce.Priority == 0 ? AssocTypes.Type :
-                        reduce.Priority > shift.Priority ? AssocTypes.Left :
-                        reduce.Priority < shift.Priority ? AssocTypes.Right :
-                        reduce.Assoc)
-                    {
-                        case AssocTypes.Left:
-                            _ = actions.Remove(act.Key);
-                            actions.Add(name, new ReduceAction { Reduce = reduce });
-                            break;
-
-                        case AssocTypes.Right:
-                            return false;
-
-                        case AssocTypes.Nonassoc:
-                            conflicts.Add($"nonassociative ([shift] {shift.Next.Name}, [reduce] {reduce.Name})");
-                            return false;
-
-                        default:
-                            conflicts.Add($"shift/reduce conflict ([shift] {shift.Next.Name}, [reduce] {reduce.Name})");
-                            return false;
-                    }
-                }
-                return true;
+                actions.Add(name, new ReduceAction { Reduce = reduce });
             }
+            else if (act.Value is ReduceAction p)
+            {
+                conflicts.Add($"reduce/reduce conflict ([reduce] {p.Reduce}, [reduce] {reduce})");
+                return false;
+            }
+            else
+            {
+                var shift = act.Value.Cast<ShiftAction>();
+                switch (
+                    reduce.Priority == shift.Priority && reduce.Priority == 0 ? AssocTypes.Type :
+                    reduce.Priority > shift.Priority ? AssocTypes.Left :
+                    reduce.Priority < shift.Priority ? AssocTypes.Right :
+                    reduce.Assoc)
+                {
+                    case AssocTypes.Left:
+                        _ = actions.Remove(act.Key);
+                        actions.Add(name, new ReduceAction { Reduce = reduce });
+                        break;
 
-            reduces
-                .Where(x => !node.Lookahead.ContainsKey(x) || node.Lookahead[x].IsEmpty())
-                .Each(x => syntax.Declares.Values.Where(y => y.IsTerminalSymbol).Each(y => add_reduce(y.Name, x.Line)));
+                    case AssocTypes.Right:
+                        return false;
 
-            reduces
-                .Where(x => node.Lookahead.ContainsKey(x) && !node.Lookahead[x].IsEmpty())
-                .Each(x => node.Lookahead[x].ToList().Each(y =>
+                    case AssocTypes.Nonassoc:
+                        conflicts.Add($"nonassociative ([shift] {shift.Next.Name}, [reduce] {reduce.Name})");
+                        return false;
+
+                    default:
+                        conflicts.Add($"shift/reduce conflict ([shift] {shift.Next.Name}, [reduce] {reduce.Name})");
+                        return false;
+                }
+            }
+            return true;
+        }
+
+        reduces
+            .Where(x => !node.Lookahead.ContainsKey(x) || node.Lookahead[x].IsEmpty())
+            .Each(x => syntax.Declares.Values.Where(y => y.IsTerminalSymbol).Each(y => add_reduce(y.Name, x.Line)));
+
+        reduces
+            .Where(x => node.Lookahead.ContainsKey(x) && !node.Lookahead[x].IsEmpty())
+            .Each(x => node.Lookahead[x].ToList().Each(y =>
+                {
+                    if (add_reduce(y, x.Line))
                     {
-                        if (add_reduce(y, x.Line))
-                        {
-                            _ = node.Nexts.RemoveWhere(n => n.Name.Value == y.Value);
-                        }
-                        else
-                        {
-                            _ = node.Lookahead[x].Remove(y);
-                        }
-                    })
-                );
+                        _ = node.Nexts.RemoveWhere(n => n.Name.Value == y.Value);
+                    }
+                    else
+                    {
+                        _ = node.Lookahead[x].Remove(y);
+                    }
+                })
+            );
 
-            return new Table { Index = i, Node = node, Conflicts = conflicts.ToArray(), Actions = actions };
-        }).ToArray();
+        return new Table { Index = index, Node = node, Conflicts = conflicts.ToArray(), Actions = actions };
     }
 }
