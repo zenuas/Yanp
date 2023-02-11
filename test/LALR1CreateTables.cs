@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using Extensions;
+using Xunit;
 using Yanp.TemplateEngine;
 
 namespace Yanp.Test;
@@ -12,37 +13,14 @@ public class LALR1CreateTables
         LALR1.Generate(syntax, nodes);
         var tables = nodes.Select((x, i) => LALR1.CreateTables(syntax, x, i)).ToArray();
 
-        var source = @"
-@using System.Linq
-@foreach (var table in Model.Tables)
-{
-	if (table.get_Conflicts().Length > 0)
-	{
-@:@string.Join(""\r\n"", table.get_Conflicts())
-	}
-@:state @table.get_Index()
-	foreach (var line in table.get_Node().LinesToString())
-	{
-	@:@line
-	}
-@:
-	var shift_found = false;
-	foreach (var next in table.get_Node().Nexts)
-	{
-		shift_found = true;
-	@:@next.get_Name()  shift @Model.NodeToTable(next).get_Index()
-	}
-	if (shift_found)
-	{
-@:
-	}
-}
-";
-        using var output = new StringWriter();
-        var config = Engine.CreateConfig("");
-        var model = Engine.CreateModel(syntax, nodes, tables);
-        Engine.Run(config, model, source, output);
-        return output.ToString();
+        return "\r\n" + tables.Select(table =>
+        {
+            var conflicts = table.Conflicts.Join("\r\n");
+            var lines = table.Node.LinesToString().Select(x => $"\t{x}\r\n").Join("");
+            var shifts = table.Node.Nexts.Select(x => $"\t{x.Name}  shift {tables.First(y => y.Node.Equals(x)).Index}\r\n").Join("");
+
+            return $"{conflicts}{(conflicts.Length > 0 ? "\r\n" : "")}state {table.Index}\r\n{lines}\r\n{shifts}{(shifts.Length > 0 ? "\r\n" : "")}";
+        }).Join("");
     }
 
     [Fact]
