@@ -11,6 +11,7 @@ public class LALR1Lookahead
         var syntax = new Syntax();
         var lex = new Lexer(new() { BaseReader = new StringReader(text) });
         SyntaxParser.ParseGrammar(syntax, lex);
+        SyntaxParser.GrammarsToTerminalSymbol(syntax);
         syntax.Start = start;
         var nodes = LR0.Generate(syntax);
         LALR1.Generate(syntax, nodes);
