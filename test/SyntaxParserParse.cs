@@ -64,6 +64,31 @@ public class SyntaxParserParse
     }
 
     [Fact]
+    public void Comment2()
+    {
+        var y = RunString(@"
+//%left A
+%%
+%%
+");
+        Assert.Equal("", y.Start);
+        Assert.Equal("", y.HeaderCode.ToString());
+        Assert.Equal("", y.FooterCode.ToString());
+        Assert.Empty(y.Declares);
+        Assert.Empty(y.Grammars);
+    }
+
+    [Fact]
+    public void Comment3()
+    {
+        Assert.Throws<SyntaxErrorException>(() => RunString(@"
+/%left A
+%%
+%%
+"));
+    }
+
+    [Fact]
     public void Test1()
     {
         var y = RunString(@"

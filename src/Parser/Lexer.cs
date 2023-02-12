@@ -78,6 +78,11 @@ public class Lexer
 
         switch (c)
         {
+            case '/':
+                _ = reader.ReadChar();
+                if (reader.PeekChar() != '/') break;
+                goto case '#';
+
             case '#':
                 _ = reader.ReadLine();
                 _ = ReadSkipWhiteSpace(reader);
