@@ -73,7 +73,7 @@ public static class LALR1
 
             head_first.Each(kv => kv.Value
                 .ToArray()
-                .Where(x => nullable.Contains(x) && head_first.ContainsKey(x))
+                .Where(x => head_first.ContainsKey(x))
                 .Select(x => head_first[x])
                 .Flatten()
                 .Each(x => retry = kv.Value.Add(x) || retry));
