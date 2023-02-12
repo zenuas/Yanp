@@ -224,17 +224,16 @@ public static class LALR1
         reduces
             .Where(x => node.Lookahead.ContainsKey(x) && !node.Lookahead[x].IsEmpty())
             .Each(x => node.Lookahead[x].ToList().Each(y =>
+            {
+                if (add_reduce(y, x.Line))
                 {
-                    if (add_reduce(y, x.Line))
-                    {
-                        _ = node.Nexts.RemoveWhere(n => n.Name.Value == y.Value);
-                    }
-                    else
-                    {
-                        _ = node.Lookahead[x].Remove(y);
-                    }
-                })
-            );
+                    _ = node.Nexts.RemoveWhere(n => n.Name.Value == y.Value);
+                }
+                else
+                {
+                    _ = node.Lookahead[x].Remove(y);
+                }
+            }));
 
         return new Table { Index = index, Node = node, Conflicts = conflicts.ToArray(), Actions = actions };
     }

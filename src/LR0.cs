@@ -44,15 +44,15 @@ public static class LR0
     {
         return syntax.Grammars.Select(g =>
             g.Value.Select(gl =>
-                {
-                    var line = Lists.Sequence(0)
-                        .Select(i => new Node { Name = i == 0 ? syntax.Declares[g.Key].Name : gl.Grammars[i - 1], Lines = new() { new() { Index = i, Line = gl } } })
-                        .Take(gl.Grammars.Count + 1)
-                        .ToArray();
+            {
+                var line = Lists.Sequence(0)
+                    .Select(i => new Node { Name = i == 0 ? syntax.Declares[g.Key].Name : gl.Grammars[i - 1], Lines = new() { new() { Index = i, Line = gl } } })
+                    .Take(gl.Grammars.Count + 1)
+                    .ToArray();
 
-                    line.Take(gl.Grammars.Count).Each((x, i) => x.Nexts.Add(line[i + 1]));
-                    return line;
-                }))
+                line.Take(gl.Grammars.Count).Each((x, i) => x.Nexts.Add(line[i + 1]));
+                return line;
+            }))
             .Flatten()
             .Flatten()
             .ToArray();
