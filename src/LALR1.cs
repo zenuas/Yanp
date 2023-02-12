@@ -129,35 +129,33 @@ public static class LALR1
 
     public static void Lookahead(Syntax syntax, Node node, Dictionary<string, HashSet<string>> follow, HashSet<string> nullable, Dictionary<string, HashSet<string>> head)
     {
+        var reduceable = node.Lines
+            .Where(x => x.Line.Grammars.Skip(x.Index)
+            .All(x => nullable.Contains(x.Value)))
+            .Select(x => x.Line.Name.Value)
+            .ToHashSet();
+
+        var ahead = new HashSet<Token>();
+        foreach (var look in node.Lines.Where(x => x.Index < x.Line.Grammars.Count && reduceable.Contains(x.Line.Grammars[x.Index].Value)))
+        {
+            for (var i = look.Index + 1; i < look.Line.Grammars.Count; i++)
+            {
+                var t = syntax.Declares[look.Line.Grammars[i].Value];
+                if (t.IsTerminalSymbol)
+                {
+                    _ = ahead.Add(t.Name);
+                }
+                else
+                {
+                    head[t.Name.Value].Each(x => ahead.Add(syntax.Declares[x].Name));
+                }
+                if (!nullable.Contains(t.Name.Value)) break;
+            }
+        }
+
         node.Lines
             .Where(x => x.Index >= x.Line.Grammars.Count)
-            .Each(reduce =>
-            {
-                var ahead = new HashSet<Token>();
-                node.Lookahead.Add(reduce, ahead);
-                var reduceable = node.Lines
-                    .Where(x => x.Line.Grammars.Skip(x.Index)
-                    .All(x => nullable.Contains(x.Value)))
-                    .Select(x => x.Line.Name.Value)
-                    .ToHashSet();
-
-                foreach (var look in node.Lines.Where(x => x.Index < x.Line.Grammars.Count && reduceable.Contains(x.Line.Grammars[x.Index].Value)))
-                {
-                    for (var i = look.Index + 1; i < look.Line.Grammars.Count; i++)
-                    {
-                        var t = syntax.Declares[look.Line.Grammars[i].Value];
-                        if (t.IsTerminalSymbol)
-                        {
-                            _ = ahead.Add(t.Name);
-                        }
-                        else
-                        {
-                            head[t.Name.Value].Each(x => ahead.Add(syntax.Declares[x].Name));
-                        }
-                        if (!nullable.Contains(t.Name.Value)) break;
-                    }
-                }
-            });
+            .Each(x => node.Lookahead.Add(x, ahead.ToHashSet()));
 
         node.Lookahead.Each(look =>
         {
