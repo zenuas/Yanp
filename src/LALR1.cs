@@ -12,7 +12,7 @@ public static class LALR1
     {
         var lines = GrammarLines(nodes);
         var follow = Follow(nodes, lines, Nullable(lines));
-        Lookahead(syntax, nodes, follow);
+        nodes.Each(x => Lookahead(syntax, x, follow));
     }
 
     public static GrammarLine[] GrammarLines(Node[] nodes) => nodes
@@ -89,11 +89,11 @@ public static class LALR1
         return follow;
     }
 
-    public static void Lookahead(Syntax syntax, Node[] nodes, Dictionary<string, HashSet<string>> follow)
+    public static void Lookahead(Syntax syntax, Node node, Dictionary<string, HashSet<string>> follow)
     {
-        nodes.Each(node => node.Lines
+        node.Lines
             .Where(x => x.Line.Grammars.Count == x.Index && follow.ContainsKey(x.Line.Name.Value))
-            .Each(line => node.Lookahead.Add(line, follow[line.Line.Name.Value].Select(x => syntax.Declares[x].Name).ToHashSet())));
+            .Each(line => node.Lookahead.Add(line, follow[line.Line.Name.Value].Select(x => syntax.Declares[x].Name).ToHashSet()));
     }
 
     public static Table CreateTables(Syntax syntax, Node node, int index)
