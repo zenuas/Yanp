@@ -20,7 +20,11 @@ public class LALR1Lookahead
     [Fact]
     public void Lookahead1()
     {
-        var nodes = RunString("start : left '=' right | right left : right right : ID");
+        var nodes = RunString(@"
+start : left '=' right 
+      | right
+left  : right
+right : ID");
         Assert.Equal(8, nodes.Length);
         Assert.Equal("$ACCEPT : . start $END; start : . left '=' right; left : . right; start : . right; right : . ID", nodes[0].ToString());
         Assert.Equal("$ACCEPT : start . $END", nodes[1].ToString());
