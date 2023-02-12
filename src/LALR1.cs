@@ -130,8 +130,7 @@ public static class LALR1
     public static void Lookahead(Syntax syntax, Node node, Dictionary<string, HashSet<string>> follow, HashSet<string> nullable, Dictionary<string, HashSet<string>> head)
     {
         var reduceable = node.Lines
-            .Where(x => x.Line.Grammars.Skip(x.Index)
-            .All(x => nullable.Contains(x.Value)))
+            .Where(x => x.Line.Grammars.Skip(x.Index).All(x => nullable.Contains(x.Value)))
             .Select(x => x.Line.Name.Value)
             .ToHashSet();
 
