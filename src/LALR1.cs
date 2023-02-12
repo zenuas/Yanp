@@ -1,5 +1,6 @@
 ﻿using Extensions;
 using Parser;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Yanp.Data;
@@ -11,8 +12,10 @@ public static class LALR1
     public static void Generate(Syntax syntax, Node[] nodes)
     {
         var lines = GrammarLines(nodes);
-        var follow = Follow(nodes, lines, Nullable(lines));
-        nodes.Each(x => Lookahead(syntax, x, follow));
+        var nullable = Nullable(lines);
+        var head = Head(syntax, lines, nullable);
+        var follow = Follow(nodes, lines, nullable);
+        nodes.Each(x => Lookahead(syntax, x, follow, nullable, head));
     }
 
     public static GrammarLine[] GrammarLines(Node[] nodes) => nodes
@@ -44,6 +47,41 @@ public static class LALR1
             if (!retry) break;
         }
         return nullable;
+    }
+
+    public static Dictionary<string, HashSet<string>> Head(Syntax syntax, GrammarLine[] lines, HashSet<string> nullable)
+    {
+        // s : a b | c => {Key: s, Value: {a, c}}
+        var head_first = lines
+            .Where(x => x.Grammars.Count > 0)
+            .Select(x => (Head: x.Name.Value, First: x.Grammars.First().Value))
+            .GroupBy(x => x.Head, x => x.First)
+            .ToDictionary(x => x.Key, x => x.ToHashSet());
+
+        var head = lines
+            .Select(x => x.Name.Value)
+            .Distinct()
+            .ToDictionary(x => x, _ => new HashSet<string>());
+
+        while (true)
+        {
+            var retry = false;
+
+            head_first.Each(kv => kv.Value
+                .Where(x => syntax.Declares[x].IsTerminalSymbol)
+                .Each(x => retry = head[kv.Key].Add(x) || retry));
+
+            head_first.Each(kv => kv.Value
+                .ToArray()
+                .Where(x => nullable.Contains(x) && head_first.ContainsKey(x))
+                .Select(x => head_first[x])
+                .Flatten()
+                .Each(x => retry = kv.Value.Add(x) || retry));
+
+            if (!retry) break;
+        }
+
+        return head;
     }
 
     public static Dictionary<string, HashSet<string>> Follow(Node[] nodes, GrammarLine[] lines, HashSet<string> nullable)
@@ -89,11 +127,42 @@ public static class LALR1
         return follow;
     }
 
-    public static void Lookahead(Syntax syntax, Node node, Dictionary<string, HashSet<string>> follow)
+    public static void Lookahead(Syntax syntax, Node node, Dictionary<string, HashSet<string>> follow, HashSet<string> nullable, Dictionary<string, HashSet<string>> head)
     {
         node.Lines
-            .Where(x => x.Line.Grammars.Count == x.Index && follow.ContainsKey(x.Line.Name.Value))
-            .Each(line => node.Lookahead.Add(line, follow[line.Line.Name.Value].Select(x => syntax.Declares[x].Name).ToHashSet()));
+            .Where(x => x.Index >= x.Line.Grammars.Count)
+            .Each(reduce =>
+            {
+                var ahead = new HashSet<Token>();
+                node.Lookahead.Add(reduce, ahead);
+                var reduceable = node.Lines
+                    .Where(x => x.Line.Grammars.Skip(x.Index)
+                    .All(x => nullable.Contains(x.Value)))
+                    .Select(x => x.Line.Name.Value)
+                    .ToHashSet();
+
+                foreach (var look in node.Lines.Where(x => x.Index < x.Line.Grammars.Count && reduceable.Contains(x.Line.Grammars[x.Index].Value)))
+                {
+                    for (var i = look.Index + 1; i < look.Line.Grammars.Count; i++)
+                    {
+                        var t = syntax.Declares[look.Line.Grammars[i].Value];
+                        if (t.IsTerminalSymbol)
+                        {
+                            _ = ahead.Add(t.Name);
+                        }
+                        else
+                        {
+                            head[t.Name.Value].Each(x => ahead.Add(syntax.Declares[x].Name));
+                        }
+                        if (!nullable.Contains(t.Name.Value)) break;
+                    }
+                }
+            });
+
+        node.Lookahead.Each(look =>
+        {
+            if (look.Value.IsEmpty() && follow.TryGetValue(look.Key.Line.Name.Value, out var value)) value.Each(x => look.Value.Add(syntax.Declares[x].Name));
+        });
     }
 
     public static Table CreateTables(Syntax syntax, Node node, int index)
