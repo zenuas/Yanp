@@ -56,11 +56,7 @@ public static class Engine
                 .ToArray(),
             GetGrammarLines = () => syntax.Grammars.Values
                 .Flatten()
-                .Order((a, b) =>
-                    a.LineNumber < b.LineNumber ? -1 :
-                    a.LineNumber > b.LineNumber ? 1 :
-                    a.LineColumn < b.LineColumn ? -1 :
-                    a.LineColumn - b.LineColumn)
+                .Order((a, b) => a.LineNumber != b.LineNumber ? a.LineNumber - b.LineNumber : a.LineColumn - b.LineColumn)
                 .ToArray(),
             NodeToTable = (node) => tables.First(x => x.Node.Equals(node)),
         };
