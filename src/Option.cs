@@ -1,5 +1,6 @@
 ﻿using Command;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
@@ -13,7 +14,9 @@ public class Option
 
     [ShortOption('v')]
     [LongOption("verbose")]
-    public TextReader? Verbose { get; set; } = null;
+    public void Verbose() => Exclude.Remove("v");
+
+    public HashSet<string> Exclude { get; } = new() { "v" };
 
     [ShortOption('t')]
     [LongOption("template")]

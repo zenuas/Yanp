@@ -40,7 +40,7 @@ public static class Program
         Directory
             .GetFiles(opt.Template, "*.txt")
             .Select(x => (Path: x, TemplateLevel: Path.GetExtension(Path.GetFileNameWithoutExtension(Path.GetFileNameWithoutExtension(x))).Skip(1).ToStringByChars()))
-            .Where(x => !int.TryParse(x.TemplateLevel, out var value) || value <= opt.TemplateLevel)
+            .Where(x => !opt.Exclude.Contains(x.TemplateLevel) && (!int.TryParse(x.TemplateLevel, out var value) || value <= opt.TemplateLevel))
             .AsParallel()
             .ForAll(async x =>
             {
