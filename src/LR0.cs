@@ -99,7 +99,7 @@ public static class LR0
                     .ToList())
                 {
                     var lines = group.Select(x => x.Lines).Flatten().Distinct().ToList();
-                    var found = currents.Concat(newnodes).FindFirstOrNull(x => x.Lines.Count == lines.Count && !x.Lines.Except(lines).Any());
+                    var found = currents.Concat(newnodes).FirstOrDefault(x => x.Lines.Count == lines.Count && !x.Lines.Except(lines).Any());
                     var merge = found ?? new Node { Name = syntax.Declares[group.Key].Name, Lines = lines };
                     if (found is null)
                     {
