@@ -27,7 +27,7 @@ public partial class Lexer
             var c = BaseReader.Peek();
             if (c < 0)
             {
-                Store = CreateEndOfToken();
+                Store = new Token<@Model.Syntax.Default> { Symbol = Symbols._END, Value = default! };
                 return Store;
             }
             else if (!char.IsWhiteSpace((char)c))

@@ -27,6 +27,4 @@ public partial class Lexer : ILexer<@Model.Syntax.Default>
             @:{ "@symbol.get_Value()", Symbols.@(((Func<Token, string>)Model.KeyValues["csterms"])(symbol)) },
 }
         };
-
-    public static Token<@Model.Syntax.Default> CreateEndOfToken() => new() { Symbol = Symbols._END, Value = default! };
 }
