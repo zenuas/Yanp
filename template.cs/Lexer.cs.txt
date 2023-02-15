@@ -1,17 +1,11 @@
 @using Extensions
 @using Parser
 @using Yanp.Data
-@{
-if(Model.Syntax.HeaderCode.Length > 0)
-{
-@:@Model.Syntax.HeaderCode
-}
-}
 using System.Collections.Generic;
 
 namespace @Model.GetDefine("YYNAMESPACE", "Parser");
 @Include("Utility.cs")
-public partial class Lexer : ILexer<@Model.Syntax.Default>
+public partial class Lexer
 {
     public static Dictionary<char, Symbols> ReservedChar { get; } = new()
         {
