@@ -37,19 +37,19 @@
 	powershell -NoProfile $ProgressPreference = 'SilentlyContinue' ; Compress-Archive -Force -Path .tmp\*, README.md, LICENSE -DestinationPath Yanp-bin-%DATE:/=%.zip
 	rmdir /S /Q .tmp 2>nul
 	
-	dotnet publish src --nologo -v q --clp:NoSummary -c Release -o .tmp -r win-x64 --sc false -p:PublishSingleFile=true
-	mkdir .tmp\template.cs
-	copy template.cs\*.txt .tmp\template.cs\ /Y >nul
-	copy template.cs\*.cs  .tmp\template.cs\ /Y >nul
-	powershell -NoProfile $ProgressPreference = 'SilentlyContinue' ; Compress-Archive -Force -Path .tmp\*, README.md, LICENSE -DestinationPath Yanp-win-x64-noruntime-%DATE:/=%.zip
-	rmdir /S /Q .tmp 2>nul
+	@REM dotnet publish src --nologo -v q --clp:NoSummary -c Release -o .tmp -r win-x64 --sc false -p:PublishSingleFile=true
+	@REM mkdir .tmp\template.cs
+	@REM copy template.cs\*.txt .tmp\template.cs\ /Y >nul
+	@REM copy template.cs\*.cs  .tmp\template.cs\ /Y >nul
+	@REM powershell -NoProfile $ProgressPreference = 'SilentlyContinue' ; Compress-Archive -Force -Path .tmp\*, README.md, LICENSE -DestinationPath Yanp-win-x64-noruntime-%DATE:/=%.zip
+	@REM rmdir /S /Q .tmp 2>nul
 	
-	dotnet publish src --nologo -v q --clp:NoSummary -c Release -o .tmp -r win-x64 --sc true -p:PublishSingleFile=true
-	mkdir .tmp\template.cs
-	copy template.cs\*.txt .tmp\template.cs\ /Y >nul
-	copy template.cs\*.cs  .tmp\template.cs\ /Y >nul
-	powershell -NoProfile $ProgressPreference = 'SilentlyContinue' ; Compress-Archive -Force -Path .tmp\*, README.md, LICENSE -DestinationPath Yanp-win-x64-%DATE:/=%.zip
-	rmdir /S /Q .tmp 2>nul
+	@REM dotnet publish src --nologo -v q --clp:NoSummary -c Release -o .tmp -r win-x64 --sc true -p:PublishSingleFile=true
+	@REM mkdir .tmp\template.cs
+	@REM copy template.cs\*.txt .tmp\template.cs\ /Y >nul
+	@REM copy template.cs\*.cs  .tmp\template.cs\ /Y >nul
+	@REM powershell -NoProfile $ProgressPreference = 'SilentlyContinue' ; Compress-Archive -Force -Path .tmp\*, README.md, LICENSE -DestinationPath Yanp-win-x64-%DATE:/=%.zip
+	@REM rmdir /S /Q .tmp 2>nul
 	
 	@exit /b %ERRORLEVEL%
 
