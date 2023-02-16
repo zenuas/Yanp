@@ -103,7 +103,10 @@ foreach (var reduce in reduce_to_index)
             @:case @reduce.Value:
                 @:{
                     @:Debug.WriteLine("@reduce.Key");
+                    if (actformat != "")
+                    {
                     @:@actformat
+                    }
                     @:return DoAction(Symbols.@sym, @value, @length);
                 @:}
 @:
