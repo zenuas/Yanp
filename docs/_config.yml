@@ -1,0 +1,11 @@
+title: Yanp
+description: パーサジェネレータについて
+keywords: Yanp,パーサジェネレータ
+author: zenuas
+theme: jekyll-theme-dinky
+google_analytics: G-GQP0L5QGRN
+markdown: kramdown
+kramdown:
+  hard_wrap: true
+plugins:
+  - jekyll-sitemap
