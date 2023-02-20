@@ -13,7 +13,7 @@ public static class LALR1
     {
         var lines = GrammarLines(nodes);
         var nullable = Nullable(lines);
-        var head = Head(syntax, lines, nullable);
+        var head = Head(syntax, lines);
         var follow = Follow(nodes, lines, nullable);
         nodes.Each(x => Lookahead(syntax, x, follow, nullable, head));
     }
@@ -49,7 +49,7 @@ public static class LALR1
         return nullable;
     }
 
-    public static Dictionary<string, HashSet<string>> Head(Syntax syntax, GrammarLine[] lines, HashSet<string> nullable)
+    public static Dictionary<string, HashSet<string>> Head(Syntax syntax, GrammarLine[] lines)
     {
         // s : a b | c => {Key: s, Value: {a, c}}
         var head_first = lines
