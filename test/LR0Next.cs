@@ -11,6 +11,7 @@ public class LR0Next
         var syntax = new Syntax();
         var lex = new Lexer(new() { BaseReader = new StringReader(text) });
         SyntaxParser.ParseGrammar(syntax, lex);
+        SyntaxParser.GrammarsToTerminalSymbol(syntax);
         var nodes = LR0.CreateNodes(syntax);
         LR0.Next(nodes, LR0.First(nodes));
         return nodes;

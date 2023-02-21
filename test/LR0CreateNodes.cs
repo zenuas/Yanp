@@ -11,6 +11,7 @@ public class LR0CreateNodes
         var syntax = new Syntax();
         var lex = new Lexer(new() { BaseReader = new StringReader(text) });
         SyntaxParser.ParseGrammar(syntax, lex);
+        SyntaxParser.GrammarsToTerminalSymbol(syntax);
         return LR0.CreateNodes(syntax);
     }
 

@@ -11,6 +11,7 @@ public class SyntaxParserParseGrammar
         var syntax = new Syntax();
         var lex = new Lexer(new() { BaseReader = new StringReader(text) });
         SyntaxParser.ParseGrammar(syntax, lex);
+        SyntaxParser.GrammarsToTerminalSymbol(syntax);
         return syntax;
     }
 
@@ -20,6 +21,7 @@ public class SyntaxParserParseGrammar
         var lex = new Lexer(new() { BaseReader = new StringReader(text) });
         SyntaxParser.ParseDeclaration(syntax, lex);
         SyntaxParser.ParseGrammar(syntax, lex);
+        SyntaxParser.GrammarsToTerminalSymbol(syntax);
         return syntax;
     }
 
