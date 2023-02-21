@@ -30,17 +30,17 @@ public class LexerReadAction
     [Fact]
     public void Action()
     {
-        Assert.Equal("", RunString("{}"));
-        Assert.Equal(" ", RunString("{ }"));
-        Assert.Equal(" { a } ", RunString("{ { a } }"));
-        Assert.Equal(" 'abc' ", RunString("{ 'abc' }"));
-        Assert.Equal(" '\"' ", RunString("{ '\"' }"));
-        Assert.Equal(" '\\'' ", RunString("{ '\\'' }"));
-        Assert.Equal(" '{' ", RunString("{ '{' }"));
+        Assert.Equal(RunString("{}"), "");
+        Assert.Equal(RunString("{ }"), " ");
+        Assert.Equal(RunString("{ { a } }"), " { a } ");
+        Assert.Equal(RunString("{ 'abc' }"), " 'abc' ");
+        Assert.Equal(RunString("{ '\"' }"), " '\"' ");
+        Assert.Equal(RunString("{ '\\'' }"), " '\\'' ");
+        Assert.Equal(RunString("{ '{' }"), " '{' ");
 
         var a = RunString2("{ if(true == false } a");
-        Assert.Equal(" if(true == false ", a.Action);
-        Assert.Equal(1, a.Reader.LineNumber);
-        Assert.Equal(21, a.Reader.LineColumn);
+        Assert.Equal(a.Action, " if(true == false ");
+        Assert.Equal(a.Reader.LineNumber, 1);
+        Assert.Equal(a.Reader.LineColumn, 21);
     }
 }

@@ -18,14 +18,14 @@ public class SyntaxParserParseDeclaration
     public void Null()
     {
         var y = RunString("");
-        Assert.Empty(y.Declares);
+        Assert.Equal(y.Declares.Count, 0);
     }
 
     [Fact]
     public void Left1()
     {
         var y = RunString("%left a");
-        _ = Assert.Single(y.Declares);
+        Assert.Equal(y.Declares.Count, 1);
         Assert.Equivalent(y.Declares["a"], new Declarate() { Assoc = AssocTypes.Left, Name = new() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 7, Value = "a" }, Priority = 1 });
     }
 
@@ -33,7 +33,7 @@ public class SyntaxParserParseDeclaration
     public void Left2()
     {
         var y = RunString("%left a b");
-        Assert.Equal(2, y.Declares.Count);
+        Assert.Equal(y.Declares.Count, 2);
         Assert.Equivalent(y.Declares["a"], new Declarate() { Assoc = AssocTypes.Left, Name = new() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 7, Value = "a" }, Priority = 1 });
         Assert.Equivalent(y.Declares["b"], new Declarate() { Assoc = AssocTypes.Left, Name = new() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 9, Value = "b" }, Priority = 1 });
     }
@@ -42,7 +42,7 @@ public class SyntaxParserParseDeclaration
     public void Left3()
     {
         var y = RunString("%left a b %left c");
-        Assert.Equal(3, y.Declares.Count);
+        Assert.Equal(y.Declares.Count, 3);
         Assert.Equivalent(y.Declares["a"], new Declarate() { Assoc = AssocTypes.Left, Name = new() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 7, Value = "a" }, Priority = 1 });
         Assert.Equivalent(y.Declares["b"], new Declarate() { Assoc = AssocTypes.Left, Name = new() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 9, Value = "b" }, Priority = 1 });
         Assert.Equivalent(y.Declares["c"], new Declarate() { Assoc = AssocTypes.Left, Name = new() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 17, Value = "c" }, Priority = 2 });
@@ -58,7 +58,7 @@ public class SyntaxParserParseDeclaration
     public void Type2()
     {
         var y = RunString("%type<type> a b");
-        Assert.Equal(2, y.Declares.Count);
+        Assert.Equal(y.Declares.Count, 2);
         Assert.Equivalent(y.Declares["a"], new Declarate() { Assoc = AssocTypes.Type, Name = new() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 13, Value = "a" }, Priority = 1, Type = "type" });
         Assert.Equivalent(y.Declares["b"], new Declarate() { Assoc = AssocTypes.Type, Name = new() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 15, Value = "b" }, Priority = 1, Type = "type" });
     }
@@ -67,7 +67,7 @@ public class SyntaxParserParseDeclaration
     public void Type3()
     {
         var y = RunString("%type<type> a b %type<type2> c");
-        Assert.Equal(3, y.Declares.Count);
+        Assert.Equal(y.Declares.Count, 3);
         Assert.Equivalent(y.Declares["a"], new Declarate() { Assoc = AssocTypes.Type, Name = new() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 13, Value = "a" }, Priority = 1, Type = "type" });
         Assert.Equivalent(y.Declares["b"], new Declarate() { Assoc = AssocTypes.Type, Name = new() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 15, Value = "b" }, Priority = 1, Type = "type" });
         Assert.Equivalent(y.Declares["c"], new Declarate() { Assoc = AssocTypes.Type, Name = new() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 30, Value = "c" }, Priority = 2, Type = "type2" });
@@ -77,7 +77,7 @@ public class SyntaxParserParseDeclaration
     public void Char1()
     {
         var y = RunString("%left 'a'");
-        _ = Assert.Single(y.Declares);
+        Assert.Equal(y.Declares.Count, 1);
         Assert.Equivalent(y.Declares["'a'"], new Declarate() { Assoc = AssocTypes.Left, Name = new() { Type = Symbols.CHAR, LineNumber = 1, LineColumn = 7, Value = "'a'" }, Priority = 1 });
     }
 
@@ -85,7 +85,7 @@ public class SyntaxParserParseDeclaration
     public void Char2()
     {
         var y = RunString("%left 'a' a");
-        Assert.Equal(2, y.Declares.Count);
+        Assert.Equal(y.Declares.Count, 2);
         Assert.Equivalent(y.Declares["'a'"], new Declarate() { Assoc = AssocTypes.Left, Name = new() { Type = Symbols.CHAR, LineNumber = 1, LineColumn = 7, Value = "'a'" }, Priority = 1 });
         Assert.Equivalent(y.Declares["a"], new Declarate() { Assoc = AssocTypes.Left, Name = new() { Type = Symbols.VAR, LineNumber = 1, LineColumn = 11, Value = "a" }, Priority = 1 });
     }
@@ -101,10 +101,10 @@ world
 %}
 %token b
 ");
-        Assert.Equal(2, y.Declares.Count);
+        Assert.Equal(y.Declares.Count, 2);
         Assert.Equivalent(y.Declares["a"], new Declarate() { Assoc = AssocTypes.Type, Name = new() { Type = Symbols.VAR, LineNumber = 2, LineColumn = 8, Value = "a" }, Priority = 1 });
         Assert.Equivalent(y.Declares["b"], new Declarate() { Assoc = AssocTypes.Type, Name = new() { Type = Symbols.VAR, LineNumber = 7, LineColumn = 8, Value = "b" }, Priority = 2 });
-        Assert.Equal("hello\r\nworld\r\n", y.HeaderCode.ToString());
+        Assert.Equal(y.HeaderCode.ToString(), "hello\r\nworld\r\n");
     }
 
     [Fact]
@@ -117,7 +117,7 @@ world
     public void Default2()
     {
         var y = RunString("%default a");
-        Assert.Equal("a", y.Default);
+        Assert.Equal(y.Default, "a");
     }
 
     [Fact]
@@ -137,15 +137,15 @@ world
     public void Define2()
     {
         var y = RunString("%define a");
-        Assert.Equal("", y.Defines["a"]);
+        Assert.Equal(y.Defines["a"], "");
     }
 
     [Fact]
     public void Define3()
     {
         var y = RunString("%define a b");
-        _ = Assert.Single(y.Defines);
-        Assert.Equal("b", y.Defines["a"]);
+        Assert.Equal(y.Defines.Count, 1);
+        Assert.Equal(y.Defines["a"], "b");
     }
 
     [Fact]
@@ -164,9 +164,9 @@ world
 %define a b
 %define c d
 ");
-        Assert.Equal(2, y.Defines.Count);
-        Assert.Equal("b", y.Defines["a"]);
-        Assert.Equal("d", y.Defines["c"]);
+        Assert.Equal(y.Defines.Count, 2);
+        Assert.Equal(y.Defines["a"], "b");
+        Assert.Equal(y.Defines["c"], "d");
     }
 
     [Fact]
@@ -185,13 +185,13 @@ world
     public void Start3()
     {
         var y = RunString("%start a");
-        Assert.Equal("a", y.Start);
+        Assert.Equal(y.Start, "a");
     }
 
     [Fact]
     public void Start4()
     {
         var y = RunString("%start a %start b");
-        Assert.Equal("b", y.Start);
+        Assert.Equal(y.Start, "b");
     }
 }

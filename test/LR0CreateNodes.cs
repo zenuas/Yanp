@@ -19,56 +19,56 @@ public class LR0CreateNodes
     public void Null()
     {
         var nodes = RunString("");
-        Assert.Empty(nodes);
+        Assert.Equal(nodes.Length, 0);
     }
 
     [Fact]
     public void Node1()
     {
         var nodes = RunString("start :");
-        _ = Assert.Single(nodes);
-        _ = Assert.Single(nodes[0].Lines);
-        Assert.Equal("start : .", nodes[0].Lines[0].ToString());
+        Assert.Equal(nodes.Length, 1);
+        Assert.Equal(nodes[0].Lines.Count, 1);
+        Assert.Equal(nodes[0].Lines[0].ToString(), "start : .");
     }
 
     [Fact]
     public void Node2()
     {
         var nodes = RunString("start : a");
-        Assert.Equal(2, nodes.Length);
-        _ = Assert.Single(nodes[0].Lines);
-        _ = Assert.Single(nodes[1].Lines);
-        Assert.Equal("start : . a", nodes[0].Lines[0].ToString());
-        Assert.Equal("start : a .", nodes[1].Lines[0].ToString());
+        Assert.Equal(nodes.Length, 2);
+        Assert.Equal(nodes[0].Lines.Count, 1);
+        Assert.Equal(nodes[1].Lines.Count, 1);
+        Assert.Equal(nodes[0].Lines[0].ToString(), "start : . a");
+        Assert.Equal(nodes[1].Lines[0].ToString(), "start : a .");
     }
 
     [Fact]
     public void Node3()
     {
         var nodes = RunString("start : a b");
-        Assert.Equal(3, nodes.Length);
-        _ = Assert.Single(nodes[0].Lines);
-        _ = Assert.Single(nodes[1].Lines);
-        _ = Assert.Single(nodes[2].Lines);
-        Assert.Equal("start : . a b", nodes[0].Lines[0].ToString());
-        Assert.Equal("start : a . b", nodes[1].Lines[0].ToString());
-        Assert.Equal("start : a b .", nodes[2].Lines[0].ToString());
+        Assert.Equal(nodes.Length, 3);
+        Assert.Equal(nodes[0].Lines.Count, 1);
+        Assert.Equal(nodes[1].Lines.Count, 1);
+        Assert.Equal(nodes[2].Lines.Count, 1);
+        Assert.Equal(nodes[0].Lines[0].ToString(), "start : . a b");
+        Assert.Equal(nodes[1].Lines[0].ToString(), "start : a . b");
+        Assert.Equal(nodes[2].Lines[0].ToString(), "start : a b .");
     }
 
     [Fact]
     public void Node4()
     {
         var nodes = RunString("start : a b a : 'A'");
-        Assert.Equal(5, nodes.Length);
-        _ = Assert.Single(nodes[0].Lines);
-        _ = Assert.Single(nodes[1].Lines);
-        _ = Assert.Single(nodes[2].Lines);
-        _ = Assert.Single(nodes[3].Lines);
-        _ = Assert.Single(nodes[4].Lines);
-        Assert.Equal("start : . a b", nodes[0].Lines[0].ToString());
-        Assert.Equal("start : a . b", nodes[1].Lines[0].ToString());
-        Assert.Equal("start : a b .", nodes[2].Lines[0].ToString());
-        Assert.Equal("a : . 'A'", nodes[3].Lines[0].ToString());
-        Assert.Equal("a : 'A' .", nodes[4].Lines[0].ToString());
+        Assert.Equal(nodes.Length, 5);
+        Assert.Equal(nodes[0].Lines.Count, 1);
+        Assert.Equal(nodes[1].Lines.Count, 1);
+        Assert.Equal(nodes[2].Lines.Count, 1);
+        Assert.Equal(nodes[3].Lines.Count, 1);
+        Assert.Equal(nodes[4].Lines.Count, 1);
+        Assert.Equal(nodes[0].Lines[0].ToString(), "start : . a b");
+        Assert.Equal(nodes[1].Lines[0].ToString(), "start : a . b");
+        Assert.Equal(nodes[2].Lines[0].ToString(), "start : a b .");
+        Assert.Equal(nodes[3].Lines[0].ToString(), "a : . 'A'");
+        Assert.Equal(nodes[4].Lines[0].ToString(), "a : 'A' .");
     }
 }

@@ -34,7 +34,7 @@ if : IF expr stmt
    | IF expr stmt ELSE stmt
 expr : '2'
 ");
-        Assert.Equal(@"
+        Assert.Equal(verbose, @"
 state 0
 	$ACCEPT : . stmt $END
 	stmt : . if
@@ -107,7 +107,7 @@ state 9
 state 10
 	if : IF expr stmt ELSE stmt . [$END, ELSE]
 
-", verbose);
+");
     }
 
     [Fact]
@@ -122,7 +122,7 @@ if : IF expr stmt
    | IF expr stmt ELSE stmt
 expr : '2'
 ");
-        Assert.Equal(@"
+        Assert.Equal(verbose, @"
 state 0
 	$ACCEPT : . stmt $END
 	stmt : . if
@@ -194,7 +194,7 @@ state 9
 state 10
 	if : IF expr stmt ELSE stmt . [$END, ELSE]
 
-", verbose);
+");
     }
 
     [Fact]
@@ -209,7 +209,7 @@ if : IF expr stmt
    | IF expr stmt ELSE stmt
 expr : '2'
 ");
-        Assert.Equal(@"
+        Assert.Equal(verbose, @"
 state 0
 	$ACCEPT : . stmt $END
 	stmt : . if
@@ -281,7 +281,7 @@ state 9
 state 10
 	if : IF expr stmt ELSE stmt . [$END, ELSE]
 
-", verbose);
+");
     }
 
     [Fact]
@@ -292,7 +292,7 @@ state 10
 expr : expr '+' expr
      | NUM
 ");
-        Assert.Equal(@"
+        Assert.Equal(verbose, @"
 state 0
 	$ACCEPT : . expr $END
 	expr : . expr '+' expr
@@ -329,7 +329,7 @@ state 4
 state 5
 	expr : NUM . ['+', $END]
 
-", verbose);
+");
     }
 
     [Fact]
@@ -341,7 +341,7 @@ state 5
 expr : expr '+' expr
      | NUM
 ");
-        Assert.Equal(@"
+        Assert.Equal(verbose, @"
 state 0
 	$ACCEPT : . expr $END
 	expr : . expr '+' expr
@@ -375,7 +375,7 @@ state 4
 state 5
 	expr : NUM . ['+', $END]
 
-", verbose);
+");
     }
 
     [Fact]
@@ -387,7 +387,7 @@ state 5
 expr : expr '+' expr
      | NUM
 ");
-        Assert.Equal(@"
+        Assert.Equal(verbose, @"
 state 0
 	$ACCEPT : . expr $END
 	expr : . expr '+' expr
@@ -423,7 +423,7 @@ state 4
 state 5
 	expr : NUM . ['+', $END]
 
-", verbose);
+");
     }
 
     [Fact]
@@ -437,7 +437,7 @@ expr : expr '+' expr
      | expr '*' expr
      | NUM
 ");
-        Assert.Equal(@"
+        Assert.Equal(verbose, @"
 state 0
 	$ACCEPT : . expr $END
 	expr : . expr '+' expr
@@ -492,7 +492,7 @@ state 6
 state 7
 	expr : NUM . ['*', '+', $END]
 
-", verbose);
+");
     }
 
     [Fact]
@@ -508,7 +508,7 @@ expr : expr '+' expr
      | expr '/' expr
      | NUM
 ");
-        Assert.Equal(@"
+        Assert.Equal(verbose, @"
 state 0
 	$ACCEPT : . expr $END
 	expr : . expr '+' expr
@@ -617,7 +617,7 @@ state 10
 state 11
 	expr : NUM . ['-', '*', '/', '+', $END]
 
-", verbose);
+");
     }
 
     [Fact]
@@ -635,7 +635,7 @@ expr : expr '+' expr
      | expr '^' expr
      | NUM
 ");
-        Assert.Equal(@"
+        Assert.Equal(verbose, @"
 state 0
 	$ACCEPT : . expr $END
 	expr : . expr '+' expr
@@ -783,7 +783,7 @@ state 12
 state 13
 	expr : NUM . ['-', '*', '/', '^', '+', $END]
 
-", verbose);
+");
     }
 
     [Fact]
@@ -797,7 +797,7 @@ expr : expr '+' expr
      | expr '-' expr
      | NUM
 ");
-        Assert.Equal(@"
+        Assert.Equal(verbose, @"
 state 0
 	$ACCEPT : . expr $END
 	expr : . expr '+' expr
@@ -857,6 +857,6 @@ state 6
 state 7
 	expr : NUM . ['-', '+', $END]
 
-", verbose);
+");
     }
 }

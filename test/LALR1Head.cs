@@ -23,7 +23,7 @@ public class LALR1Head
     {
         var head = RunString("start :");
         Assert.True(head.ContainsKey("start"));
-        Assert.Empty(head["start"]);
+        Assert.Equal(head["start"].Count, 0);
         Assert.Superset(head["start"], new HashSet<string> { });
     }
 
@@ -32,7 +32,7 @@ public class LALR1Head
     {
         var head = RunString("start : 'A' 'B'");
         Assert.True(head.ContainsKey("start"));
-        Assert.Single(head["start"]);
+        Assert.Equal(head["start"].Count, 1);
         Assert.Superset(head["start"], new HashSet<string> { "'A'" });
     }
 
@@ -41,13 +41,13 @@ public class LALR1Head
     {
         var head = RunString("start : a b | c a : 'A' b : 'B' c : 'C'");
         Assert.True(head.ContainsKey("start"));
-        Assert.Equal(2, head["start"].Count);
+        Assert.Equal(head["start"].Count, 2);
         Assert.Superset(head["start"], new HashSet<string> { "'A'", "'C'" });
-        Assert.Single(head["a"]);
+        Assert.Equal(head["a"].Count, 1);
         Assert.Superset(head["a"], new HashSet<string> { "'A'" });
-        Assert.Single(head["b"]);
+        Assert.Equal(head["b"].Count, 1);
         Assert.Superset(head["b"], new HashSet<string> { "'B'" });
-        Assert.Single(head["c"]);
+        Assert.Equal(head["c"].Count, 1);
         Assert.Superset(head["c"], new HashSet<string> { "'C'" });
     }
 }

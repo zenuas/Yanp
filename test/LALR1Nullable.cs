@@ -22,7 +22,7 @@ public class LALR1Nullable
     public void Nullable1()
     {
         var hash = RunString("start :");
-        _ = Assert.Single(hash);
+        Assert.Equal(hash.Count, 1);
         Assert.Contains("start", hash);
     }
 
@@ -30,7 +30,7 @@ public class LALR1Nullable
     public void Nullable2()
     {
         var hash = RunString("start : a 'B' a :");
-        _ = Assert.Single(hash);
+        Assert.Equal(hash.Count, 1);
         Assert.Contains("a", hash);
     }
 
@@ -38,7 +38,7 @@ public class LALR1Nullable
     public void Nullable3()
     {
         var hash = RunString("start : a b 'C' a : void b : void void :");
-        Assert.Equal(3, hash.Count);
+        Assert.Equal(hash.Count, 3);
         Assert.Contains("a", hash);
         Assert.Contains("b", hash);
         Assert.Contains("void", hash);

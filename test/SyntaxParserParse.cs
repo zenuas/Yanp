@@ -14,11 +14,11 @@ public class SyntaxParserParse
         var y = RunString(@"
 %%
 ");
-        Assert.Equal("", y.Start);
-        Assert.Equal("", y.HeaderCode.ToString());
-        Assert.Equal("", y.FooterCode.ToString());
-        Assert.Empty(y.Declares);
-        Assert.Empty(y.Grammars);
+        Assert.Equal(y.Start, "");
+        Assert.Equal(y.HeaderCode.ToString(), "");
+        Assert.Equal(y.FooterCode.ToString(), "");
+        Assert.Equal(y.Declares.Count, 0);
+        Assert.Equal(y.Grammars.Count, 0);
     }
 
     [Fact]
@@ -27,11 +27,11 @@ public class SyntaxParserParse
         var y = RunString(@"
 %%
 %%");
-        Assert.Equal("", y.Start);
-        Assert.Equal("", y.HeaderCode.ToString());
-        Assert.Equal("", y.FooterCode.ToString());
-        Assert.Empty(y.Declares);
-        Assert.Empty(y.Grammars);
+        Assert.Equal(y.Start, "");
+        Assert.Equal(y.HeaderCode.ToString(), "");
+        Assert.Equal(y.FooterCode.ToString(), "");
+        Assert.Equal(y.Declares.Count, 0);
+        Assert.Equal(y.Grammars.Count, 0);
     }
 
     [Fact]
@@ -41,11 +41,11 @@ public class SyntaxParserParse
 %%
 %%
 ");
-        Assert.Equal("", y.Start);
-        Assert.Equal("", y.HeaderCode.ToString());
-        Assert.Equal("", y.FooterCode.ToString());
-        Assert.Empty(y.Declares);
-        Assert.Empty(y.Grammars);
+        Assert.Equal(y.Start, "");
+        Assert.Equal(y.HeaderCode.ToString(), "");
+        Assert.Equal(y.FooterCode.ToString(), "");
+        Assert.Equal(y.Declares.Count, 0);
+        Assert.Equal(y.Grammars.Count, 0);
     }
 
     [Fact]
@@ -56,11 +56,11 @@ public class SyntaxParserParse
 %%
 %%
 ");
-        Assert.Equal("", y.Start);
-        Assert.Equal("", y.HeaderCode.ToString());
-        Assert.Equal("", y.FooterCode.ToString());
-        Assert.Empty(y.Declares);
-        Assert.Empty(y.Grammars);
+        Assert.Equal(y.Start, "");
+        Assert.Equal(y.HeaderCode.ToString(), "");
+        Assert.Equal(y.FooterCode.ToString(), "");
+        Assert.Equal(y.Declares.Count, 0);
+        Assert.Equal(y.Grammars.Count, 0);
     }
 
     [Fact]
@@ -71,11 +71,11 @@ public class SyntaxParserParse
 %%
 %%
 ");
-        Assert.Equal("", y.Start);
-        Assert.Equal("", y.HeaderCode.ToString());
-        Assert.Equal("", y.FooterCode.ToString());
-        Assert.Empty(y.Declares);
-        Assert.Empty(y.Grammars);
+        Assert.Equal(y.Start, "");
+        Assert.Equal(y.HeaderCode.ToString(), "");
+        Assert.Equal(y.FooterCode.ToString(), "");
+        Assert.Equal(y.Declares.Count, 0);
+        Assert.Equal(y.Grammars.Count, 0);
     }
 
     [Fact]
@@ -96,18 +96,18 @@ public class SyntaxParserParse
 %%
 a : 'A'
 ");
-        Assert.Equal("b", y.Start);
-        Assert.Equal("", y.HeaderCode.ToString());
-        Assert.Equal("", y.FooterCode.ToString());
-        Assert.Equal(2, y.Declares.Count);
-        _ = Assert.Single(y.Grammars);
+        Assert.Equal(y.Start, "b");
+        Assert.Equal(y.HeaderCode.ToString(), "");
+        Assert.Equal(y.FooterCode.ToString(), "");
+        Assert.Equal(y.Declares.Count, 2);
+        Assert.Equal(y.Grammars.Count, 1);
         Assert.Equivalent(y.Declares["a"], new Declarate() { Assoc = AssocTypes.Type, Name = new() { Type = Symbols.VAR, LineNumber = 4, LineColumn = 1, Value = "a" }, Priority = 0, IsTerminalSymbol = false });
         Assert.Equivalent(y.Declares["'A'"], new Declarate() { Assoc = AssocTypes.Type, Name = new() { Type = Symbols.CHAR, LineNumber = 4, LineColumn = 5, Value = "'A'" }, Priority = 0, IsTerminalSymbol = true });
-        _ = Assert.Single(y.Grammars["a"]);
+        Assert.Equal(y.Grammars["a"].Count, 1);
         var yg = y.Grammars["a"][0];
         Assert.Null(yg.Action);
         Assert.Null(yg.Prec);
-        _ = Assert.Single(yg.Grammars);
+        Assert.Equal(yg.Grammars.Count, 1);
         Assert.Equivalent(yg.Grammars[0], new Token() { Type = Symbols.CHAR, LineNumber = 4, LineColumn = 5, Value = "'A'" });
     }
 
@@ -118,18 +118,18 @@ a : 'A'
 %%
 a : B
 ");
-        Assert.Equal("a", y.Start);
-        Assert.Equal("", y.HeaderCode.ToString());
-        Assert.Equal("", y.FooterCode.ToString());
-        Assert.Equal(2, y.Declares.Count);
-        _ = Assert.Single(y.Grammars);
+        Assert.Equal(y.Start, "a");
+        Assert.Equal(y.HeaderCode.ToString(), "");
+        Assert.Equal(y.FooterCode.ToString(), "");
+        Assert.Equal(y.Declares.Count, 2);
+        Assert.Equal(y.Grammars.Count, 1);
         Assert.Equivalent(y.Declares["a"], new Declarate() { Assoc = AssocTypes.Type, Name = new() { Type = Symbols.VAR, LineNumber = 3, LineColumn = 1, Value = "a" }, Priority = 0, IsTerminalSymbol = false });
         Assert.Equivalent(y.Declares["B"], new Declarate() { Assoc = AssocTypes.Type, Name = new() { Type = Symbols.VAR, LineNumber = 3, LineColumn = 5, Value = "B" }, Priority = 0, IsTerminalSymbol = true });
-        _ = Assert.Single(y.Grammars["a"]);
+        Assert.Equal(y.Grammars["a"].Count, 1);
         var yg = y.Grammars["a"][0];
         Assert.Null(yg.Action);
         Assert.Null(yg.Prec);
-        _ = Assert.Single(yg.Grammars);
+        Assert.Equal(yg.Grammars.Count, 1);
         Assert.Equivalent(yg.Grammars[0], new Token() { Type = Symbols.VAR, LineNumber = 3, LineColumn = 5, Value = "B" });
     }
 
@@ -143,13 +143,13 @@ a : B
 %right b
 %%
 ");
-        Assert.Equal("", y.Start);
-        Assert.Equal(" x y z\r\n", y.HeaderCode.ToString());
-        Assert.Equal("", y.FooterCode.ToString());
-        Assert.Equal(2, y.Declares.Count);
+        Assert.Equal(y.Start, "");
+        Assert.Equal(y.HeaderCode.ToString(), " x y z\r\n");
+        Assert.Equal(y.FooterCode.ToString(), "");
+        Assert.Equal(y.Declares.Count, 2);
         Assert.Equivalent(y.Declares["a"], new Declarate() { Assoc = AssocTypes.Left, Name = new() { Type = Symbols.VAR, LineNumber = 2, LineColumn = 7, Value = "a" }, Priority = 1, IsTerminalSymbol = true });
         Assert.Equivalent(y.Declares["b"], new Declarate() { Assoc = AssocTypes.Right, Name = new() { Type = Symbols.VAR, LineNumber = 5, LineColumn = 8, Value = "b" }, Priority = 2, IsTerminalSymbol = true });
-        Assert.Empty(y.Grammars);
+        Assert.Equal(y.Grammars.Count, 0);
     }
 
     [Fact]
@@ -163,13 +163,13 @@ x y z
 %right b
 %%
 ");
-        Assert.Equal("", y.Start);
-        Assert.Equal("x y z\r\n", y.HeaderCode.ToString());
-        Assert.Equal("", y.FooterCode.ToString());
-        Assert.Equal(2, y.Declares.Count);
+        Assert.Equal(y.Start, "");
+        Assert.Equal(y.HeaderCode.ToString(), "x y z\r\n");
+        Assert.Equal(y.FooterCode.ToString(), "");
+        Assert.Equal(y.Declares.Count, 2);
         Assert.Equivalent(y.Declares["a"], new Declarate() { Assoc = AssocTypes.Left, Name = new() { Type = Symbols.VAR, LineNumber = 2, LineColumn = 7, Value = "a" }, Priority = 1, IsTerminalSymbol = true });
         Assert.Equivalent(y.Declares["b"], new Declarate() { Assoc = AssocTypes.Right, Name = new() { Type = Symbols.VAR, LineNumber = 6, LineColumn = 8, Value = "b" }, Priority = 2, IsTerminalSymbol = true });
-        Assert.Empty(y.Grammars);
+        Assert.Equal(y.Grammars.Count, 0);
     }
 
     [Fact]
@@ -185,13 +185,13 @@ z
 %right b
 %%
 ");
-        Assert.Equal("", y.Start);
-        Assert.Equal("x\r\ny\r\nz\r\n", y.HeaderCode.ToString());
-        Assert.Equal("", y.FooterCode.ToString());
-        Assert.Equal(2, y.Declares.Count);
+        Assert.Equal(y.Start, "");
+        Assert.Equal(y.HeaderCode.ToString(), "x\r\ny\r\nz\r\n");
+        Assert.Equal(y.FooterCode.ToString(), "");
+        Assert.Equal(y.Declares.Count, 2);
         Assert.Equivalent(y.Declares["a"], new Declarate() { Assoc = AssocTypes.Left, Name = new() { Type = Symbols.VAR, LineNumber = 2, LineColumn = 7, Value = "a" }, Priority = 1, IsTerminalSymbol = true });
         Assert.Equivalent(y.Declares["b"], new Declarate() { Assoc = AssocTypes.Right, Name = new() { Type = Symbols.VAR, LineNumber = 8, LineColumn = 8, Value = "b" }, Priority = 2, IsTerminalSymbol = true });
-        Assert.Empty(y.Grammars);
+        Assert.Equal(y.Grammars.Count, 0);
     }
 
     [Fact]
@@ -200,11 +200,11 @@ z
         var y = RunString(@"
 %%
 %% x y z");
-        Assert.Equal("", y.Start);
-        Assert.Equal("", y.HeaderCode.ToString());
-        Assert.Equal(" x y z\r\n", y.FooterCode.ToString());
-        Assert.Empty(y.Declares);
-        Assert.Empty(y.Grammars);
+        Assert.Equal(y.Start, "");
+        Assert.Equal(y.HeaderCode.ToString(), "");
+        Assert.Equal(y.FooterCode.ToString(), " x y z\r\n");
+        Assert.Equal(y.Declares.Count, 0);
+        Assert.Equal(y.Grammars.Count, 0);
     }
 
     [Fact]
@@ -214,11 +214,11 @@ z
 %%
 %%
 x y z");
-        Assert.Equal("", y.Start);
-        Assert.Equal("", y.HeaderCode.ToString());
-        Assert.Equal("x y z", y.FooterCode.ToString());
-        Assert.Empty(y.Declares);
-        Assert.Empty(y.Grammars);
+        Assert.Equal(y.Start, "");
+        Assert.Equal(y.HeaderCode.ToString(), "");
+        Assert.Equal(y.FooterCode.ToString(), "x y z");
+        Assert.Equal(y.Declares.Count, 0);
+        Assert.Equal(y.Grammars.Count, 0);
     }
 
     [Fact]
@@ -231,11 +231,11 @@ x
 y
 z
 ");
-        Assert.Equal("", y.Start);
-        Assert.Equal("", y.HeaderCode.ToString());
-        Assert.Equal("x\r\ny\r\nz\r\n", y.FooterCode.ToString());
-        Assert.Empty(y.Declares);
-        Assert.Empty(y.Grammars);
+        Assert.Equal(y.Start, "");
+        Assert.Equal(y.HeaderCode.ToString(), "");
+        Assert.Equal(y.FooterCode.ToString(), "x\r\ny\r\nz\r\n");
+        Assert.Equal(y.Declares.Count, 0);
+        Assert.Equal(y.Grammars.Count, 0);
     }
 
     [Fact]
@@ -250,11 +250,11 @@ y
 z
 
 ");
-        Assert.Equal("", y.Start);
-        Assert.Equal("", y.HeaderCode.ToString());
-        Assert.Equal("\r\nx\r\ny\r\nz\r\n\r\n", y.FooterCode.ToString());
-        Assert.Empty(y.Declares);
-        Assert.Empty(y.Grammars);
+        Assert.Equal(y.Start, "");
+        Assert.Equal(y.HeaderCode.ToString(), "");
+        Assert.Equal(y.FooterCode.ToString(), "\r\nx\r\ny\r\nz\r\n\r\n");
+        Assert.Equal(y.Declares.Count, 0);
+        Assert.Equal(y.Grammars.Count, 0);
     }
 
     [Fact]
@@ -265,10 +265,10 @@ z
 %%x
 y z
 ");
-        Assert.Equal("", y.Start);
-        Assert.Equal("", y.HeaderCode.ToString());
-        Assert.Equal("x\r\ny z\r\n", y.FooterCode.ToString());
-        Assert.Empty(y.Declares);
-        Assert.Empty(y.Grammars);
+        Assert.Equal(y.Start, "");
+        Assert.Equal(y.HeaderCode.ToString(), "");
+        Assert.Equal(y.FooterCode.ToString(), "x\r\ny z\r\n");
+        Assert.Equal(y.Declares.Count, 0);
+        Assert.Equal(y.Grammars.Count, 0);
     }
 }

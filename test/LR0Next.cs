@@ -21,25 +21,25 @@ public class LR0Next
     public void Next1()
     {
         var nodes = RunString("start : a a : 'A'");
-        Assert.Equal(4, nodes.Length);
-        Assert.Equal("start : . a; a : . 'A'", nodes[0].ToString());
-        Assert.Equal("start : a .", nodes[1].ToString());
-        Assert.Equal("a : . 'A'", nodes[2].ToString());
-        Assert.Equal("a : 'A' .", nodes[3].ToString());
+        Assert.Equal(nodes.Length, 4);
+        Assert.Equal(nodes[0].ToString(), "start : . a; a : . 'A'");
+        Assert.Equal(nodes[1].ToString(), "start : a .");
+        Assert.Equal(nodes[2].ToString(), "a : . 'A'");
+        Assert.Equal(nodes[3].ToString(), "a : 'A' .");
     }
 
     [Fact]
     public void Next2()
     {
         var nodes = RunString("start : a a : b b : c c : 'C'");
-        Assert.Equal(8, nodes.Length);
-        Assert.Equal("start : . a; a : . b; b : . c; c : . 'C'", nodes[0].ToString());
-        Assert.Equal("start : a .", nodes[1].ToString());
-        Assert.Equal("a : . b; b : . c; c : . 'C'", nodes[2].ToString());
-        Assert.Equal("a : b .", nodes[3].ToString());
-        Assert.Equal("b : . c; c : . 'C'", nodes[4].ToString());
-        Assert.Equal("b : c .", nodes[5].ToString());
-        Assert.Equal("c : . 'C'", nodes[6].ToString());
-        Assert.Equal("c : 'C' .", nodes[7].ToString());
+        Assert.Equal(nodes.Length, 8);
+        Assert.Equal(nodes[0].ToString(), "start : . a; a : . b; b : . c; c : . 'C'");
+        Assert.Equal(nodes[1].ToString(), "start : a .");
+        Assert.Equal(nodes[2].ToString(), "a : . b; b : . c; c : . 'C'");
+        Assert.Equal(nodes[3].ToString(), "a : b .");
+        Assert.Equal(nodes[4].ToString(), "b : . c; c : . 'C'");
+        Assert.Equal(nodes[5].ToString(), "b : c .");
+        Assert.Equal(nodes[6].ToString(), "c : . 'C'");
+        Assert.Equal(nodes[7].ToString(), "c : 'C' .");
     }
 }
