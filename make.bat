@@ -32,8 +32,10 @@
 	
 	dotnet publish src --nologo -v q --clp:NoSummary -c Release -o .tmp
 	mkdir .tmp\template.cs
-	copy template.cs\*.txt .tmp\template.cs\ /Y >nul
-	copy template.cs\*.cs  .tmp\template.cs\ /Y >nul
+	mkdir .tmp\template.debug
+	copy template.cs\*.txt    .tmp\template.cs\    /Y >nul
+	copy template.cs\*.cs     .tmp\template.cs\    /Y >nul
+	copy template.debug\*.txt .tmp\template.debug\ /Y >nul
 	powershell -NoProfile $ProgressPreference = 'SilentlyContinue' ; Compress-Archive -Force -Path .tmp\*, README.md, LICENSE -DestinationPath Yanp-bin-%DATE:/=%.zip
 	rmdir /S /Q .tmp 2>nul
 	

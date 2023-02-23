@@ -1,0 +1,18 @@
+@using Extensions
+## Mermaid
+
+```mermaid
+graph TD
+	classDef default text-align:left
+@foreach (var table in Model.Tables)
+{
+	@:@(table.get_Index())["@table.get_Node().LinesToString().Join("<br>")"]
+}
+@foreach (var table in Model.Tables)
+{
+	foreach (var next in table.get_Node().Nexts)
+	{
+	@:@table.get_Index() -- @next.get_Name() --> @Model.NodeToTable(next).get_Index()
+	}
+}
+```
