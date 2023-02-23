@@ -37,7 +37,7 @@ public static class LALR1
             var retry = false;
             foreach (var line in lines.Where(x => !nullable.Contains(x.Name.Value)))
             {
-                if (line.Grammars.Where(x => !nullable.Contains(x.Value)).IsEmpty())
+                if (line.Grammars.All(x => nullable.Contains(x.Value)))
                 {
                     _ = nullable.Add(line.Name.Value);
                     retry = true;
