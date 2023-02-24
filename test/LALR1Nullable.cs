@@ -22,25 +22,20 @@ public class LALR1Nullable
     public void Nullable1()
     {
         var hash = RunString("start :");
-        Assert.Equal(hash.Count, 1);
-        Assert.Contains("start", hash);
+        Assert.Equal(hash, new HashSet<string> { "start" });
     }
 
     [Fact]
     public void Nullable2()
     {
         var hash = RunString("start : a 'B' a :");
-        Assert.Equal(hash.Count, 1);
-        Assert.Contains("a", hash);
+        Assert.Equal(hash, new HashSet<string> { "a" });
     }
 
     [Fact]
     public void Nullable3()
     {
         var hash = RunString("start : a b 'C' a : void b : void void :");
-        Assert.Equal(hash.Count, 3);
-        Assert.Contains("a", hash);
-        Assert.Contains("b", hash);
-        Assert.Contains("void", hash);
+        Assert.Equal(hash, new HashSet<string> { "a", "b", "void" });
     }
 }
