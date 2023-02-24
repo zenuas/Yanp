@@ -49,7 +49,7 @@ public static class CommandLine
             var is_method_name = false;
             if (args[i].StartsWith("--"))
             {
-                method = map[args[i].Substring(2)].Method;
+                method = map[args[i][2..]].Method;
                 is_method_name = true;
             }
             else if (args[i].Length > 1 && args[i].StartsWith("-"))

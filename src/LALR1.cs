@@ -234,6 +234,6 @@ public static class LALR1
                 }
             }));
 
-        return new Table { Index = index, Node = node, Conflicts = conflicts.ToArray(), Actions = actions };
+        return new() { Index = index, Node = node, Conflicts = conflicts.ToArray(), Actions = actions };
     }
 }

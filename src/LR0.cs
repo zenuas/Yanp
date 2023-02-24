@@ -24,8 +24,8 @@ public static class LR0
         var start = new Token { Type = Symbols.VAR, LineNumber = 0, LineColumn = 0, Value = syntax.Start };
         var end = new Token { Type = Symbols.VAR, LineNumber = 0, LineColumn = 0, Value = "$END" };
 
-        syntax.Declares.Add(accept.Value, new Declarate { Name = accept, Assoc = AssocTypes.Type, IsTerminalSymbol = false });
-        syntax.Declares.Add(end.Value, new Declarate { Name = end, Assoc = AssocTypes.Type });
+        syntax.Declares.Add(accept.Value, new() { Name = accept, Assoc = AssocTypes.Type, IsTerminalSymbol = false });
+        syntax.Declares.Add(end.Value, new() { Name = end, Assoc = AssocTypes.Type });
 
         // $ACCEPT : syntax.Start $END
         syntax.Grammars.Add(accept.Value, new()
@@ -99,11 +99,11 @@ public static class LR0
                     .ToList())
                 {
                     var lines = group.Select(x => x.Lines).Flatten().Distinct().ToList();
-                    var found = currents.Concat(newnodes).FirstOrDefault(x => x.Lines.Count == lines.Count && !x.Lines.Except(lines).Any());
+                    var found = currents.Concat(newnodes).FirstOrDefault(x => x.Lines.Count == lines.Count && x.Lines.Except(lines).IsEmpty());
                     var merge = found ?? new Node { Name = syntax.Declares[group.Key].Name, Lines = lines };
                     if (found is null)
                     {
-                        group.Select(x => x.Nexts).Flatten().Distinct((a, b) => a!.Equals(b)).Each(y => merge.Nexts.Add(y));
+                        group.Select(x => x.Nexts).Flatten().Distinct((a, b) => a!.Equals(b)).Each(x => merge.Nexts.Add(x));
                         newnodes.Add(merge);
                     }
                     _ = node.Nexts.RemoveWhere(x => group.Contains(x));
@@ -124,7 +124,7 @@ public static class LR0
             if (marks.Contains(node)) return;
             marks.Add(node);
             node.Nexts.Each(mark_proc);
-        };
+        }
         mark_proc(start);
 
         return marks.ToArray();
