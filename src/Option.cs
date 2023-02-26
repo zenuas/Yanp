@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 
 namespace Yanp;
 
@@ -35,7 +34,7 @@ public class Option
     public void Help()
     {
         Console.WriteLine(
-$@"Usage: {Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location)} [OPTION]... FILE
+$@"Usage: {Path.GetFileNameWithoutExtension(AppContext.BaseDirectory)} [OPTION]... FILE
 Generate LALR(1) parser.
 
   -i, --input FILE          input syntax definition file
@@ -55,7 +54,7 @@ contribute to https://github.com/zenuas/Yanp");
     public void Version()
     {
         Console.WriteLine(
-$@"yanp {File.GetLastWriteTime(Assembly.GetExecutingAssembly().Location):d}
+$@"yanp {File.GetLastWriteTime(AppContext.BaseDirectory):d}
 
 Copyright zenuas
 Released under the MIT license
