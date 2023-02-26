@@ -89,4 +89,30 @@ void  :
         Assert.Equal(nodes[8].ToString(), "a : 'A' . ['A', 'B', $END]");
         Assert.Equal(nodes[9].ToString(), "b : 'B' . ['A', 'B', $END]");
     }
+
+    [Fact]
+    public void Lookahead4()
+    {
+
+        var nodes = RunString(@"
+start : avoid avoid bvoid
+void  :
+avoid : void
+      | 'A'
+bvoid : void
+      | 'B'
+");
+        Assert.Equal(nodes.Length, 10);
+        Assert.Equal(nodes[0].ToString(), "$ACCEPT : . start $END; start : . avoid avoid bvoid; avoid : . void; avoid : . 'A'; void : . ['A', 'B', $END]");
+        Assert.Equal(nodes[1].ToString(), "$ACCEPT : start . $END");
+        Assert.Equal(nodes[2].ToString(), "$ACCEPT : start $END .");
+        Assert.Equal(nodes[3].ToString(), "start : avoid . avoid bvoid; avoid : . void; avoid : . 'A'; void : . ['B', $END]");
+        Assert.Equal(nodes[4].ToString(), "start : avoid avoid . bvoid; bvoid : . void; bvoid : . 'B'; void : . [$END]");
+        Assert.Equal(nodes[5].ToString(), "start : avoid avoid bvoid . [$END]");
+        Assert.Equal(nodes[6].ToString(), "bvoid : void . [$END]");
+        Assert.Equal(nodes[7].ToString(), "bvoid : 'B' . [$END]");
+        Assert.Equal(nodes[8].ToString(), "avoid : void . ['A', 'B', $END]");
+        Assert.Equal(nodes[9].ToString(), "avoid : 'A' . ['A', 'B', $END]");
+
+    }
 }

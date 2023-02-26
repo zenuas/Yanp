@@ -48,4 +48,15 @@ public class LALR1Follow
         Assert.Superset(follow["start"], new HashSet<string> { "$END" });
         Assert.Superset(follow["void"], new HashSet<string> { "'B'", "'D'" });
     }
+
+    [Fact]
+    public void Follow4()
+    {
+        var follow = RunString("start : avoid avoid bvoid void : avoid : void | 'A' bvoid : void | 'B'");
+        Assert.Equal(follow.Count, 4);
+        Assert.Superset(follow["start"], new HashSet<string> { "$END" });
+        Assert.Superset(follow["void"], new HashSet<string> { "'A'", "'B'", "$END" });
+        Assert.Superset(follow["avoid"], new HashSet<string> { "'A'", "'B'", "$END" });
+        Assert.Superset(follow["bvoid"], new HashSet<string> { "$END" });
+    }
 }
