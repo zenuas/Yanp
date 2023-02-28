@@ -192,4 +192,13 @@ public static class Lists
 
     [DebuggerHidden]
     public static IEnumerable<T> Except<T>(this IEnumerable<T> self, IEnumerable<T> second, Func<T?, T?, bool> f) => Enumerable.Except(self, second, new EqualityComparerBinder<T>() { Equals = f });
+
+    [DebuggerHidden]
+    public static TValue GetOrNew<TKey, TValue>(this Dictionary<TKey, TValue> self, TKey key)
+        where TKey : notnull
+        where TValue : new()
+    {
+        if (!self.ContainsKey(key)) self.Add(key, new());
+        return self[key];
+    }
 }
