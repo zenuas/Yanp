@@ -1,6 +1,5 @@
 ﻿using Extensions;
 using Xunit;
-using Yanp.TemplateEngine;
 
 namespace Yanp.Test;
 
