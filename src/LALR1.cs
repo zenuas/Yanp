@@ -15,7 +15,12 @@ public static class LALR1
         var nullable = Nullable(lines);
         var head = Head(syntax, lines);
         var follow = Follow(nodes, lines, nullable);
-        nodes.Each(x => Lookahead(syntax, x, follow, nullable, head));
+        nodes.Each(node =>
+        {
+            var ahead = Ahead(syntax, node, nullable, head);
+            var followable = Followable(node, follow, nullable, ahead);
+            Lookahead(syntax, node, followable, ahead);
+        });
     }
 
     public static GrammarLine[] GrammarLines(Node[] nodes) => nodes
@@ -127,7 +132,38 @@ public static class LALR1
         return follow;
     }
 
-    public static void Lookahead(Syntax syntax, Node node, Dictionary<string, HashSet<string>> follow, HashSet<string> nullable, Dictionary<string, HashSet<string>> head)
+    public static Dictionary<string, HashSet<string>> Ahead(Syntax syntax, Node node, HashSet<string> nullable, Dictionary<string, HashSet<string>> head)
+    {
+        var reduceable = node.Lines
+            .Where(x => x.Line.Grammars.Skip(x.Index).All(x => nullable.Contains(x.Value)))
+            .Select(x => x.Line.Name.Value)
+            .ToHashSet();
+
+        var ahead = new Dictionary<string, HashSet<string>>();
+        foreach (var look in node.Lines.Where(x => x.Index < x.Line.Grammars.Count && reduceable.Contains(x.Line.Grammars[x.Index].Value)))
+        {
+            var top = look.Line.Grammars[look.Index].Value;
+            if (!ahead.ContainsKey(top)) ahead.Add(top, new());
+
+            for (var i = look.Index + 1; i < look.Line.Grammars.Count; i++)
+            {
+                var s = look.Line.Grammars[i].Value;
+                if (syntax.Declares[s].IsTerminalSymbol)
+                {
+                    _ = ahead[top].Add(s);
+                    break;
+                }
+                else
+                {
+                    head[s].Each(x => ahead[top].Add(x));
+                    if (!nullable.Contains(s)) break;
+                }
+            }
+        }
+        return ahead;
+    }
+
+    public static Dictionary<string, HashSet<string>> Followable(Node node, Dictionary<string, HashSet<string>> follow, HashSet<string> nullable, Dictionary<string, HashSet<string>> ahead)
     {
         var reduces = node.Lines
             .Where(x => x.Line.Grammars.Skip(x.Index).All(x => nullable.Contains(x.Value)))
@@ -137,32 +173,6 @@ public static class LALR1
             .Where(x => x.Index > 0)
             .GroupBy(x => x.Line.Name.Value, x => follow.TryGetValue(x.Line.Name.Value, out var value) ? value : new())
             .ToDictionary(x => x.Key, x => x.Flatten().ToHashSet());
-
-        var reduceable = reduces
-            .Select(x => x.Line.Name.Value)
-            .ToHashSet();
-
-        var ahead = new Dictionary<string, HashSet<Token>>();
-        foreach (var look in node.Lines.Where(x => x.Index < x.Line.Grammars.Count && reduceable.Contains(x.Line.Grammars[x.Index].Value)))
-        {
-            var top = look.Line.Grammars[look.Index].Value;
-            if (!ahead.ContainsKey(top)) ahead.Add(top, new());
-
-            for (var i = look.Index + 1; i < look.Line.Grammars.Count; i++)
-            {
-                var t = syntax.Declares[look.Line.Grammars[i].Value];
-                if (t.IsTerminalSymbol)
-                {
-                    _ = ahead[top].Add(t.Name);
-                    break;
-                }
-                else
-                {
-                    head[t.Name.Value].Each(x => ahead[top].Add(syntax.Declares[x].Name));
-                    if (!nullable.Contains(t.Name.Value)) break;
-                }
-            }
-        }
 
         while (true)
         {
@@ -174,19 +184,23 @@ public static class LALR1
                 {
                     var top = index.Line.Name.Value;
                     var current = index.Line.Grammars[index.Index].Value;
-                    if (ahead.TryGetValue(top, out var value1)) value1.Each(x => retry = followable.GetOrNew(current).Add(x.Value) || retry);
+                    if (ahead.TryGetValue(top, out var value1)) value1.Each(x => retry = followable.GetOrNew(current).Add(x) || retry);
                     if (followable.TryGetValue(top, out var value2)) value2.Each(x => retry = followable.GetOrNew(current).Add(x) || retry);
                 });
 
             if (!retry) break;
         }
+        return followable;
+    }
 
+    public static void Lookahead(Syntax syntax, Node node, Dictionary<string, HashSet<string>> followable, Dictionary<string, HashSet<string>> ahead)
+    {
         node.Lines
             .Where(x => x.Index >= x.Line.Grammars.Count)
             .Each(index =>
             {
                 var top = index.Line.Name.Value;
-                if (ahead.TryGetValue(top, out var value1)) value1.Each(x => node.Lookahead.GetOrNew(index).Add(x));
+                if (ahead.TryGetValue(top, out var value1)) value1.Each(x => node.Lookahead.GetOrNew(index).Add(syntax.Declares[x].Name));
                 if (followable.TryGetValue(top, out var value2)) value2.Each(x => node.Lookahead.GetOrNew(index).Add(syntax.Declares[x].Name));
             });
     }
