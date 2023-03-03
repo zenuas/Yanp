@@ -184,8 +184,8 @@ public static class LALR1
                 {
                     var top = index.Line.Name.Value;
                     var current = index.Line.Grammars[index.Index].Value;
-                    if (ahead.TryGetValue(top, out var value1)) value1.Each(x => retry = followable.GetOrNew(current).Add(x) || retry);
-                    if (followable.TryGetValue(top, out var value2)) value2.Each(x => retry = followable.GetOrNew(current).Add(x) || retry);
+                    ahead.GetOrDefault(top)?.Each(x => retry = followable.GetOrNew(current).Add(x) || retry);
+                    followable.GetOrDefault(top)?.Each(x => retry = followable.GetOrNew(current).Add(x) || retry);
                 });
 
             if (!retry) break;
@@ -200,8 +200,8 @@ public static class LALR1
             .Each(index =>
             {
                 var top = index.Line.Name.Value;
-                if (ahead.TryGetValue(top, out var value1)) value1.Each(x => node.Lookahead.GetOrNew(index).Add(syntax.Declares[x].Name));
-                if (followable.TryGetValue(top, out var value2)) value2.Each(x => node.Lookahead.GetOrNew(index).Add(syntax.Declares[x].Name));
+                ahead.GetOrDefault(top)?.Each(x => node.Lookahead.GetOrNew(index).Add(syntax.Declares[x].Name));
+                followable.GetOrDefault(top)?.Each(x => node.Lookahead.GetOrNew(index).Add(syntax.Declares[x].Name));
             });
     }
 
