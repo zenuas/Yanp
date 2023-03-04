@@ -18,8 +18,8 @@ public static class LALR1
         nodes.Each(node =>
         {
             var ahead = Ahead(syntax, node, nullable, head);
-            var followable = Followable(node, follow, nullable, ahead);
-            Lookahead(syntax, node, followable, ahead);
+            var followable = Followable(syntax, node, follow, nullable, ahead);
+            Lookahead(syntax, node, followable);
         });
     }
 
@@ -163,14 +163,14 @@ public static class LALR1
         return ahead;
     }
 
-    public static Dictionary<string, HashSet<string>> Followable(Node node, Dictionary<string, HashSet<string>> follow, HashSet<string> nullable, Dictionary<string, HashSet<string>> ahead)
+    public static Dictionary<string, HashSet<string>> Followable(Syntax syntax, Node node, Dictionary<string, HashSet<string>> follow, HashSet<string> nullable, Dictionary<string, HashSet<string>> ahead)
     {
         var reduces = node.Lines
             .Where(x => x.Line.Grammars.Skip(x.Index).All(x => nullable.Contains(x.Value)))
             .ToArray();
 
         var followable = reduces
-            .Where(x => x.Index > 0)
+            .Where(x => x.Index > 0 || x.Line.Name.Value == syntax.Start)
             .GroupBy(x => x.Line.Name.Value, x => follow.TryGetValue(x.Line.Name.Value, out var value) ? value : new())
             .ToDictionary(x => x.Key, x => x.Flatten().ToHashSet());
 
@@ -193,16 +193,11 @@ public static class LALR1
         return followable;
     }
 
-    public static void Lookahead(Syntax syntax, Node node, Dictionary<string, HashSet<string>> followable, Dictionary<string, HashSet<string>> ahead)
+    public static void Lookahead(Syntax syntax, Node node, Dictionary<string, HashSet<string>> followable)
     {
         node.Lines
             .Where(x => x.Index >= x.Line.Grammars.Count)
-            .Each(index =>
-            {
-                var top = index.Line.Name.Value;
-                ahead.GetOrDefault(top)?.Each(x => node.Lookahead.GetOrNew(index).Add(syntax.Declares[x].Name));
-                followable.GetOrDefault(top)?.Each(x => node.Lookahead.GetOrNew(index).Add(syntax.Declares[x].Name));
-            });
+            .Each(index => followable.GetOrDefault(index.Line.Name.Value)?.Each(x => node.Lookahead.GetOrNew(index).Add(syntax.Declares[x].Name)));
     }
 
     public static Table CreateTables(Syntax syntax, Node node, int index)
