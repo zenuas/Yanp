@@ -21,7 +21,7 @@ public static class SyntaxParser
             var first = lex.BaseReader.ReadLine();
             if (first != "") _ = syntax.FooterCode.AppendLine(first);
         }
-        syntax.FooterCode.Append(input.ReadToEnd());
+        _ = syntax.FooterCode.Append(input.ReadToEnd());
         return syntax;
     }
 

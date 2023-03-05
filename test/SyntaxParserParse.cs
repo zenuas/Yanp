@@ -81,7 +81,7 @@ public class SyntaxParserParse
     [Fact]
     public void Comment3()
     {
-        Assert.Throws<SyntaxErrorException>(() => RunString(@"
+        _ = Assert.Throws<SyntaxErrorException>(() => RunString(@"
 /%left A
 %%
 %%
