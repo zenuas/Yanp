@@ -115,4 +115,24 @@ bvoid : void
         Assert.Equal(nodes[9].ToString(), "avoid : 'A' . ['A', 'B', $END]");
 
     }
+
+    [Fact]
+    public void Lookahead5()
+    {
+
+        var nodes = RunString(@"
+start : 'A' void 'B'
+      | void 'C'
+void  :
+");
+        Assert.Equal(nodes.Length, 8);
+        Assert.Equal(nodes[0].ToString(), "$ACCEPT : . start $END; start : . 'A' void 'B'; start : . void 'C'; void : . ['C']");
+        Assert.Equal(nodes[1].ToString(), "$ACCEPT : start . $END");
+        Assert.Equal(nodes[2].ToString(), "$ACCEPT : start $END .");
+        Assert.Equal(nodes[3].ToString(), "start : 'A' . void 'B'; void : . ['B']");
+        Assert.Equal(nodes[4].ToString(), "start : 'A' void . 'B'");
+        Assert.Equal(nodes[5].ToString(), "start : 'A' void 'B' . [$END]");
+        Assert.Equal(nodes[6].ToString(), "start : void . 'C'");
+        Assert.Equal(nodes[7].ToString(), "start : void 'C' . [$END]");
+    }
 }

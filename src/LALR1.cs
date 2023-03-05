@@ -18,7 +18,7 @@ public static class LALR1
         nodes.Each(node =>
         {
             var ahead = Ahead(syntax, node, nullable, head);
-            var followable = Followable(syntax, node, follow, nullable, ahead);
+            var followable = Followable(node, follow, nullable, ahead);
             Lookahead(syntax, node, followable);
         });
     }
@@ -163,20 +163,28 @@ public static class LALR1
         return ahead;
     }
 
-    public static Dictionary<string, HashSet<string>> Followable(Syntax syntax, Node node, Dictionary<string, HashSet<string>> follow, HashSet<string> nullable, Dictionary<string, HashSet<string>> ahead)
+    public static Dictionary<string, HashSet<string>> Followable(Node node, Dictionary<string, HashSet<string>> follow, HashSet<string> nullable, Dictionary<string, HashSet<string>> ahead)
     {
         var reduces = node.Lines
             .Where(x => x.Line.Grammars.Skip(x.Index).All(x => nullable.Contains(x.Value)))
             .ToArray();
 
         var followable = reduces
-            .Where(x => x.Index > 0 || x.Line.Name.Value == syntax.Start)
+            .Where(x => x.Index > 0)
             .GroupBy(x => x.Line.Name.Value, x => follow.TryGetValue(x.Line.Name.Value, out var value) ? value : new())
             .ToDictionary(x => x.Key, x => x.Flatten().ToHashSet());
 
         while (true)
         {
             var retry = false;
+
+            reduces
+                .Where(x => x.Line.Grammars.Count == 0)
+                .Each(index =>
+                {
+                    var top = index.Line.Name.Value;
+                    ahead.GetOrDefault(top)?.Each(x => retry = followable.GetOrNew(top).Add(x) || retry);
+                });
 
             reduces
                 .Where(x => x.Index < x.Line.Grammars.Count)
