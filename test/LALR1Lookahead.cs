@@ -135,4 +135,17 @@ void  :
         Assert.Equal(nodes[6].ToString(), "start : void . 'C'");
         Assert.Equal(nodes[7].ToString(), "start : void 'C' . [$END]");
     }
+
+    [Fact]
+    public void Lookahead6()
+    {
+
+        var nodes = RunString(@"
+start :
+");
+        Assert.Equal(nodes.Length, 3);
+        Assert.Equal(nodes[0].ToString(), "$ACCEPT : . start $END; start : . [$END]");
+        Assert.Equal(nodes[1].ToString(), "$ACCEPT : start . $END");
+        Assert.Equal(nodes[2].ToString(), "$ACCEPT : start $END .");
+    }
 }
