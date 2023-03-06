@@ -9,7 +9,7 @@ public class LR0Merge
     private static Node[] RunString(string text, string start = "start")
     {
         var syntax = new Syntax();
-        var lex = new Lexer(new() { BaseReader = new StringReader(text) });
+        var lex = new Lexer { BaseReader = new() { BaseReader = new StringReader(text) } };
         SyntaxParser.ParseGrammar(syntax, lex);
         SyntaxParser.GrammarsToTerminalSymbol(syntax);
         syntax.Start = start;

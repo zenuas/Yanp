@@ -7,7 +7,7 @@ public class SyntaxParserParserGrammarLines
 {
     private static Token[][] RunString(string text)
     {
-        var lex = new Lexer(new() { BaseReader = new StringReader(text) });
+        var lex = new Lexer { BaseReader = new() { BaseReader = new StringReader(text) } };
         return SyntaxParser.ParserGrammarLines(lex).Select(x =>
         {
             var t = new List<Token> { x.Head };

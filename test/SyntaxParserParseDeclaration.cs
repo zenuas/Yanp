@@ -9,7 +9,7 @@ public class SyntaxParserParseDeclaration
     private static Syntax RunString(string text)
     {
         var syntax = new Syntax();
-        var lex = new Lexer(new() { BaseReader = new StringReader(text) });
+        var lex = new Lexer { BaseReader = new() { BaseReader = new StringReader(text) } };
         SyntaxParser.ParseDeclaration(syntax, lex);
         return syntax;
     }

@@ -11,7 +11,7 @@ public static class SyntaxParser
 {
     public static Syntax Parse(TextReader input)
     {
-        var lex = new Lexer(new() { BaseReader = input });
+        var lex = new Lexer { BaseReader = new() { BaseReader = input } };
         var syntax = new Syntax();
         ParseDeclaration(syntax, lex);
         ParseGrammar(syntax, lex);

@@ -7,7 +7,7 @@ namespace Parser;
 
 public class Lexer
 {
-    public SourceCodeReader BaseReader { get; }
+    public required SourceCodeReader BaseReader { get; init; }
     public List<Token> Store { get; } = new();
     public static Dictionary<char, Symbols> ReservedChar { get; } = new()
         {
@@ -27,11 +27,6 @@ public class Lexer
             { "%start", Symbols.START },
             { "%prec", Symbols.PREC },
         };
-
-    public Lexer(SourceCodeReader reader)
-    {
-        BaseReader = reader;
-    }
 
     public Token PeekToken()
     {
