@@ -15,8 +15,7 @@ public static class CommandLine
         {
             foreach (var attr in m.GetCustomAttributes(true))
             {
-                if (attr is ShortOptionAttribute s) yield return (s, m);
-                else if (attr is LongOptionAttribute l) yield return (l, m);
+                if (attr is CommandOptionAttribute o) yield return (o, m);
                 else if (attr is CommandHelpAttribute h) yield return (h, m);
             }
         }
@@ -26,8 +25,7 @@ public static class CommandLine
             var setter = m.GetSetMethod(true)!;
             foreach (var attr in m.GetCustomAttributes(true))
             {
-                if (attr is ShortOptionAttribute s) yield return (s, setter);
-                else if (attr is LongOptionAttribute l) yield return (l, setter);
+                if (attr is CommandOptionAttribute o) yield return (o, setter);
                 else if (attr is CommandHelpAttribute h) yield return (h, setter);
             }
         }
@@ -36,8 +34,8 @@ public static class CommandLine
     public static (string[] Arguments, (MethodInfo Method, string[] Arguments)[] Options) Parse<T>(params string[] args)
     {
         var map = GetCommands<T>()
-            .Where(x => x.Attribute is ShortOptionAttribute || x.Attribute is LongOptionAttribute)
-            .ToDictionary(x => x.Attribute is ShortOptionAttribute s ? s.Command.ToString() : x.Attribute.Cast<LongOptionAttribute>().Command);
+            .Where(x => x.Attribute is CommandOptionAttribute)
+            .ToDictionary(x => x.Attribute.Cast<CommandOptionAttribute>().Command);
 
         var xargs = new List<string>();
         var methods = new List<(MethodInfo, string[])>();
@@ -46,32 +44,30 @@ public static class CommandLine
 
         for (var i = 0; i < args.Length; i++)
         {
-            var is_method_name = false;
             if (args[i].StartsWith("--"))
             {
                 method = map[args[i][2..]].Method;
-                is_method_name = true;
             }
-            else if (args[i].Length > 1 && args[i].StartsWith("-"))
+            else if (args[i].Length > 1 && args[i].StartsWith('-'))
             {
-                method = map[args[i].Substring(1, 1)].Method;
+                method = map[args[i][1..2]].Method;
                 if (args[i].Length > 2) method_args.Add(args[i][2..]);
-                is_method_name = true;
             }
-
-            if (method is null)
+            else if (method is null)
             {
                 xargs.Add(args[i]);
+                continue;
             }
             else
             {
-                if (!is_method_name) method_args.Add(args[i]);
-                if (method.GetParameters().Count() <= method_args.Count)
-                {
-                    methods.Add((method, method_args.ToArray()));
-                    method = null;
-                    method_args.Clear();
-                }
+                method_args.Add(args[i]);
+            }
+
+            if (method is { } && method.GetParameters().Length <= method_args.Count)
+            {
+                methods.Add((method, method_args.ToArray()));
+                method = null;
+                method_args.Clear();
             }
         }
         return (xargs.ToArray(), methods.ToArray());

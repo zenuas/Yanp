@@ -7,30 +7,30 @@ namespace Yanp;
 
 public class Option
 {
-    [ShortOption('i')]
-    [LongOption("input")]
+    [CommandOption('i')]
+    [CommandOption("input")]
     public TextReader Input { get; set; } = Console.In;
 
-    [ShortOption('v')]
-    [LongOption("verbose")]
+    [CommandOption('v')]
+    [CommandOption("verbose")]
     public void Verbose() => Exclude.Remove("v");
 
-    public HashSet<string> Exclude { get; } = new() { "v" };
+    public HashSet<string> Exclude { get; } = ["v"];
 
-    [ShortOption('t')]
-    [LongOption("template")]
+    [CommandOption('t')]
+    [CommandOption("template")]
     public string Template { get; set; } = Path.Combine(AppContext.BaseDirectory, "template.cs");
 
-    [ShortOption('l')]
-    [LongOption("template-level")]
+    [CommandOption('l')]
+    [CommandOption("template-level")]
     public int TemplateLevel { get; set; } = 1;
 
-    [ShortOption('o')]
-    [LongOption("output")]
+    [CommandOption('o')]
+    [CommandOption("output")]
     public string Output { get; set; } = "";
 
-    [ShortOption('h')]
-    [LongOption("help")]
+    [CommandOption('h')]
+    [CommandOption("help")]
     public void Help()
     {
         Console.WriteLine(
@@ -49,8 +49,8 @@ contribute to https://github.com/zenuas/Yanp");
         Environment.Exit(0);
     }
 
-    [ShortOption('V')]
-    [LongOption("version")]
+    [CommandOption('V')]
+    [CommandOption("version")]
     public void Version()
     {
         Console.WriteLine(
