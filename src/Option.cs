@@ -31,7 +31,7 @@ public class Option
 
     [CommandOption('h')]
     [CommandOption("help")]
-    public void Help()
+    public static void Help()
     {
         Console.WriteLine(
 $@"Usage: {Path.GetFileNameWithoutExtension(AppContext.BaseDirectory)} [OPTION]... FILE
@@ -51,7 +51,7 @@ contribute to https://github.com/zenuas/Yanp");
 
     [CommandOption('V')]
     [CommandOption("version")]
-    public void Version()
+    public static void Version()
     {
         Console.WriteLine(
 $@"yanp {File.GetLastWriteTime(AppContext.BaseDirectory):d}

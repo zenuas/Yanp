@@ -11,7 +11,7 @@ public static class CommandLine
 {
     public static IEnumerable<(Attribute Attribute, MethodInfo Method)> GetCommands<T>()
     {
-        foreach (var m in typeof(T).GetMethods(BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
+        foreach (var m in typeof(T).GetMethods(BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static))
         {
             foreach (var attr in m.GetCustomAttributes(true))
             {
