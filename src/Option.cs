@@ -9,25 +9,25 @@ public class Option
 {
     [CommandOption('i')]
     [CommandOption("input")]
-    public TextReader Input { get; set; } = Console.In;
+    public TextReader Input { get; init; } = Console.In;
 
     [CommandOption('v')]
     [CommandOption("verbose")]
     public void Verbose() => Exclude.Remove("v");
 
-    public HashSet<string> Exclude { get; } = ["v"];
+    public HashSet<string> Exclude { get; init; } = ["v"];
 
     [CommandOption('t')]
     [CommandOption("template")]
-    public string Template { get; set; } = Path.Combine(AppContext.BaseDirectory, "template.cs");
+    public string Template { get; init; } = Path.Combine(AppContext.BaseDirectory, "template.cs");
 
     [CommandOption('l')]
     [CommandOption("template-level")]
-    public int TemplateLevel { get; set; } = 1;
+    public int TemplateLevel { get; init; } = 1;
 
     [CommandOption('o')]
     [CommandOption("output")]
-    public string Output { get; set; } = "";
+    public string Output { get; init; } = "";
 
     [CommandOption('h')]
     [CommandOption("help")]
