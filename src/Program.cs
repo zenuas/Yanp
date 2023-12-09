@@ -11,17 +11,16 @@ public static class Program
 {
     public static void Main(string[] args)
     {
-        var opt = new Option();
-        var xs = CommandLine.Run(opt, args);
+        var (opt, xargs) = CommandLine.Run<Option>(args);
 
-        if (xs.Length > 1) throw new Exception($"extra operand '{xs[1]}'");
-        if (xs.Length == 0)
+        if (xargs.Length > 1) throw new Exception($"extra operand '{xargs[1]}'");
+        if (xargs.Length == 0)
         {
             Run(opt, opt.Input);
         }
         else
         {
-            using var input = new StreamReader(xs[0]);
+            using var input = new StreamReader(xargs[0]);
             Run(opt, input);
         }
     }
