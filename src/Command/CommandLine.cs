@@ -105,6 +105,7 @@ public static class CommandLine
             Type a when a == typeof(char) => char.Parse(s),
             Type a when a == typeof(bool) => bool.Parse(s),
             Type a when a == typeof(decimal) => decimal.Parse(s),
+            Type a when a == typeof(DateTime) => DateTime.Parse(s),
             _ => s,
         };
     }
