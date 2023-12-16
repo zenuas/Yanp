@@ -16,7 +16,7 @@ namespace @Model.GetDefine("YYNAMESPACE", "Parser");
 @Include("Utility.cs")
 public partial class Parser
 {
-    public List<(int Index, @Model.Syntax.Default Value)> TokenStack { get; } = [];
+    public List<(int Index, @Model.Syntax.Default Value)> TokenStack { get; init; } = [];
     public static int[,] Tables { get; } = new [,]
         {
 @{

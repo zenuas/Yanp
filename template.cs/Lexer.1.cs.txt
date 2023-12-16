@@ -13,7 +13,7 @@ using System.Text;
 
 namespace @Model.GetDefine("YYNAMESPACE", "Parser");
 @Include("Utility.cs")
-public partial class Lexer
+public partial class Lexer : ILexer<@Model.Syntax.Default>
 {
     public required TextReader BaseReader { get; init; }
     public IToken<@Model.Syntax.Default>? Store { get; set; } = null;
