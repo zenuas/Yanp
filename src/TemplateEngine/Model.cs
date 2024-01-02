@@ -1,4 +1,4 @@
-﻿using Parser;
+﻿using Yanp.Parser;
 using System;
 using System.Collections.Generic;
 using Yanp.Data;

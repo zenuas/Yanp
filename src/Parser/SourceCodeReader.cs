@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace Parser;
+namespace Yanp.Parser;
 
 public class SourceCodeReader
 {

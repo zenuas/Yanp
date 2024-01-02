@@ -1,5 +1,5 @@
-﻿using Command;
-using Extensions;
+﻿using Mina.Command;
+using Mina.Extensions;
 using System;
 using System.IO;
 using System.Linq;

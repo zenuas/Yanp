@@ -1,9 +1,9 @@
-﻿using Extensions;
+﻿using Mina.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Parser;
+namespace Yanp.Parser;
 
 public class Lexer
 {

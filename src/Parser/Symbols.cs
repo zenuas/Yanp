@@ -1,4 +1,4 @@
-namespace Parser;
+namespace Yanp.Parser;
 
 public enum Symbols
 {

@@ -1,5 +1,5 @@
-﻿using Parser;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Yanp.Parser;
 
 namespace Yanp.Data;
 

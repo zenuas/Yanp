@@ -1,5 +1,5 @@
-﻿using Parser;
-using Xunit;
+﻿using Xunit;
+using Yanp.Parser;
 
 namespace Yanp.Test;
 
