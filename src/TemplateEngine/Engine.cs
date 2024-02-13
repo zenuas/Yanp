@@ -1,4 +1,4 @@
-﻿using Mina.Extensions;
+﻿using Mina.Extension;
 using RazorEngine;
 using RazorEngine.Compilation;
 using RazorEngine.Compilation.ReferenceResolver;

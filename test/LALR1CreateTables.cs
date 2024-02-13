@@ -1,4 +1,4 @@
-﻿using Mina.Extensions;
+﻿using Mina.Extension;
 using Xunit;
 
 namespace Yanp.Test;

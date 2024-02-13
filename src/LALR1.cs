@@ -1,4 +1,4 @@
-﻿using Mina.Extensions;
+﻿using Mina.Extension;
 using Yanp.Parser;
 using System;
 using System.Collections.Generic;
