@@ -1,4 +1,4 @@
-@using Parser
+@using Yanp.Parser
 @{
 var cs_reserved_word = new HashSet<string>
     {

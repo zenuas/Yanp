@@ -1,7 +1,7 @@
-@using Extensions
-@using Parser
-@using System.Text.RegularExpressions
+@using Mina.Extension
+@using Yanp.Parser
 @using Yanp.Data
+@using System.Text.RegularExpressions
 @{
 if(Model.Syntax.HeaderCode.Length > 0)
 {

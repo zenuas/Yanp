@@ -1,4 +1,4 @@
-﻿@using Parser
+﻿@using Yanp.Parser
 namespace @Model.GetDefine("YYNAMESPACE", "Parser");
 @Include("Utility.cs")
 public enum Symbols

@@ -1,5 +1,5 @@
-@using Extensions
-@using Parser
+@using Mina.Extension
+@using Yanp.Parser
 @using Yanp.Data
 @{
 if(Model.Syntax.HeaderCode.Length > 0)
