@@ -23,7 +23,7 @@ public class LALR1Head
     {
         var head = RunString("start :");
         Assert.True(head.ContainsKey("start"));
-        Assert.Equal(head["start"], new HashSet<string> { });
+        Assert.Equal(head["start"], []);
     }
 
     [Fact]
@@ -31,7 +31,7 @@ public class LALR1Head
     {
         var head = RunString("start : 'A' 'B'");
         Assert.True(head.ContainsKey("start"));
-        Assert.Equal(head["start"], new HashSet<string> { "'A'" });
+        Assert.Equal(head["start"], ["'A'"]);
     }
 
     [Fact]
@@ -39,9 +39,9 @@ public class LALR1Head
     {
         var head = RunString("start : a b | c a : 'A' b : 'B' c : 'C'");
         Assert.True(head.ContainsKey("start"));
-        Assert.Equal(head["start"], new HashSet<string> { "'A'", "'C'" });
-        Assert.Equal(head["a"], new HashSet<string> { "'A'" });
-        Assert.Equal(head["b"], new HashSet<string> { "'B'" });
-        Assert.Equal(head["c"], new HashSet<string> { "'C'" });
+        Assert.Equal(head["start"], ["'A'", "'C'"]);
+        Assert.Equal(head["a"], ["'A'"]);
+        Assert.Equal(head["b"], ["'B'"]);
+        Assert.Equal(head["c"], ["'C'"]);
     }
 }

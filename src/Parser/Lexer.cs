@@ -8,7 +8,7 @@ namespace Yanp.Parser;
 public class Lexer
 {
     public required SourceCodeReader BaseReader { get; init; }
-    public List<Token> Store { get; } = new();
+    public List<Token> Store { get; } = [];
     public static Dictionary<char, Symbols> ReservedChar { get; } = new()
         {
             { ':', Symbols.__Colon },

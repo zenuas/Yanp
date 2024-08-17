@@ -28,16 +28,16 @@ public static class LR0
         syntax.Declares.Add(end.Value, new() { Name = end, Assoc = AssocTypes.Type });
 
         // $ACCEPT : syntax.Start $END
-        syntax.Grammars.Add(accept.Value, new()
-        {
+        syntax.Grammars.Add(accept.Value,
+        [
             new()
             {
                 Name = accept,
                 LineNumber = 0,
                 LineColumn = 0,
-                Grammars = new() { start, end },
+                Grammars = [start, end],
             }
-        });
+        ]);
     }
 
     public static Node[] CreateNodes(Syntax syntax)
@@ -46,7 +46,7 @@ public static class LR0
             g.Value.Select(gl =>
             {
                 var line = Lists.Sequence(0)
-                    .Select(i => new Node { Name = i == 0 ? syntax.Declares[g.Key].Name : gl.Grammars[i - 1], Lines = new() { new() { Index = i, Line = gl } } })
+                    .Select(i => new Node { Name = i == 0 ? syntax.Declares[g.Key].Name : gl.Grammars[i - 1], Lines = [new() { Index = i, Line = gl }] })
                     .Take(gl.Grammars.Count + 1)
                     .ToArray();
 
@@ -113,7 +113,7 @@ public static class LR0
             if (newnodes.IsEmpty()) break;
             currents.AddRange(newnodes);
         }
-        return currents.ToArray();
+        return [.. currents];
     }
 
     public static Node[] Sweep(Node start)
@@ -127,6 +127,6 @@ public static class LR0
         }
         mark_proc(start);
 
-        return marks.ToArray();
+        return [.. marks];
     }
 }

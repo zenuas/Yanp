@@ -1,9 +1,9 @@
 ﻿using Mina.Extension;
-using Yanp.Parser;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Yanp.Data;
+using Yanp.Parser;
 
 namespace Yanp;
 
@@ -143,7 +143,7 @@ public static class LALR1
         foreach (var look in node.Lines.Where(x => x.Index < x.Line.Grammars.Count && reduceable.Contains(x.Line.Grammars[x.Index].Value)))
         {
             var top = look.Line.Grammars[look.Index].Value;
-            if (!ahead.ContainsKey(top)) ahead.Add(top, new());
+            if (!ahead.ContainsKey(top)) ahead.Add(top, []);
 
             for (var i = look.Index + 1; i < look.Line.Grammars.Count; i++)
             {
@@ -171,7 +171,7 @@ public static class LALR1
 
         var followable = reduces
             .Where(x => x.Index > 0)
-            .GroupBy(x => x.Line.Name.Value, x => follow.TryGetValue(x.Line.Name.Value, out var value) ? value : new())
+            .GroupBy(x => x.Line.Name.Value, x => follow.TryGetValue(x.Line.Name.Value, out var value) ? value : [])
             .ToDictionary(x => x.Key, x => x.Flatten().ToHashSet());
 
         while (true)
@@ -280,6 +280,6 @@ public static class LALR1
                 }
             }));
 
-        return new() { Index = index, Node = node, Conflicts = conflicts.ToArray(), Actions = actions };
+        return new() { Index = index, Node = node, Conflicts = [.. conflicts], Actions = actions };
     }
 }

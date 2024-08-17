@@ -10,9 +10,9 @@ public class Syntax
     public string Start { get; set; } = "";
     public string Default { get; set; } = "object";
 
-    public Dictionary<string, string> Defines { get; } = new();
+    public Dictionary<string, string> Defines { get; } = [];
 
-    public Dictionary<string, Declarate> Declares { get; } = new();
+    public Dictionary<string, Declarate> Declares { get; } = [];
 
-    public Dictionary<string, List<GrammarLine>> Grammars { get; } = new();
+    public Dictionary<string, List<GrammarLine>> Grammars { get; } = [];
 }

@@ -12,7 +12,7 @@ public class GrammarLine
     public required int LineColumn { get; init; }
     public Token? Prec { get; init; }
     public Token? Action { get; init; }
-    public List<Token> Grammars { get; init; } = new();
+    public List<Token> Grammars { get; init; } = [];
     public int Priority { get; init; } = 0;
     public AssocTypes Assoc { get; init; } = AssocTypes.Type;
 

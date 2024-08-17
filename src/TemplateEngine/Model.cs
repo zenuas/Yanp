@@ -14,5 +14,5 @@ public class Model
     public required Func<Token[]> GetSymbols;
     public required Func<GrammarLine[]> GetGrammarLines;
     public required Func<Node, Table> NodeToTable;
-    public Dictionary<string, object> KeyValues = new();
+    public Dictionary<string, object> KeyValues = [];
 }
