@@ -46,10 +46,7 @@ public class Lexer
         return t;
     }
 
-    public void UnReadToken(Token t)
-    {
-        Store.Insert(0, t);
-    }
+    public void UnReadToken(Token t) => Store.Insert(0, t);
 
     public static bool ReadSkipWhiteSpace(SourceCodeReader reader)
     {
@@ -69,7 +66,7 @@ public class Lexer
         if (reader.EndOfStream) return new() { Type = Symbols.__EOF, LineNumber = reader.LineNumber, LineColumn = reader.LineColumn };
 
         var c = reader.PeekChar();
-        if (ReservedChar.ContainsKey(c)) return new() { Type = ReservedChar[c], LineNumber = reader.LineNumber, LineColumn = reader.LineColumn, Value = reader.ReadChar().ToString() };
+        if (ReservedChar.TryGetValue(c, out var value)) return new() { Type = value, LineNumber = reader.LineNumber, LineColumn = reader.LineColumn, Value = reader.ReadChar().ToString() };
 
         switch (c)
         {
@@ -92,8 +89,9 @@ public class Lexer
                 if (IsAlphabet(next))
                 {
                     var t = ReadVariable(reader, "%");
-                    if (t.Type == Symbols.VAR) throw new SyntaxErrorException($"undefined keyword {t.Value}") { LineNumber = reader.LineNumber, LineColumn = reader.LineColumn };
-                    return t;
+                    return t.Type == Symbols.VAR
+                        ? throw new SyntaxErrorException($"undefined keyword {t.Value}") { LineNumber = reader.LineNumber, LineColumn = reader.LineColumn }
+                        : t;
                 }
                 else if (next == '%')
                 {
@@ -137,8 +135,9 @@ public class Lexer
             _ = text.AppendLine(line);
         }
 
-        if (eofmark != "") throw new SyntaxErrorException("missing eof mark") { LineNumber = reader.LineNumber, LineColumn = reader.LineColumn };
-        return text.ToString();
+        return eofmark != ""
+            ? throw new SyntaxErrorException("missing eof mark") { LineNumber = reader.LineNumber, LineColumn = reader.LineColumn }
+            : text.ToString();
     }
 
     public static string ReadAction(SourceCodeReader reader)
@@ -203,8 +202,8 @@ public class Lexer
 
         while (IsWord(reader.PeekChar())) _ = s.Append(reader.ReadChar());
         var name = s.ToString();
-        return ReservedString.ContainsKey(name)
-            ? new() { Type = ReservedString[name], LineNumber = line, LineColumn = col, Value = name }
+        return ReservedString.TryGetValue(name, out var value)
+            ? new() { Type = value, LineNumber = line, LineColumn = col, Value = name }
             : new() { Type = Symbols.VAR, LineNumber = line, LineColumn = col, Value = name };
     }
 
@@ -230,9 +229,9 @@ public class Lexer
             }
             _ = s.Append(c);
         }
-        if (nest > 0 || s.Length == 0) throw new SyntaxErrorException("syntax error") { LineNumber = line, LineColumn = col };
-
-        return s.ToString();
+        return nest > 0 || s.Length == 0
+            ? throw new SyntaxErrorException("syntax error") { LineNumber = line, LineColumn = col }
+            : s.ToString();
     }
 
     public static Token ReadChar(SourceCodeReader reader)
@@ -249,25 +248,19 @@ public class Lexer
             if (reader.EndOfStream) throw new SyntaxErrorException("syntax error") { LineNumber = line, LineColumn = col };
 
             var next = reader.ReadChar();
-            switch (next)
+            c = next switch
             {
-                case '\'':
-                case '"':
-                case '\\':
-                    c = next;
-                    break;
-
-                case 't': c = '\t'; break;
-                case 'r': c = '\r'; break;
-                case 'n': c = '\n'; break;
-
-                default:
-                    throw new SyntaxErrorException($"parse escape char error ({next})") { LineNumber = line, LineColumn = col };
-            }
+                '\'' or '"' or '\\' => next,
+                't' => '\t',
+                'r' => '\r',
+                'n' => '\n',
+                _ => throw new SyntaxErrorException($"parse escape char error ({next})") { LineNumber = line, LineColumn = col },
+            };
         }
 
-        if (reader.EndOfStream || reader.ReadChar() != '\'') throw new SyntaxErrorException("syntax error") { LineNumber = line, LineColumn = col };
-        return new() { Type = Symbols.CHAR, LineNumber = line, LineColumn = col, Value = $"'{c}'" };
+        return reader.EndOfStream || reader.ReadChar() != '\''
+            ? throw new SyntaxErrorException("syntax error") { LineNumber = line, LineColumn = col }
+            : new() { Type = Symbols.CHAR, LineNumber = line, LineColumn = col, Value = $"'{c}'" };
     }
 
     public static bool IsNumber(char c) => c >= '0' && c <= '9';

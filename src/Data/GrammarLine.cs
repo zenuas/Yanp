@@ -16,8 +16,5 @@ public class GrammarLine
     public int Priority { get; init; } = 0;
     public AssocTypes Assoc { get; init; } = AssocTypes.Type;
 
-    public override string ToString()
-    {
-        return $"{Name} : {Grammars.Select(x => x.ToString()).Join(" ")}";
-    }
+    public override string ToString() => $"{Name} : {Grammars.Select(x => x.ToString()).Join(" ")}";
 }
