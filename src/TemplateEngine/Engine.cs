@@ -30,8 +30,8 @@ public static class Engine
                     .GroupBy(a => a.GetName().Name)
                     .Select(grp => grp.First(y => y.GetName().Version == grp.Max(x => x.GetName().Version)))
                     .Select(a => CompilerReference.From(a))
-                    .Concat(includeAssemblies ?? Enumerable.Empty<CompilerReference>())
-                    .Concat(new[] { CompilerReference.From(Assembly.Load("System.Text.RegularExpressions")) })
+                    .Concat(includeAssemblies ?? [])
+                    .Concat([CompilerReference.From(Assembly.Load("System.Text.RegularExpressions"))])
             },
             TemplateManager = new DelegateTemplateManager(key => File.ReadAllText(Path.Combine(basepath, key))),
         };
