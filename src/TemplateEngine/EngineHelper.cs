@@ -18,4 +18,9 @@ public static class EngineHelper
         .TakeWhile(x => x.StartsWith("//#Assembly.Load "))
         .Select(x => x[("//#Assembly.Load ".Length)..])
         .Select(x => CompilerReference.From(Assembly.Load(x)));
+
+    public static string TrimHeader(string source) => source
+        .SplitLine()
+        .SkipWhile(x => x.StartsWith("//#Assembly.Load "))
+        .Join("\r\n");
 }

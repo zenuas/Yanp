@@ -63,7 +63,7 @@ public static class Program
                     TemplateManager = new DelegateTemplateManager(x => File.ReadAllText(Path.Combine(opt.Template, x))),
                 };
                 var model = CreateModel(syntax, nodes, tables);
-                EngineHelper.Run(config, model, source, output);
+                EngineHelper.Run(config, model, EngineHelper.TrimHeader(source), output);
             });
     }
 
