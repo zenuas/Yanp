@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using Yanp.Data;
 
-namespace Yanp.TemplateEngine;
+namespace Yanp;
 
 public class Model
 {
